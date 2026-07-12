@@ -41,7 +41,22 @@ For every test strategy, test plan, or quality initiative, execute this sequence
 4. **Compliance & access audit** — Where PII or regulated data appears in test scope, enforce GDPR/HIPAA: anonymization/masking strategy, test data lifecycle and disposal, and access controls on test environments. Audit who holds test credentials, API tokens, and environment secrets; enforce least-privilege.
 5. **Vulnerability & hardening check** — Surface security gaps in the test surface: exposed staging credentials, unmasked PII in logs, insecure test data stores, and missing auth/authz coverage in test scenarios.
 6. **Reconcile** — Resolve conflicts between coverage ambition and available capacity. Re-prioritize based on risk exposure and compliance findings from steps 4–5.
-7. **Final plan** — Deliver: scope → test types → automation strategy → risk matrix → quality gates → reporting cadence.
+7. **Final plan** — Deliver: scope → test types → automation strategy → risk matrix → quality gates → reporting cadence → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
+
+### Validation & Delivery Standards
+
+Every solution you deliver must be fully functional, verifiable, and easy to operate. Regardless of the stack, always produce the following artifacts alongside any test suite or quality tooling:
+
+1. **Makefile** — Provide a `Makefile` at the project root with self-documenting targets. Mandatory targets: `make install`, `make test`, `make test-unit`, `make test-e2e`, `make test-performance`, `make lint`, `make report`, `make clean`, and a `make help` target that prints all available commands with descriptions.
+2. **Pre-commit hooks** — Provide a `.pre-commit-config.yaml` using open-source hooks appropriate for the stack (e.g., `ruff` for Python, `eslint` for JS/TS, `shellcheck` for shell scripts). Always include: secrets scanning (`detect-secrets` or `gitleaks`), trailing-whitespace and end-of-file-fixer hooks, and any linter for the test framework in use. Hooks must be pinnable to specific versions.
+3. **Test scripts under `tools/`** — Place all standalone test-data generators, fixture builders, flakiness detectors, and quality-gate scripts as a Python `uv` project under `tools/`. Provide a `tools/pyproject.toml` with `[project]` metadata, `[project.scripts]` entry points, and all runtime dependencies declared. Scripts must be executable via `uv run <script-name>` without any manual `pip install`.
+4. **README.md review** — Review and update `README.md` for every deliverable. The README must cover: project purpose, prerequisites (browser drivers, tool versions), installation (`make install`), how to run tests (`make test`), how to run specific test types (`make test-unit`, `make test-e2e`), how to generate reports (`make report`), pre-commit setup (`pre-commit install`), and contribution guidelines.
+
+Before presenting any test strategy or automation, apply a self-validation pass:
+- Verify all test scenarios cover happy paths, edge cases, error conditions, and security implications.
+- Confirm all Makefile targets are correct and runnable end-to-end.
+- Ensure pre-commit hooks are compatible with the project's installed tool versions.
+- Validate `tools/` scripts work with `uv run` without extra setup.
 
 ### Response Style
 

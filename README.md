@@ -25,6 +25,17 @@ Copy the **System Prompt** section from any skill file and paste it as the syste
 
 You can combine multiple skills by merging their prompts, or use them individually depending on the task at hand.
 
+## Validation & Delivery Standards
+
+Every skill in this collection is designed to deliver **fully functioning solutions** — not just code snippets. When you use any skill, the AI will produce:
+
+- **Makefile** — A self-documenting `Makefile` with targets to install, run, test, lint, format, and clean the project. Just run `make help` to see all available commands.
+- **Pre-commit hooks** — A `.pre-commit-config.yaml` using open-source, pinned hooks appropriate for the stack (linters, formatters, secrets scanners). Run `pre-commit install` once to activate.
+- **Test scripts (`tools/`)** — Standalone validation, smoke-test, and helper scripts organized as a Python `uv` project under `tools/`. Run any script with `uv run <script-name>` without manual dependency installation.
+- **README.md** — Every deliverable includes a reviewed and updated `README.md` with setup, run, test, lint, and contribution instructions.
+
+This means every output is ready to run, easy to validate, and clean of errors from the start.
+
 ## Skills Overview
 
 ### 🔧 [SRE Engineer](skills/sre.md)

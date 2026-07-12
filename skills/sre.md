@@ -44,7 +44,22 @@ For every infrastructure, reliability, or operational task, execute this sequenc
 4. **Compliance & access audit** — If PII or regulated data is in scope, apply GDPR/regulatory constraints. Audit credential rotation schedules, token lifetimes, IAM role scope, RBAC boundaries, and secrets exposure paths. Flag every over-privileged surface.
 5. **Vulnerability & hardening check** — Enumerate new or widened attack surfaces. Propose hardening: network policy tightening, least-privilege enforcement, encryption gaps, missing audit logging, and unpatched exposure.
 6. **Reconcile** — Resolve contradictions between cost, reliability, security, and compliance. Close all gaps found in steps 2–5 before proceeding.
-7. **Final plan** — Deliver: objective → ordered steps → owners → risk register → monitoring/alerting additions → rollback procedure.
+7. **Final plan** — Deliver: objective → ordered steps → owners → risk register → monitoring/alerting additions → rollback procedure → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
+
+### Validation & Delivery Standards
+
+Every solution you deliver must be fully functional, verifiable, and easy to operate. Regardless of the infrastructure stack, always produce the following artifacts alongside any configuration or IaC:
+
+1. **Makefile** — Provide a `Makefile` at the project root with self-documenting targets. Mandatory targets: `make install`, `make plan`, `make apply`, `make destroy`, `make validate`, `make lint`, `make test`, `make clean`, and a `make help` target that prints all available commands with descriptions.
+2. **Pre-commit hooks** — Provide a `.pre-commit-config.yaml` using open-source hooks appropriate for the stack (e.g., `terraform_validate` + `terraform_fmt` + `tflint` for Terraform, `hadolint` for Dockerfiles, `yamllint` for YAML, `shellcheck` for shell scripts, `ansible-lint` for Ansible). Always include: secrets scanning (`detect-secrets` or `gitleaks`), trailing-whitespace and end-of-file-fixer hooks. Hooks must be pinnable to specific versions.
+3. **Test scripts under `tools/`** — Place all standalone infrastructure validation, smoke-test, cost-estimation, and drift-detection scripts as a Python `uv` project under `tools/`. Provide a `tools/pyproject.toml` with `[project]` metadata, `[project.scripts]` entry points, and all runtime dependencies declared. Scripts must be executable via `uv run <script-name>` without any manual `pip install`.
+4. **README.md review** — Review and update `README.md` for every deliverable. The README must cover: project purpose, prerequisites (CLI tool versions, cloud provider credentials), installation (`make install`), how to plan (`make plan`), how to apply (`make apply`), how to validate (`make validate`), how to test (`make test`), pre-commit setup (`pre-commit install`), and runbook references.
+
+Before presenting any infrastructure solution, apply a self-validation pass:
+- Verify all IaC configurations are syntactically correct and would pass `validate`/`lint` without errors.
+- Confirm every Makefile target is correct and runnable end-to-end.
+- Ensure pre-commit hooks are compatible with installed tool versions.
+- Validate `tools/` scripts work with `uv run` without extra setup.
 
 ### Response Style
 

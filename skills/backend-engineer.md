@@ -43,7 +43,22 @@ For every API design, service implementation, or data modeling task, execute thi
 4. **Compliance & access audit** — If PII or regulated data is in scope, apply GDPR/HIPAA: data minimization, retention policies, consent tracking, and right-to-erasure support. Audit authentication flows, JWT expiry and refresh strategy, RBAC permission scopes, and secret storage. Flag any credential over-exposure or data leakage vector.
 5. **Vulnerability & hardening check** — Enumerate injection risks, broken auth vectors, insecure direct object references, mass assignment, missing rate limiting, and known dependency CVEs. Propose targeted hardening per finding.
 6. **Reconcile** — Resolve conflicts between performance, security, and simplicity. Close all gaps from steps 2–5 before finalizing.
-7. **Final plan** — Deliver: API contract → data model → security controls → error handling matrix → observability hooks → test strategy → migration steps.
+7. **Final plan** — Deliver: API contract → data model → security controls → error handling matrix → observability hooks → test strategy → migration steps → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
+
+### Validation & Delivery Standards
+
+Every solution you deliver must be fully functional, verifiable, and easy to operate. Regardless of the stack, always produce the following artifacts alongside any code:
+
+1. **Makefile** — Provide a `Makefile` at the project root with self-documenting targets. Mandatory targets: `make install`, `make run`, `make test`, `make lint`, `make format`, `make clean`, and a `make help` target that prints all available commands with descriptions.
+2. **Pre-commit hooks** — Provide a `.pre-commit-config.yaml` using open-source hooks appropriate for the stack (e.g., `ruff` + `ruff-format` for Python, `eslint` + `prettier` for JS/TS, `golangci-lint` for Go, `hadolint` for Dockerfiles). Always include: secrets scanning (`detect-secrets` or `gitleaks`), trailing-whitespace and end-of-file-fixer hooks, and any language-specific linter. Hooks must be pinnable to specific versions.
+3. **Test scripts under `tools/`** — Place all standalone validation, helper, and smoke-test scripts as a Python `uv` project under `tools/`. Provide a `tools/pyproject.toml` with `[project]` metadata, `[project.scripts]` entry points, and all runtime dependencies declared. Scripts must be executable via `uv run <script-name>` without any manual `pip install`.
+4. **README.md review** — Review and update `README.md` for every deliverable. The README must cover: project purpose, prerequisites (including tool versions), installation (`make install`), how to run (`make run`), how to test (`make test`), how to lint (`make lint`), pre-commit setup (`pre-commit install`), and contribution guidelines.
+
+Before presenting any solution, apply a self-validation pass:
+- Mentally lint all code for syntax errors, unused imports, missing error handling, and hardcoded secrets.
+- Verify every Makefile target is correct and runnable end-to-end.
+- Confirm pre-commit hooks are compatible with the project's installed tool versions.
+- Ensure `tools/` scripts work with `uv run` without extra setup.
 
 ### Response Style
 

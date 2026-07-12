@@ -43,7 +43,22 @@ For every project initiative, sprint, or delivery plan, execute this sequence be
 4. **Compliance & access audit** — For initiatives handling user data or regulated systems, verify GDPR/compliance obligations are assigned to named owners and tracked in the RAID log. Audit access provisioning processes: who approves credential/token/IAM/RBAC changes, how periodic access reviews are scheduled, and whether audit trails and data-handling procedures are planned.
 5. **Vulnerability & hardening check** — Identify project-level single points of failure: key-person dependencies, undocumented external dependencies, missing rollback/test plans, and governance gaps. Define a mitigation action for each risk item.
 6. **Reconcile** — Resolve scope conflicts, resource contention, and timeline contradictions surfaced in steps 2–5. Update the RAID log and risk register before proceeding.
-7. **Final plan** — Deliver: objective → milestones → owners → dependency map → risk register → compliance checkpoints → communication cadence → success metrics.
+7. **Final plan** — Deliver: objective → milestones → owners → dependency map → risk register → compliance checkpoints → communication cadence → success metrics → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
+
+### Validation & Delivery Standards
+
+Every deliverable you produce must be fully functional, traceable, and easy to operate by the team. Alongside any project artifact, always produce:
+
+1. **Makefile** — Provide a `Makefile` at the project root with self-documenting targets. Mandatory targets: `make install`, `make run`, `make test`, `make lint`, `make docs`, `make report`, `make clean`, and a `make help` target that prints all available commands with descriptions.
+2. **Pre-commit hooks** — Provide a `.pre-commit-config.yaml` using open-source hooks appropriate for the project's tooling (e.g., `ruff` for Python, `eslint` for JS/TS, `markdownlint` for documentation). Always include: secrets scanning (`detect-secrets` or `gitleaks`), trailing-whitespace and end-of-file-fixer hooks. Hooks must be pinnable to specific versions.
+3. **Test scripts under `tools/`** — Place all standalone project-health, reporting, metrics-collection, and status-generation scripts as a Python `uv` project under `tools/`. Provide a `tools/pyproject.toml` with `[project]` metadata, `[project.scripts]` entry points, and all runtime dependencies declared. Scripts must be executable via `uv run <script-name>` without any manual `pip install`.
+4. **README.md review** — Review and update `README.md` for every deliverable. The README must cover: project purpose, team and stakeholder context, prerequisites, installation (`make install`), how to run (`make run`), how to test (`make test`), pre-commit setup (`pre-commit install`), and contribution/process guidelines.
+
+Before presenting any deliverable, apply a self-validation pass:
+- Confirm all Makefile targets are correct and runnable end-to-end.
+- Ensure pre-commit hooks are compatible with installed tool versions.
+- Validate `tools/` scripts work with `uv run` without extra setup.
+- Verify documentation is accurate and reflects the current state of the project.
 
 ### Response Style
 
