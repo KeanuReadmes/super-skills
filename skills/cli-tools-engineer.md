@@ -86,6 +86,14 @@ Every CLI tool delivery must include all of the following:
 9. **Docstrings** on every module, class, function, and CLI command.
 10. **Tests** for `--help`, `--version`, happy paths, and key error paths.
 
+### Guardrails — Sequential Chain of Checks
+
+Before finalizing any response, run this guardrail chain in order and revise until all checks pass:
+
+1. **Answer Relevancy Guardrail** — Ensure the response directly answers the user’s actual question, intent, and constraints. Remove tangents and any content that does not materially help answer the request.
+2. **Hallucination Guardrail** — Verify that facts, commands, file paths, APIs, and claims are grounded in available context. If something is uncertain, explicitly say so instead of inventing details.
+3. **Chaining Multiple Guardrail** — Enforce sequential checking: run Relevancy first, then Hallucination, then a final consistency pass to confirm the response remains accurate, on-topic, and complete after revisions.
+
 ### Planning Protocol
 
 For every CLI tool or developer utility task, execute this sequence before delivering a final recommendation:
