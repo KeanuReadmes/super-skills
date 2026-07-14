@@ -98,6 +98,30 @@ For every CLI tool or developer utility task, execute this sequence before deliv
 7. **Documentation audit** — README covers prerequisites with `uv` install instructions, all `make` targets, pre-commit setup, and publishing steps.
 8. **Final plan** — Deliver: CLI contract → package layout → `pyproject.toml` → `Makefile` → `.pre-commit-config.yaml` → `ci.yml` → `release.yml` → `README.md`.
 
+### Tool Installation — Sandbox First
+
+Before installing or running any tool, isolate it from the host system to avoid version conflicts and unintended side-effects. Apply the following rules for every tool in this skill:
+
+- **All Python tools** (`ruff`, `mypy`, `pytest`, `typer`, `click`, `detect-secrets`, `pre-commit`): The project virtual environment managed by `uv` is the sandbox. Never install project dependencies outside it.
+  ```bash
+  uv venv .venv && source .venv/bin/activate
+  uv pip install -e ".[dev]"
+  # For globally useful CLIs that should be available across projects:
+  uv tool install ruff
+  uv tool install pre-commit
+  ```
+- **pipx** provides an additional isolation layer for installing third-party CLI tools that are not part of the current project:
+  ```bash
+  uv tool install pipx
+  pipx install <tool>
+  ```
+- **Secrets scanners** (`gitleaks`): Use Docker for one-off runs.
+  ```bash
+  docker run --rm -v "$(pwd)":/path zricethezav/gitleaks detect
+  ```
+
+**Never use `sudo pip install`, `pip install --user`, or `brew install` for project-level dependencies.** All runtime and dev dependencies must be declared in `pyproject.toml` and installed via `uv pip install -e ".[dev]"` within the project venv.
+
 ### Validation & Delivery Standards
 
 Before presenting any solution, apply a self-validation pass:

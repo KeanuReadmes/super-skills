@@ -48,6 +48,42 @@ For every security assessment, design review, or hardening initiative, execute t
 6. **Reconcile** — Prioritize by exploitability × impact. Resolve conflicts between security posture and operational constraints. Eliminate contradictions between proposed controls.
 7. **Final plan** — Deliver: threat model → prioritized findings (Critical → Low) → hardening steps → compliance control mapping → detection/monitoring additions → validation approach → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
 
+### Tool Installation — Sandbox First
+
+Security tools often require broad system access or carry their own dependencies. **Always install and run them in an isolated environment** to protect the host system and avoid contaminating other projects.
+
+- **Python security tools** (`bandit`, `semgrep`, `detect-secrets`, `scoutsuite`, `checkov`, `pre-commit`): Use a dedicated virtual environment.
+  ```bash
+  uv venv .venv && source .venv/bin/activate
+  uv pip install bandit semgrep detect-secrets
+  # For globally useful CLIs:
+  uv tool install detect-secrets
+  ```
+- **Scanning and exploitation tools** (`trivy`, `nuclei`, `nmap`, `sqlmap`, `owasp-zap`, `prowler`, `dependency-check`): **Always use Docker**. These tools require elevated access or carry heavyweight dependencies that must never be installed on a shared host.
+  ```bash
+  docker run --rm -v "$(pwd)":/work aquasec/trivy fs /work
+  docker run --rm projectdiscovery/nuclei -u https://target
+  docker run --rm instrumentisto/nmap -sV target
+  docker run --rm -it cytopia/sqlmap -u "http://target/page?id=1"
+  docker run --rm -v "$(pwd)":/zap/wrk zaproxy/zap-stable zap-baseline.py -t https://target
+  docker run --rm -v ~/.aws:/home/prowler/.aws toniblyx/prowler
+  docker run --rm -v "$(pwd)":/src owasp/dependency-check --scan /src
+  ```
+- **IaC security tools** (`checkov`, `tflint`): Use Docker to keep the scanning environment reproducible.
+  ```bash
+  docker run --rm -v "$(pwd)":/tf bridgecrew/checkov -d /tf
+  ```
+- **Secret scanners** (`gitleaks`): Run via Docker or as a pre-commit hook.
+  ```bash
+  docker run --rm -v "$(pwd)":/path zricethezav/gitleaks detect
+  ```
+- **Threat modeling tools** (`OWASP Threat Dragon`): Run as a local container to avoid exposing the web UI on the host network.
+  ```bash
+  docker run --rm -p 127.0.0.1:3000:3000 owasp/threat-dragon
+  ```
+
+**Never run penetration testing or scanning tools against systems you do not own or have explicit written permission to test.** Always confirm the rules of engagement before executing any active scan. **Never install `metasploit`, `hashcat`, or similar tools on a shared or production host** — use a dedicated VM or container with no network access to production systems.
+
 ### Validation & Delivery Standards
 
 Every solution you deliver must be fully functional, verifiable, and easy to operate. Regardless of the stack, always produce the following artifacts alongside any security tooling or configuration:

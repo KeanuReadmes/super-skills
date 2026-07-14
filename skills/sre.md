@@ -55,6 +55,55 @@ For every infrastructure, reliability, or operational task, execute this sequenc
 6. **Reconcile** — Resolve contradictions between cost, reliability, security, and compliance. Close all gaps found in steps 2–5 before proceeding.
 7. **Final plan** — Deliver: objective → ordered steps → owners → risk register → **cascading failure matrix** (top 3–5 failure chains: Trigger → Cascade Effect → Blast Radius Containment) → **break glass procedure** → monitoring/alerting additions → rollback procedure → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
 
+### Tool Installation — Sandbox First
+
+SRE tools often interact directly with cloud providers, container runtimes, or network infrastructure. **Always install and run them in an isolated environment** to protect the host system and prevent accidental changes to production resources.
+
+- **IaC tools** (`terraform`, `pulumi`, `checkov`, `tflint`, `terraform-docs`): Use Docker to pin the exact version and avoid conflicts between projects.
+  ```bash
+  docker run --rm -v "$(pwd)":/workspace hashicorp/terraform [args]
+  docker run --rm -v "$(pwd)":/tf bridgecrew/checkov -d /tf
+  docker run --rm -v "$(pwd)":/data ghcr.io/terraform-linters/tflint
+  docker run --rm -v "$(pwd)":/terraform-docs quay.io/terraform-docs/terraform-docs markdown /terraform-docs
+  ```
+- **Container and Kubernetes tools** (`hadolint`, `kube-score`, `kube-bench`, `helm`, `dive`, `cosign`): Use Docker to avoid toolchain conflicts.
+  ```bash
+  docker run --rm -i hadolint/hadolint < Dockerfile
+  docker run --rm -v "$(pwd)":/manifests zegl/kube-score score /manifests/*.yaml
+  docker run --rm --pid=host -v /etc:/node/etc:ro aquasec/kube-bench
+  docker run --rm -v "$(pwd)":/apps alpine/helm [args]
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive <image>
+  docker run --rm -v "$(pwd)":/workspace gcr.io/projectsigstore/cosign [args]
+  ```
+- **Shell and config linters** (`shellcheck`, `yamllint`, `ansible-lint`): Use `uv tool install` for Python tools and Docker for others.
+  ```bash
+  docker run --rm -v "$(pwd)":/mnt koalaman/shellcheck mnt/**/*.sh
+  uv tool install yamllint
+  uv venv .venv && source .venv/bin/activate && uv pip install ansible-lint
+  ```
+- **Observability tools** (`prometheus`, `grafana`, `otel-collector`): Always run as containers — never install as host daemons for local development.
+  ```bash
+  docker compose up -d prometheus grafana otel-collector
+  ```
+- **Load testing** (`k6`): Run via Docker to avoid Go toolchain installs.
+  ```bash
+  docker run --rm -v "$(pwd)":/scripts grafana/k6 run /scripts/test.js
+  ```
+- **Chaos engineering** (`chaos-mesh`, `litmus`): Deploy into a dedicated non-production Kubernetes namespace.
+  ```bash
+  helm install chaos-mesh chaos-mesh/chaos-mesh -n chaos-testing --create-namespace
+  ```
+- **Secret scanners** (`gitleaks`, `detect-secrets`, `trivy`): Use Docker or `uv tool install`.
+  ```bash
+  docker run --rm -v "$(pwd)":/path zricethezav/gitleaks detect
+  uv tool install detect-secrets
+  docker run --rm -v "$(pwd)":/work aquasec/trivy fs /work
+  ```
+
+**Never run Terraform, Pulumi, or any cloud CLI with production credentials on a developer workstation without explicit credential isolation** (e.g., a named AWS profile scoped to a sandbox account). Use separate credentials per environment and never share production IAM keys across workstations or CI pipelines.
+
+**Never install `kubectl`, `helm`, or cloud CLIs system-wide without version pinning.** Version mismatches between local tools and cluster API versions cause silent failures. Use Docker-wrapped versions or a version manager like `asdf`.
+
 ### Validation & Delivery Standards
 
 Every solution you deliver must be fully functional, verifiable, and easy to operate. Regardless of the infrastructure stack, always produce the following artifacts alongside any configuration or IaC:

@@ -45,6 +45,35 @@ For every project initiative, sprint, or delivery plan, execute this sequence be
 6. **Reconcile** — Resolve scope conflicts, resource contention, and timeline contradictions surfaced in steps 2–5. Update the RAID log and risk register before proceeding.
 7. **Final plan** — Deliver: objective → milestones → owners → dependency map → risk register → compliance checkpoints → communication cadence → success metrics → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
 
+### Tool Installation — Sandbox First
+
+Before installing or running any tool, isolate it from the host system to avoid version conflicts and unintended side-effects. Apply the following rules for every tool in this skill:
+
+- **Python tools** (`ruff`, `yamllint`, `detect-secrets`, `pre-commit`): Use `uv tool install` for CLI tools used across projects, and a project venv for script dependencies.
+  ```bash
+  uv tool install pre-commit
+  uv tool install yamllint
+  uv tool install detect-secrets
+  uv venv .venv && source .venv/bin/activate && uv pip install ruff
+  ```
+- **Node.js tools** (`markdownlint-cli`, `mermaid-cli`): Install locally as devDependencies or use `npx` — never globally.
+  ```bash
+  npm install --save-dev markdownlint-cli
+  # One-off usage:
+  npx @mermaid-js/mermaid-cli [args]
+  ```
+- **GitHub / JIRA CLI tools**: Use Docker to avoid polluting the host with Go binaries or conflicting credential helpers.
+  ```bash
+  docker run --rm -v "$(pwd)":/work ghcr.io/cli/cli gh [args]
+  docker run --rm ankitpokhrel/jira-cli [args]
+  ```
+- **Secret scanners** (`gitleaks`): Use Docker for one-off runs.
+  ```bash
+  docker run --rm -v "$(pwd)":/path zricethezav/gitleaks detect
+  ```
+
+**Never use `sudo pip install`, `sudo npm install -g`, or system package managers for project tooling.** If a tool cannot be isolated in a venv, container, or `npx`, use a dedicated container.
+
 ### Validation & Delivery Standards
 
 Every deliverable you produce must be fully functional, traceable, and easy to operate by the team. Alongside any project artifact, always produce:

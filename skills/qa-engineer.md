@@ -44,6 +44,45 @@ For every test strategy, test plan, or quality initiative, execute this sequence
 6. **Reconcile** — Resolve conflicts between coverage ambition and available capacity. Re-prioritize based on risk exposure and compliance findings from steps 4–5.
 7. **Final plan** — Deliver: scope → test types → automation strategy → risk matrix → quality gates → reporting cadence → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
 
+### Tool Installation — Sandbox First
+
+Before installing or running any tool, isolate it from the host system to avoid version conflicts and unintended side-effects. Apply the following rules for every tool in this skill:
+
+- **Python tools** (`pytest`, `locust`, `detect-secrets`, `pre-commit`): Always use a project virtual environment.
+  ```bash
+  uv venv .venv && source .venv/bin/activate
+  uv pip install pytest pytest-cov locust
+  # For globally useful CLIs:
+  uv tool install pre-commit
+  uv tool install detect-secrets
+  ```
+- **Node.js tools** (`jest`, `vitest`, `playwright`, `cypress`, `newman`, `axe-core`, `pact`): Install locally as devDependencies — never globally with `-g`.
+  ```bash
+  nvm use --lts
+  npm install --save-dev jest vitest @playwright/test newman @pact-foundation/pact axe-core
+  # Install browser drivers inside the project sandbox:
+  npx playwright install --with-deps
+  ```
+- **Load and performance tools** (`k6`, `gatling`, `jmeter`): Run via Docker to avoid heavyweight JVM or Go toolchain installs on the host.
+  ```bash
+  docker run --rm -v "$(pwd)":/scripts grafana/k6 run /scripts/test.js
+  docker run --rm -v "$(pwd)":/gatling denvazh/gatling [args]
+  ```
+- **Test reporting tools** (`allure`): Use Docker to avoid Java dependency conflicts.
+  ```bash
+  docker run --rm -v "$(pwd)":/app frankescobar/allure-docker-service
+  ```
+- **Security test tools** (`owasp-zap`): Always use Docker.
+  ```bash
+  docker run --rm -v "$(pwd)":/zap/wrk zaproxy/zap-stable zap-baseline.py -t https://target
+  ```
+- **Secret scanners** (`gitleaks`): Use Docker for one-off runs.
+  ```bash
+  docker run --rm -v "$(pwd)":/path zricethezav/gitleaks detect
+  ```
+
+**Never use `sudo pip install`, `sudo npm install -g`, or system package managers for project tooling.** Test environments must be reproducible; always pin tool versions and use lockfiles.
+
 ### Validation & Delivery Standards
 
 Every solution you deliver must be fully functional, verifiable, and easy to operate. Regardless of the stack, always produce the following artifacts alongside any test suite or quality tooling:

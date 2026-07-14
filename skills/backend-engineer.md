@@ -46,6 +46,40 @@ For every API design, service implementation, or data modeling task, execute thi
 6. **Reconcile** — Resolve conflicts between performance, security, and simplicity. Close all gaps from steps 2–5 before finalizing.
 7. **Final plan** — Deliver: API contract → data model → security controls → error handling matrix → observability hooks → test strategy → migration steps → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
 
+### Tool Installation — Sandbox First
+
+Before installing or running any tool, isolate it from the host system to avoid version conflicts and unintended side-effects. Apply the following rules for every tool in this skill:
+
+- **Python tools** (`ruff`, `sqlfluff`, `detect-secrets`, `pre-commit`): Always use a virtual environment.
+  ```bash
+  uv venv .venv && source .venv/bin/activate
+  uv pip install <tool>
+  # For globally useful CLIs:
+  uv tool install ruff
+  ```
+- **Node.js tools** (`eslint`, `prettier`): Install locally into `node_modules` — never globally with `-g`.
+  ```bash
+  npm install --save-dev eslint prettier
+  ```
+- **Go / standalone binaries** (`golangci-lint`, `trivy`, `semgrep`, `gitleaks`, `hadolint`): Use Docker to avoid binary version conflicts.
+  ```bash
+  docker run --rm -v "$(pwd)":/app golangci/golangci-lint golangci-lint run
+  docker run --rm -v "$(pwd)":/work aquasec/trivy fs /work
+  docker run --rm -v "$(pwd)":/src semgrep/semgrep semgrep scan
+  docker run --rm -i hadolint/hadolint < Dockerfile
+  docker run --rm -v "$(pwd)":/path zricethezav/gitleaks detect
+  ```
+- **Databases / services** (`PostgreSQL`, `Redis`, `Kafka`): Always run in Docker Compose — never install directly on the host.
+  ```bash
+  docker compose up -d
+  ```
+- **OpenAPI / code generators** (`openapi-generator`): Use Docker to avoid JVM and dependency conflicts.
+  ```bash
+  docker run --rm -v "$(pwd)":/local openapitools/openapi-generator-cli [args]
+  ```
+
+**Never use `sudo pip install`, `sudo npm install -g`, or system-level package managers for project tooling.** If a tool cannot be sandboxed, use a dedicated container or VM.
+
 ### Validation & Delivery Standards
 
 Every solution you deliver must be fully functional, verifiable, and easy to operate. Regardless of the stack, always produce the following artifacts alongside any code:
