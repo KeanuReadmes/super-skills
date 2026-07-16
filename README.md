@@ -15,6 +15,7 @@
 | [Architect / Documentator / Diagramer / Planner](skills/architect.md) | Systems architect who understands, organizes, diagrams, and improves complex systems with C4, UML, ADRs, and technical roadmaps |
 | [CLI / Tools Engineer](skills/cli-tools-engineer.md) | CLI & Tools Engineer specializing in Python-first tooling with uv/poetry, clean code, proper packaging, CI/CD workflows, and pre-commit hooks |
 | [SEO Specialist](skills/seo-specialist.md) | World-class SEO specialist covering technical SEO, E-E-A-T, Core Web Vitals, schema/structured data, GEO, AEO, hreflang, GitHub repository SEO, and AI search optimization |
+| [Troubleshooter](skills/troubleshooter.md) | Root-cause analyst and protocol debugger covering system state collection, process anomaly detection, HTTP/REST/gRPC/GraphQL debugging, network diagnostics, VPN, and SSH — read-first, never damages a running system |
 
 ## How to Use
 
@@ -66,6 +67,9 @@ A Python-first CLI and developer-tooling specialist who builds clean, installabl
 
 ### 🔍 [SEO Specialist](skills/seo-specialist.md)
 A world-class SEO specialist combining LLM-first reasoning with deterministic script-backed evidence. Covers technical SEO, E-E-A-T content scoring, Core Web Vitals (LCP, INP, CLS), schema/structured data (JSON-LD), hreflang, GEO (AI search optimization), AEO (featured snippets, PAA, Knowledge Panels), GitHub repository SEO, and strategic planning across SaaS, e-commerce, local, publisher, and agency verticals. Every audit delivers confidence-labeled findings, a scored report, and a prioritized `ACTION-PLAN.md`.
+
+### 🔎 [Troubleshooter](skills/troubleshooter.md)
+A root-cause analyst and protocol debugger who investigates server, OS, and application issues **without damaging running systems**. Collects a full read-only snapshot (logs, config files, open ports, processes, crontabs, users, shell histories, iptables/nftables, systemd services, init scripts, installed packages, changed files, Ansible drift, and abnormal processes) and correlates evidence to reach a confident root cause. Extends to debugging HTTP/REST APIs, gRPC, GraphQL, and networking (VPNs, SSH, DNS, firewall, MTU, packet captures). Every investigation follows a structured 10-step methodology with confidence-labeled hypotheses and explicit safety guardrails.
 
 ---
 
@@ -278,3 +282,38 @@ Each skill relies on a set of open source tools to do its job well. The tables b
 | [pre-commit](https://pre-commit.com/) | Pre-commit hooks for schema validation and SEO quality gates | `uv tool install pre-commit` |
 | [detect-secrets](https://github.com/Yelp/detect-secrets) | Prevent API keys from being committed in SEO config files | `uv tool install detect-secrets` |
 | [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) | Lint SEO reports and README files | `npx markdownlint-cli` |
+
+---
+
+### 🔎 Troubleshooter
+
+| Tool | Purpose | Sandbox Install |
+|------|---------|----------------|
+| [ss / iproute2](https://man7.org/linux/man-pages/man8/ss.8.html) | Socket and port inspection (`ss -tulnpe`) | pre-installed on Linux |
+| [lsof](https://github.com/nicowillis/lsof) | List open files and network connections per process | pre-installed on Linux/macOS |
+| [tcpdump](https://www.tcpdump.org/) | Packet capture with BPF filter | pre-installed on Linux; `brew install tcpdump` on macOS |
+| [tshark / Wireshark](https://www.wireshark.org/) | Protocol dissection and pcap analysis | `docker run --rm -v $(pwd):/cap ghcr.io/linuxserver/wireshark` |
+| [mtr](https://github.com/traviscross/mtr) | Combined traceroute + ping network path diagnostic | `apt install mtr` / `brew install mtr` |
+| [nmap](https://nmap.org/) | Network discovery and port scanning | `docker run --rm instrumentisto/nmap` |
+| [grpcurl](https://github.com/fullstorydev/grpcurl) | gRPC service reflection, listing, and ad-hoc requests | `docker run --rm fullstorydev/grpcurl` |
+| [HTTPie](https://httpie.io/) | Human-friendly HTTP/REST request tester | `uv tool install httpie` |
+| [mitmproxy](https://mitmproxy.org/) | Interactive HTTP/HTTPS proxy for protocol inspection | `docker run --rm -it -p 8080:8080 mitmproxy/mitmproxy` |
+| [curl](https://curl.se/) | HTTP/gRPC/protocol testing with verbose and trace output | pre-installed on Linux/macOS |
+| [openssl](https://www.openssl.org/) | TLS/certificate inspection and validation | pre-installed on Linux/macOS |
+| [wg / wireguard-tools](https://www.wireguard.com/) | WireGuard VPN status, peer, and handshake inspection | `apt install wireguard-tools` |
+| [iperf3](https://github.com/esnet/iperf) | Network throughput and bandwidth measurement | `docker run --rm -it networkstatic/iperf3` |
+| [ansible](https://www.ansible.com/) | Configuration drift detection via `--check --diff` | `uv venv .venv && uv pip install ansible` |
+| [ansible-lint](https://ansible.readthedocs.io/projects/lint/) | Lint playbooks before dry-run checks | `uv venv .venv && uv pip install ansible-lint` |
+| [AIDE](https://aide.github.io/) | File integrity monitoring (detect changed/unexpected files) | `apt install aide` |
+| [debsums](https://packages.debian.org/debsums) | Verify Debian package file checksums | `apt install debsums` |
+| [auditd / ausearch / aureport](https://github.com/linux-audit/audit-userspace) | Linux kernel audit log collection and query | `apt install auditd` |
+| [scapy](https://scapy.net/) | Python-based packet crafting and analysis | `uv venv .venv && uv pip install scapy` |
+| [pyshark](https://github.com/KimiNewt/pyshark) | Python wrapper for tshark packet analysis | `uv venv .venv && uv pip install pyshark` |
+| [graphql-inspector](https://the-guild.dev/graphql/inspector) | GraphQL schema validation and introspection | `npx @graphql-inspector/cli` |
+| [rover (Apollo)](https://www.apollographql.com/docs/rover/) | Apollo Federation schema composition checks | `docker run --rm apollographql/rover` |
+| [Spectral](https://github.com/stoplightio/spectral) | OpenAPI / REST contract linting | `npx @stoplight/spectral-cli lint` |
+| [shellcheck](https://www.shellcheck.net/) | Shell script static analysis for collection scripts | `docker run --rm -v $(pwd):/mnt koalaman/shellcheck` |
+| [yamllint](https://github.com/adrienverge/yamllint) | Lint YAML config files being inspected | `uv tool install yamllint` |
+| [detect-secrets](https://github.com/Yelp/detect-secrets) | Prevent secrets from leaking into investigation artifacts | `uv tool install detect-secrets` |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Scan config and history for credential leaks | `docker run --rm -v $(pwd):/path zricethezav/gitleaks` |
+| [pre-commit](https://pre-commit.com/) | Enforce hook quality gates on investigation scripts | `uv tool install pre-commit` |
