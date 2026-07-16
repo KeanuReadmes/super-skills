@@ -19,65 +19,30 @@
 
 ## How to Use
 
-Copy the **System Prompt** section from any skill file and paste it as the system prompt in your AI assistant of choice:
+Copy the **System Prompt** from any skill file and paste it as the system prompt in your AI assistant:
 
 - **Claude** — Project instructions or system prompt in the API
 - **Gemini** — System instruction field
-- **Cursor** — `.cursorrules` file or Rules for AI in settings
-- **OpenAI (ChatGPT / API)** — System message or Custom Instructions
+- **Cursor** — `.cursorrules` or Rules for AI in settings
+- **OpenAI** — System message or Custom Instructions
 
-You can combine multiple skills by merging their prompts, or use them individually depending on the task at hand.
+Combine multiple skills by merging their prompts, or use them individually.
 
-## Validation & Delivery Standards
+## Delivery Standards
 
-Every skill in this collection is designed to deliver **fully functioning solutions** — not just code snippets. When you use any skill, the AI will produce:
+Every skill produces **fully functioning solutions**, not just code snippets:
 
-- **Makefile** — A self-documenting `Makefile` with targets to install, run, test, lint, format, and clean the project. Just run `make help` to see all available commands.
-- **Pre-commit hooks** — A `.pre-commit-config.yaml` using open-source, pinned hooks appropriate for the stack (linters, formatters, secrets scanners). Run `pre-commit install` once to activate.
-- **Test scripts (`tools/`)** — Standalone validation, smoke-test, and helper scripts organized as a Python `uv` project under `tools/`. Run any script with `uv run <script-name>` without manual dependency installation.
-- **README.md** — Every deliverable includes a reviewed and updated `README.md` with setup, run, test, lint, and contribution instructions.
-
-This means every output is ready to run, easy to validate, and clean of errors from the start.
-
-## Skills Overview
-
-### 🔧 [SRE Engineer](skills/sre.md)
-A combined expert in Infrastructure, Networking, Cybersecurity, DevOps, FinOps, and Disaster Recovery — with a **pessimist mindset** that assumes failure at every layer. Ideal for reviewing infrastructure, designing resilient systems, managing incidents, and controlling cloud costs.
-
-### 🧪 [QA Engineer](skills/qa-engineer.md)
-A quality-first engineer who shifts testing left, automates the right scenarios, and integrates quality gates into CI/CD. Expert in Playwright, Cypress, k6, and risk-based test strategy.
-
-### ⚙️ [Backend Engineer](skills/backend-engineer.md)
-A battle-tested server-side engineer focused on clean API design, database performance, event-driven architecture, and secure, observable services.
-
-### 🎨 [Frontend Engineer](skills/frontend-engineer.md)
-A modern UI engineer with deep expertise in React/Next.js/Nuxt.js 4, TypeScript, Core Web Vitals, WCAG accessibility, and design system development.
-
-### 🔐 [Cybersecurity Engineer](skills/cybersecurity-engineer.md)
-A full-spectrum security professional covering OWASP AppSec, cloud security posture, penetration testing, threat modeling (STRIDE), and incident response — with the "assume breach" mindset.
-
-### 📋 [Project Manager Engineer](skills/project-manager.md)
-A technically literate PM who combines Agile mastery, risk management, stakeholder communication, and engineering literacy to deliver projects on time with clarity.
-
-### 🏛️ [Architect / Documentator / Diagramer / Planner](skills/architect.md)
-A strategic technical leader who excels at understanding complex systems, producing C4 diagrams and ADRs, organizing information, and proactively suggesting improvements. This skill aces at making sense of ambiguity and turning it into structured, actionable artifacts.
-
-### 🛠️ [CLI / Tools Engineer](skills/cli-tools-engineer.md)
-A Python-first CLI and developer-tooling specialist who builds clean, installable, and well-documented command-line tools. Expert in `uv`, `poetry`, `Typer`/`Click`, `pyproject.toml` packaging, `--help`/`--version` wiring, CI/CD release pipelines, pre-commit hooks, and Makefile-driven workflows.
-
-### 🔍 [SEO Specialist](skills/seo-specialist.md)
-A world-class SEO specialist combining LLM-first reasoning with deterministic script-backed evidence. Covers technical SEO, E-E-A-T content scoring, Core Web Vitals (LCP, INP, CLS), schema/structured data (JSON-LD), hreflang, GEO (AI search optimization), AEO (featured snippets, PAA, Knowledge Panels), GitHub repository SEO, and strategic planning across SaaS, e-commerce, local, publisher, and agency verticals. Every audit delivers confidence-labeled findings, a scored report, and a prioritized `ACTION-PLAN.md`.
-
-### 🔎 [Troubleshooter](skills/troubleshooter.md)
-A root-cause analyst and protocol debugger who investigates server, OS, and application issues **without damaging running systems**. Collects a full read-only snapshot (logs, config files, open ports, processes, crontabs, users, shell histories, iptables/nftables, systemd services, init scripts, installed packages, changed files, Ansible drift, and abnormal processes) and correlates evidence to reach a confident root cause. Extends to debugging HTTP/REST APIs, gRPC, GraphQL, and networking (VPNs, SSH, DNS, firewall, MTU, packet captures). Every investigation follows a structured 10-step methodology with confidence-labeled hypotheses and explicit safety guardrails.
-
----
+- **Makefile** — Self-documenting targets for install, run, test, lint, format, and clean. Run `make help` to list them.
+- **Pre-commit hooks** — `.pre-commit-config.yaml` with pinned, stack-appropriate hooks. Run `pre-commit install` once.
+- **Test scripts (`tools/`)** — Validation and smoke-test scripts as a `uv` project. Run any with `uv run <script>`.
+- **README.md** — Setup, run, test, lint, and contribution instructions included with every deliverable.
 
 ## Open Source Tools Reference
 
-Each skill relies on a set of open source tools to do its job well. The tables below map every skill to its recommended tools, along with the preferred **sandbox installation method** to keep your host system clean and avoid version conflicts.
+<details>
+<summary>Per-skill tool tables with sandbox install commands</summary>
 
-> **Sandbox-first rule:** Never install tools globally with `sudo pip install`, `sudo npm install -g`, or `brew install` unless you are working inside a dedicated container or VM. Always prefer the isolated install commands shown below.
+> **Sandbox-first:** Avoid `sudo pip install`, `sudo npm install -g`, or bare `brew install`. Use the isolated commands below.
 
 ---
 
@@ -317,3 +282,5 @@ Each skill relies on a set of open source tools to do its job well. The tables b
 | [detect-secrets](https://github.com/Yelp/detect-secrets) | Prevent secrets from leaking into investigation artifacts | `uv tool install detect-secrets` |
 | [gitleaks](https://github.com/gitleaks/gitleaks) | Scan config and history for credential leaks | `docker run --rm -v $(pwd):/path zricethezav/gitleaks` |
 | [pre-commit](https://pre-commit.com/) | Enforce hook quality gates on investigation scripts | `uv tool install pre-commit` |
+
+</details>
