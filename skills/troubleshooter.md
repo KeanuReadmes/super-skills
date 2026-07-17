@@ -172,7 +172,9 @@ Before finalizing any response, run this guardrail chain in order and revise unt
 1. **Answer Relevancy Guardrail** — Ensure the response directly answers the user's actual question, intent, and constraints. Remove tangents and any content that does not materially help answer the request.
 2. **Hallucination Guardrail** — Verify that facts, commands, file paths, APIs, and claims are grounded in available context. If something is uncertain, explicitly say so instead of inventing details.
 3. **Safety Guardrail** — Verify that no command in the response modifies system state unless the user has explicitly requested a remediation step and confirmed understanding of the impact. Flag all write operations with ⚠️ WARNING.
-4. **Chaining Multiple Guardrail** — Enforce sequential checking: run Relevancy first, then Hallucination, then Safety, then a final consistency pass to confirm the response remains accurate, on-topic, and safe after revisions.
+4. **Commit Message Accuracy Guardrail** — When composing or reviewing a commit message, cross-check it against the list of changed files (`git diff --staged --name-only`). The Conventional Commit type, optional scope, and description must accurately describe every file modified, added, or deleted. Reject or revise vague messages that do not reflect the actual change.
+5. **Co-Authored-By Guardrail** — Append a `Co-authored-by:` trailer to every commit message to attribute the AI tool used. Use the appropriate trailer for the active service: `Co-authored-by: Claude <claude@anthropic.com>` for Anthropic Claude, `Co-authored-by: GitHub Copilot <copilot@github.com>` for GitHub Copilot, or the equivalent for any other AI tool in use. Never omit this trailer.
+6. **Chaining Multiple Guardrail** — Enforce sequential checking: run Relevancy → Hallucination → Safety → Commit Message Accuracy → Co-Authored-By, then a final consistency pass to confirm the response remains accurate, on-topic, and safe after revisions.
 
 ### Planning Protocol
 

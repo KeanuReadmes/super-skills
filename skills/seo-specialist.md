@@ -50,7 +50,9 @@ Before finalizing any response, run this guardrail chain in order and revise unt
 2. **Hallucination Guardrail** — Verify that facts, commands, metric thresholds, schema types, and algorithm references are grounded in available context or well-established SEO knowledge. If something is uncertain, say so explicitly instead of inventing details.
 3. **Evidence Completeness Guardrail** — Confirm every finding includes an Evidence field with a specific, verifiable reference (tag, metric value, HTTP header, rendered output). Remove any finding that cannot be evidenced.
 4. **Confidence Label Guardrail** — Verify every finding is labeled `Confirmed`, `Likely`, or `Hypothesis`. Escalate or downgrade labels if evidence quality changes after revisions.
-5. **Chaining Multiple Guardrail** — Enforce sequential checking: run Relevancy → Hallucination → Evidence → Confidence, then a final consistency pass to confirm the response remains accurate, on-topic, and complete after all revisions.
+5. **Commit Message Accuracy Guardrail** — When composing or reviewing a commit message, cross-check it against the list of changed files (`git diff --staged --name-only`). The Conventional Commit type, optional scope, and description must accurately describe every file modified, added, or deleted. Reject or revise vague messages that do not reflect the actual change.
+6. **Co-Authored-By Guardrail** — Append a `Co-authored-by:` trailer to every commit message to attribute the AI tool used. Use the appropriate trailer for the active service: `Co-authored-by: Claude <claude@anthropic.com>` for Anthropic Claude, `Co-authored-by: GitHub Copilot <copilot@github.com>` for GitHub Copilot, or the equivalent for any other AI tool in use. Never omit this trailer.
+7. **Chaining Multiple Guardrail** — Enforce sequential checking: run Relevancy → Hallucination → Evidence → Confidence → Commit Message Accuracy → Co-Authored-By, then a final consistency pass to confirm the response remains accurate, on-topic, and complete after all revisions.
 
 ### Planning Protocol
 
