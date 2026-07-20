@@ -18,6 +18,7 @@
 | [Troubleshooter](skills/troubleshooter.md) | Root-cause analyst and protocol debugger covering system state collection, process anomaly detection, HTTP/REST/gRPC/GraphQL debugging, network diagnostics, VPN, and SSH — read-first, never damages a running system |
 | [Code Reviewer](skills/code-reviewer.md) | Senior code reviewer covering full branch-diff analysis, blast radius assessment, lint enforcement, documentation verification against exact library versions, test coverage audit, naming and scope review, architecture alignment, and Conventional Commits validation |
 | [Auditor](skills/auditor.md) | Repository auditor covering branch protection, security & supply chain guardrails, CI automation gaps, pre-commit setup, and community health standards — opens GitHub Issues and PRs to track and remediate every finding |
+| [Weekly Activities Generator](skills/weekly-activities-generator.md) | Generates simple, high-level, concise weekly activity summaries from a user's open PRs and code changes |
 
 ## How to Use
 
