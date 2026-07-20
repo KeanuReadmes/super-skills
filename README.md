@@ -17,6 +17,7 @@
 | [SEO Specialist](skills/seo-specialist.md) | World-class SEO specialist covering technical SEO, E-E-A-T, Core Web Vitals, schema/structured data, GEO, AEO, hreflang, GitHub repository SEO, and AI search optimization |
 | [Troubleshooter](skills/troubleshooter.md) | Root-cause analyst and protocol debugger covering system state collection, process anomaly detection, HTTP/REST/gRPC/GraphQL debugging, network diagnostics, VPN, and SSH — read-first, never damages a running system |
 | [Code Reviewer](skills/code-reviewer.md) | Senior code reviewer covering full branch-diff analysis, blast radius assessment, lint enforcement, documentation verification against exact library versions, test coverage audit, naming and scope review, architecture alignment, and Conventional Commits validation |
+| [Auditor](skills/auditor.md) | Repository auditor covering branch protection, security & supply chain guardrails, CI automation gaps, pre-commit setup, and community health standards — opens GitHub Issues and PRs to track and remediate every finding |
 
 ## How to Use
 
@@ -316,5 +317,21 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 | [hadolint](https://github.com/hadolint/hadolint) | Dockerfile linting | `docker run --rm -i hadolint/hadolint < Dockerfile` |
 | [yamllint](https://github.com/adrienverge/yamllint) | YAML configuration file linting | `uv tool install yamllint` |
 | [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) | Markdown documentation linting | `npx markdownlint-cli` |
+
+---
+
+### 🔎 Auditor
+
+| Tool | Purpose | Sandbox Install |
+|------|---------|----------------|
+| [GitHub CLI (`gh`)](https://cli.github.com/) | Query branch protection, open issues and PRs, manage repository settings | `docker run --rm -v $(pwd):/work ghcr.io/cli/cli gh` |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Detect secrets in git history and staged changes | `docker run --rm -v $(pwd):/path zricethezav/gitleaks detect --source /path` |
+| [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets baseline scanning and pre-commit hook | `uv tool install detect-secrets` |
+| [Semgrep](https://semgrep.dev/) | SAST — static application security testing | `docker run --rm -v $(pwd):/src semgrep/semgrep semgrep scan --config=auto` |
+| [Trivy](https://github.com/aquasecurity/trivy) | Dependency and container vulnerability scanning | `docker run --rm -v $(pwd):/work aquasec/trivy fs /work` |
+| [pip-audit](https://pypi.org/project/pip-audit/) | Python dependency vulnerability audit | `uv tool install pip-audit` |
+| [pre-commit](https://pre-commit.com/) | Pre-commit hook runner and configuration validator | `uv tool install pre-commit` |
+| [yamllint](https://github.com/adrienverge/yamllint) | Lint workflow YAML and `.pre-commit-config.yaml` | `uv tool install yamllint` |
+| [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) | Lint `README.md`, `CONTRIBUTING.md`, and community files | `npx markdownlint-cli` |
 
 </details>
