@@ -16,9 +16,13 @@ def main() -> int:
     Returns:
         The exit code from the uv subprocess.
     """
+    import shutil
     import subprocess
 
     repo_root = Path(__file__).resolve().parents[1]
+    if shutil.which("uv") is None:
+        fallback = repo_root / "tools" / "apps" / "audit_runner" / "src" / "audit_runner" / "cli.py"
+        return subprocess.run(["python3", str(fallback)], cwd=repo_root, check=False).returncode
     cmd = [
         "uv",
         "run",

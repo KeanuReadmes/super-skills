@@ -31,7 +31,7 @@ def main() -> int:
     Returns:
         Zero when all checks pass, non-zero otherwise.
     """
-    root = Path(__file__).resolve().parents[4]
+    root = Path(__file__).resolve().parents[5]
     commands = [["make", "lint"], ["make", "validate"]]
     for cmd in commands:
         code = run(cmd, root)

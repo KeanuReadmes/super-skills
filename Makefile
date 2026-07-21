@@ -37,4 +37,8 @@ validate: ## Validate YAML workflow files (requires yamllint via uv tool install
 	yamllint .github/workflows/
 
 audit: ## Run baseline repository audit checks
-	uv run --directory tools --package audit-runner audit-runner
+	@if command -v uv >/dev/null 2>&1; then \
+		uv run --directory tools --package audit-runner audit-runner; \
+	else \
+		python3 tools/apps/audit_runner/src/audit_runner/cli.py; \
+	fi
