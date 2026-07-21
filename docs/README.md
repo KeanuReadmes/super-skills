@@ -14,7 +14,8 @@
    - **Require signed commits** (if your team policy supports it)
    - **Require linear history** (optional, if merge commits are not desired)
    - **Do not allow bypassing the above settings**
-5. In required status checks, add the repository workflows (for example `ci` and `codeql`).
+5. In required status checks, add the repository workflows
+   (for example `ci` and `codeql`).
 6. Save the rule.
 
 ## Recommended policy baseline
