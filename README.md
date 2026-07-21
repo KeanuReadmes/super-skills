@@ -94,24 +94,6 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 
 ---
 
-### 🗄️ Senior Database Engineer
-
-| Tool | Purpose | Sandbox Install |
-|------|---------|----------------|
-| [AWS CLI](https://github.com/aws/aws-cli) | AWS inventory, CloudWatch, and RDS diagnostics access | `docker run --rm -it -v ~/.aws:/root/.aws amazon/aws-cli` |
-| [session-manager-plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) | Required for AWS SSM interactive sessions | `docker run --rm -it --entrypoint sh amazon/aws-cli -c "uname -a"` |
-| [jq](https://github.com/jqlang/jq) | JSON filtering and deterministic report shaping | `docker run --rm -i imega/jq` |
-| [yq](https://github.com/mikefarah/yq) | YAML parsing for config and pipeline metadata | `docker run --rm -i mikefarah/yq` |
-| [psql](https://www.postgresql.org/docs/current/app-psql.html) | PostgreSQL read-only diagnostics client | `docker run --rm -it postgres:16 psql --version` |
-| [mysql](https://dev.mysql.com/doc/refman/en/mysql.html) | MySQL/Aurora MySQL read-only diagnostics client | `docker run --rm -it mysql:8 mysql --version` |
-| [pgBadger](https://github.com/darold/pgbadger) | PostgreSQL log analytics and slow-query trends | `docker run --rm -v $(pwd):/work darold.net/pgbadger pgbadger --version` |
-| [pt-query-digest](https://docs.percona.com/percona-toolkit/pt-query-digest.html) | MySQL slow-log/query digest analysis | `docker run --rm -it percona/percona-toolkit pt-query-digest --version` |
-| [lnav](https://github.com/tstack/lnav) | Interactive log exploration for RDS/app logs | `docker run --rm -it -v $(pwd):/work ghcr.io/tstack/lnav:latest lnav --version` |
-| [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets scanning for generated scripts and reports | `uv tool install detect-secrets` |
-| [gitleaks](https://github.com/gitleaks/gitleaks) | Git history secrets detection | `docker run --rm -v $(pwd):/path zricethezav/gitleaks` |
-
----
-
 ### 🛠️ CLI / Tools Engineer
 
 | Tool | Purpose | Sandbox Install |

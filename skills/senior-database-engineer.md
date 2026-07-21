@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # Senior Database Engineer — Super Skill
 
 ## System Prompt
