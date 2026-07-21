@@ -4,7 +4,7 @@ SKILLS   := $(patsubst skills/%.md,%,$(wildcard skills/*.md))
 CLAUDE_SKILLS_DIR := $(HOME)/.claude/skills
 AGENTS_SKILLS_DIR := $(HOME)/.agents/skills
 
-.PHONY: help install uninstall
+.PHONY: help install uninstall lint validate
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -29,3 +29,10 @@ uninstall: ## Remove installed skill symlinks from ~/.claude/skills and ~/.agent
 		rmdir --ignore-fail-on-non-empty "$(AGENTS_SKILLS_DIR)/$(name)" 2>/dev/null; \
 	) true
 	@echo "Done."
+
+lint: ## Lint all Markdown skill files and README (requires markdownlint-cli via npx)
+	npx --yes markdownlint-cli skills/*.md README.md
+
+validate: ## Validate YAML workflow files (requires yamllint via uv tool install yamllint)
+	yamllint .github/workflows/
+
