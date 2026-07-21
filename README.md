@@ -9,6 +9,7 @@
 | [SRE Engineer](skills/sre.md) | Site Reliability Engineer combining Infrastructure, Networking, Cybersecurity, DevOps, FinOps, and Disaster Recovery expertise with a pessimist mindset |
 | [QA Engineer](skills/qa-engineer.md) | Quality Assurance Engineer covering test strategy, automation, performance, accessibility, and CI quality gates |
 | [Backend Engineer](skills/backend-engineer.md) | Backend Engineer expert in API design, distributed systems, databases, messaging, security, and performance |
+| [Senior Database Engineer](skills/senior-database-engineer.md) | Senior database diagnostics engineer focused on deterministic, read-only scripts for RDS/EC2/app telemetry correlation and performance bottleneck analysis |
 | [Frontend Engineer](skills/frontend-engineer.md) | Frontend Engineer specializing in React/Vue/Angular/Nuxt.js 4, performance (Core Web Vitals), accessibility, and design systems |
 | [Cybersecurity Engineer](skills/cybersecurity-engineer.md) | Cybersecurity Engineer covering AppSec, cloud security, penetration testing, threat modeling, and incident response |
 | [Project Manager Engineer](skills/project-manager.md) | Project Manager Engineer bridging technical execution and business goals via Agile, risk management, and stakeholder communication |
@@ -90,6 +91,24 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 | [OpenAPI Generator](https://openapi-generator.tech/) | Generate client/server code from OpenAPI specs | `docker run --rm -v $(pwd):/local openapitools/openapi-generator-cli` |
 | [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets scanning | `uv tool install detect-secrets` |
 | [gitleaks](https://github.com/gitleaks/gitleaks) | Git secrets detection | `docker run --rm -v $(pwd):/path zricethezav/gitleaks` |
+
+---
+
+### 🗄️ Senior Database Engineer
+
+| Tool | Purpose | Sandbox Install |
+|------|---------|----------------|
+| [AWS CLI](https://github.com/aws/aws-cli) | AWS inventory, CloudWatch, and RDS diagnostics access | `docker run --rm -it -v ~/.aws:/root/.aws amazon/aws-cli` |
+| [session-manager-plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) | Required for AWS SSM interactive sessions | `docker run --rm -it --entrypoint sh amazon/aws-cli -c "uname -a"` |
+| [jq](https://github.com/jqlang/jq) | JSON filtering and deterministic report shaping | `docker run --rm -i imega/jq` |
+| [yq](https://github.com/mikefarah/yq) | YAML parsing for config and pipeline metadata | `docker run --rm -i mikefarah/yq` |
+| [psql](https://www.postgresql.org/docs/current/app-psql.html) | PostgreSQL read-only diagnostics client | `docker run --rm -it postgres:16 psql --version` |
+| [mysql](https://dev.mysql.com/doc/refman/en/mysql.html) | MySQL/Aurora MySQL read-only diagnostics client | `docker run --rm -it mysql:8 mysql --version` |
+| [pgBadger](https://github.com/darold/pgbadger) | PostgreSQL log analytics and slow-query trends | `docker run --rm -v $(pwd):/work darold.net/pgbadger pgbadger --version` |
+| [pt-query-digest](https://docs.percona.com/percona-toolkit/pt-query-digest.html) | MySQL slow-log/query digest analysis | `docker run --rm -it percona/percona-toolkit pt-query-digest --version` |
+| [lnav](https://github.com/tstack/lnav) | Interactive log exploration for RDS/app logs | `docker run --rm -it -v $(pwd):/work ghcr.io/tstack/lnav:latest lnav --version` |
+| [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets scanning for generated scripts and reports | `uv tool install detect-secrets` |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Git history secrets detection | `docker run --rm -v $(pwd):/path zricethezav/gitleaks` |
 
 ---
 
