@@ -19,6 +19,7 @@
 | [Code Reviewer](skills/code-reviewer.md) | Senior code reviewer covering full branch-diff analysis, blast radius assessment, lint enforcement, documentation verification against exact library versions, test coverage audit, naming and scope review, architecture alignment, and Conventional Commits validation |
 | [Auditor](skills/auditor.md) | Repository auditor covering branch protection, security & supply chain guardrails, CI automation gaps, pre-commit setup, and community health standards — opens GitHub Issues and PRs to track and remediate every finding |
 | [Weekly Activities Generator](skills/weekly-activities-generator.md) | Generates simple, high-level, concise weekly activity summaries from a user's open PRs and code changes |
+| [Rust MCP Coder](skills/rust-mcp-coder.md) | Expert Rust engineer who builds production-grade, token-authenticated MCP servers with Axum using TDD, cargo audit, clippy, full CI/CD, and dual HTTP/SSE transport for maximum client compatibility |
 
 ## How to Use
 
@@ -334,5 +335,28 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 | [pre-commit](https://pre-commit.com/) | Pre-commit hook runner and configuration validator | `uv tool install pre-commit` |
 | [yamllint](https://github.com/adrienverge/yamllint) | Lint workflow YAML and `.pre-commit-config.yaml` | `uv tool install yamllint` |
 | [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) | Lint `README.md`, `CONTRIBUTING.md`, and community files | `npx markdownlint-cli` |
+
+---
+
+### 🦀 Rust MCP Coder
+
+| Tool | Purpose | Sandbox Install |
+|------|---------|----------------|
+| [Rust](https://www.rust-lang.org/tools/install) | Systems language for building memory-safe, high-performance MCP servers | `rustup toolchain install stable && rustup override set stable` |
+| [clippy](https://github.com/rust-lang/rust-clippy) | Rust linter — always run with `-- -D warnings` | `rustup component add clippy` |
+| [rustfmt](https://github.com/rust-lang/rustfmt) | Rust code formatter | `rustup component add rustfmt` |
+| [cargo-nextest](https://nexte.st/) | Fast Rust test runner with better output and parallelism | `cargo install cargo-nextest --locked` |
+| [cargo-audit](https://rustsec.org/) | Scan Rust dependencies for known CVEs via the RustSec advisory DB | `cargo install cargo-audit --locked` |
+| [cargo-deny](https://github.com/EmbarkStudios/cargo-deny) | Dependency license, advisory, and duplicate-crate policy checks | `cargo install cargo-deny --locked` |
+| [cargo-tarpaulin](https://github.com/xd009642/tarpaulin) | Rust code coverage (HTML, XML/Cobertura, LCOV output) | `cargo install cargo-tarpaulin --locked` |
+| [axum](https://github.com/tokio-rs/axum) | Ergonomic and modular Axum HTTP framework for MCP server transport | `cargo add axum --features macros,json` |
+| [tokio](https://tokio.rs/) | Async runtime powering all I/O in the MCP server | `cargo add tokio --features full` |
+| [tower-http](https://github.com/tower-rs/tower-http) | Tower middleware: CORS, tracing, compression, request-id | `cargo add tower-http --features cors,trace,compression-gzip,request-id` |
+| [subtle](https://github.com/dalek-cryptography/subtle) | Constant-time comparison for ****** auth (prevents timing oracles) | `cargo add subtle` |
+| [tower_governor](https://github.com/benwis/tower-governor) | Rate limiting middleware for Axum/Tower | `cargo add tower_governor` |
+| [thiserror](https://github.com/dtolnay/thiserror) | Derive macro for ergonomic typed error enums | `cargo add thiserror` |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Detect secrets in git history and staged changes | `docker run --rm -v $(pwd):/path zricethezav/gitleaks detect --source /path` |
+| [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets baseline scanning and pre-commit hook | `uv tool install detect-secrets` |
+| [pre-commit](https://pre-commit.com/) | Pre-commit hook runner for fmt, clippy, audit, and secrets | `uv tool install pre-commit` |
 
 </details>
