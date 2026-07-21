@@ -77,6 +77,7 @@ jobs:
         run: |
           required=(
             "README.md"
+            "AGENTS.md"
             "CONTRIBUTING.md"
             "SECURITY.md"
             "CODE_OF_CONDUCT.md"
@@ -99,10 +100,11 @@ jobs:
 
       - name: Enforce repository coverage threshold
         run: |
-          total=9
+          total=10
           present=0
           for file in \
             README.md \
+            AGENTS.md \
             CONTRIBUTING.md \
             SECURITY.md \
             CODE_OF_CONDUCT.md \
