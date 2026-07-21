@@ -4,7 +4,7 @@ SKILLS   := $(patsubst skills/%.md,%,$(wildcard skills/*.md))
 CLAUDE_SKILLS_DIR := $(HOME)/.claude/skills
 AGENTS_SKILLS_DIR := $(HOME)/.agents/skills
 
-.PHONY: help install uninstall lint validate
+.PHONY: help install uninstall lint validate audit
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -36,3 +36,5 @@ lint: ## Lint all Markdown skill files and README (requires markdownlint-cli via
 validate: ## Validate YAML workflow files (requires yamllint via uv tool install yamllint)
 	yamllint .github/workflows/
 
+audit: ## Run baseline repository audit checks
+	python3 tools/audit.py

@@ -361,3 +361,18 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 | [pre-commit](https://pre-commit.com/) | Pre-commit hook runner for fmt, clippy, audit, and secrets | `uv tool install pre-commit` |
 
 </details>
+
+## Contribution Guidelines
+
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+- Use Conventional Commits for all commit messages.
+- Run `make lint` and `make validate` before submitting changes.
+
+## Security
+
+- Read [SECURITY.md](SECURITY.md) for vulnerability reporting instructions.
+- Do not disclose unpatched vulnerabilities in public issues.
+
+## Code of Conduct
+
+All contributors are expected to follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

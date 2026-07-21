@@ -1,6 +1,7 @@
+---
 name: CI
 
-on:
+'on':
   push:
     branches: ["main"]
   pull_request:
@@ -11,8 +12,12 @@ permissions:
 
 jobs:
   lint:
-    name: Lint skill files
+    name: Lint skill files (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,17 +25,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-
-      - name: Install markdownlint-cli
-        run: npm install --global markdownlint-cli@0.44.0
+          node-version: ${{ matrix.node }}
 
       - name: Lint Markdown skill files
-        run: markdownlint skills/*.md README.md
+        run: npx --yes markdownlint-cli skills/*.md README.md
 
   validate-yaml:
-    name: Validate YAML files
+    name: Validate YAML files (Python ${{ matrix.python }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,13 +44,80 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
 
       - name: Install yamllint
         run: pip install yamllint==1.35.1
 
       - name: Lint YAML files
         run: yamllint .github/workflows/
+
+  dependency-audit:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+
+  test-repository:
+    name: Repository checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify required files exist
+        run: |
+          required=(
+            "README.md"
+            "CONTRIBUTING.md"
+            "SECURITY.md"
+            "CODE_OF_CONDUCT.md"
+            ".github/pull_request_template.md"
+            ".github/ISSUE_TEMPLATE/bug_report.yml"
+            ".github/ISSUE_TEMPLATE/feature_request.yml"
+            ".github/dependabot.yml"
+            ".pre-commit-config.yaml"
+          )
+          missing=0
+          for file in "${required[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Missing required file: $file"
+              missing=$((missing + 1))
+            fi
+          done
+          if [ "$missing" -gt 0 ]; then
+            exit 1
+          fi
+
+      - name: Enforce repository coverage threshold
+        run: |
+          total=9
+          present=0
+          for file in \
+            README.md \
+            CONTRIBUTING.md \
+            SECURITY.md \
+            CODE_OF_CONDUCT.md \
+            .github/pull_request_template.md \
+            .github/ISSUE_TEMPLATE/bug_report.yml \
+            .github/ISSUE_TEMPLATE/feature_request.yml \
+            .github/dependabot.yml \
+            .pre-commit-config.yaml; do
+            if [ -f "$file" ]; then
+              present=$((present + 1))
+            fi
+          done
+          pct=$((present * 100 / total))
+          echo "Repository coverage: ${pct}%"
+          test "$pct" -ge 100
 
   secrets-scan:
     name: Scan for secrets
