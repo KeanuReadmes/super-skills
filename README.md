@@ -21,6 +21,7 @@
 | [Auditor](skills/auditor.md) | Repository auditor covering branch protection, security & supply chain guardrails, CI automation gaps, pre-commit setup, and community health standards — opens GitHub Issues and PRs to track and remediate every finding |
 | [Weekly Activities Generator](skills/weekly-activities-generator.md) | Generates simple, high-level, concise weekly activity summaries from a user's open PRs and code changes |
 | [Rust MCP Coder](skills/rust-mcp-coder.md) | Expert Rust engineer who builds production-grade, token-authenticated MCP servers with Axum using TDD, cargo audit, clippy, full CI/CD, and dual HTTP/SSE transport for maximum client compatibility |
+| [Dependency Vendor Engineer](skills/dependency-vendor-engineer.md) | Vendors all dependencies at their latest safe versions into the repository, eliminates binary-only packages, audits each package's source code project by project, sets up a hardened CI pipeline, and creates periodic upstream-sync tasks |
 
 ## How to Use
 
@@ -359,6 +360,27 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 | [gitleaks](https://github.com/gitleaks/gitleaks) | Detect secrets in git history and staged changes | `docker run --rm -v $(pwd):/path zricethezav/gitleaks detect --source /path` |
 | [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets baseline scanning and pre-commit hook | `uv tool install detect-secrets` |
 | [pre-commit](https://pre-commit.com/) | Pre-commit hook runner for fmt, clippy, audit, and secrets | `uv tool install pre-commit` |
+
+---
+
+### 📦 Dependency Vendor Engineer
+
+| Tool | Purpose | Sandbox Install |
+|------|---------|----------------|
+| [pip-audit](https://pypi.org/project/pip-audit/) | Python dependency vulnerability audit | `uv tool install pip-audit` |
+| [npm audit](https://docs.npmjs.com/cli/commands/npm-audit) | Node.js dependency vulnerability audit | `npm audit` |
+| [cargo-audit](https://rustsec.org/) | Rust dependency vulnerability scanner | `cargo install cargo-audit --locked` |
+| [OSV-Scanner](https://github.com/google/osv-scanner) | Multi-ecosystem vulnerability scanner using OSV DB | `docker run --rm -v $(pwd):/src --network none ghcr.io/google/osv-scanner --recursive /src/vendor` |
+| [Trivy](https://github.com/aquasecurity/trivy) | Vulnerability and dependency scanner for filesystem and SBOMs | `docker run --rm -v $(pwd):/work --network none aquasec/trivy fs /work/vendor` |
+| [Semgrep](https://github.com/semgrep/semgrep) | SAST and supply-chain rule scanning | `docker run --rm -v $(pwd):/src --network none semgrep/semgrep semgrep scan --config=p/supply-chain /src/vendor` |
+| [Syft](https://github.com/anchore/syft) | SBOM generator (CycloneDX / SPDX) | `docker run --rm -v $(pwd):/work --network none anchore/syft /work -o cyclonedx-json` |
+| [cdxgen](https://github.com/CycloneDX/cdxgen) | Multi-ecosystem CycloneDX SBOM generator | `docker run --rm -v $(pwd):/work --network none ghcr.io/cyclonedx/cdxgen -r /work -o /work/sbom/sbom.json` |
+| [Grype](https://github.com/anchore/grype) | Vulnerability scanner for SBOMs and container images | `docker run --rm -v $(pwd):/work --network none anchore/grype sbom:/work/sbom/sbom.json` |
+| [license-checker](https://github.com/davglass/license-checker) | Audit Node.js dependency licenses | `npx license-checker --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC'` |
+| [licensee](https://github.com/licensee/licensee) | Detect licenses in source repositories | `docker run --rm -v $(pwd):/work --network none rubygems/licensee /work` |
+| [Renovate](https://github.com/renovatebot/renovate) | Automated dependency update PRs with vendor support | `npx renovate --dry-run` |
+| [Dependabot](https://docs.github.com/en/code-security/dependabot) | GitHub-native dependency update and security alerts | Configure via `.github/dependabot.yml` |
+| [mitmproxy](https://mitmproxy.org/) | Intercept and inspect outbound network calls during sandbox runtime profiling | `docker run --rm -v $(pwd):/work -p 8080:8080 mitmproxy/mitmproxy mitmproxy` |
 
 </details>
 
