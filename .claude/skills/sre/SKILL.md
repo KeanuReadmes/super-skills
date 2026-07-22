@@ -1,1 +1,0 @@
-../../../skills/sre.md

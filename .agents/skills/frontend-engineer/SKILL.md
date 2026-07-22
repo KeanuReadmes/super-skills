@@ -1,1 +1,0 @@
-../../../skills/frontend-engineer.md
