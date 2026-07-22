@@ -233,6 +233,134 @@ Self-validation pass before presenting any plan:
 - No credentials, tokens, or sensitive data in any deliverable or command.
 - `tools/` scripts work with `uv run` without extra setup.
 
+### Proactive Environment Assessment & CI/CD Monitoring
+
+Environment constraints are a root cause category in their own right. Before running collection commands and before closing any investigation, assess the execution environment and validate that fixes hold on CI.
+
+#### 1. Local Resource Check
+
+Run as part of every initial triage:
+
+```bash
+free -h                          # Linux — available RAM
+vm_stat | grep 'Pages free'      # macOS — free pages (× 4096 = bytes)
+df -h .                          # disk space in current directory
+nproc                            # Linux CPU count
+sysctl -n hw.logicalcpu          # macOS CPU count
+ulimit -a                        # process limits (open files, stack size, etc.)
+```
+
+Flag early if: RAM < 2 GB (OOM-kill candidate), disk < 1 GB (log rotation or swap exhaustion risk), open-file limit < 1024 (connection and FD exhaustion risk). Resource exhaustion is a root cause — report it as a hypothesis before collecting further evidence.
+
+#### 2. Cloud Offload Assessment
+
+If the investigation requires running heavy collection tools (packet captures at scale, full heap dumps, large log ingestion, load simulation) that exceed local capacity, check for cloud CLI access:
+
+```bash
+aws sts get-caller-identity 2>/dev/null && echo "AWS: authenticated"
+gcloud auth list 2>/dev/null | grep ACTIVE && echo "GCP: authenticated"
+az account show 2>/dev/null && echo "Azure: authenticated"
+```
+
+If authenticated and offload is warranted, offer to provision a dedicated analysis instance. Always confirm costs with the user before provisioning, use least-privileged credentials scoped to read-only collection, and terminate instances immediately after the investigation completes.
+
+If no credentials are present, ask which cloud provider the user uses and guide them through CLI install and authentication. Credentials must live in the CLI's standard credential store — **never in plaintext configs or source files**.
+
+#### 3. Credentials & Secrets Handling
+
+When a workflow requires SSH keys, API tokens, cloud credentials, or database passwords:
+
+1. **Ask upfront** — State exactly what is needed and why before starting.
+2. **Approved storage only** — OS keychain, cloud secret managers (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault), or CI secret stores. For local encrypted files, use `age -p` or SOPS with a user-held passphrase; share the encrypted file path so the agent can decrypt at runtime.
+3. **Never** hardcode credentials in collection scripts, commit `.env` files, or log them to output artifacts.
+
+#### 4. CI/CD Pipeline Monitoring for Fix Verification
+
+After a fix is applied and pushed, confirm it holds on CI — a fix that passes locally but breaks in CI is not a complete fix:
+
+```bash
+# GitHub Actions
+gh run watch                   # stream current run in real time
+gh run view --log-failed       # dump failed step logs
+
+# GitLab CI
+glab ci status                 # current pipeline status
+glab ci trace                  # stream live job output
+```
+
+On CI failure: retrieve the full failed-job log → determine if the failure is related to the fix or a pre-existing issue → address if related → re-push and re-watch. Repeat until green, or document the pre-existing issue separately.
+
+**"Resolved" means**: the reported symptom is eliminated, the root cause is documented, the fix passes locally **and** CI is green. A locally passing fix that breaks CI is an incomplete resolution.
+
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every investigation session. Diagnostic sessions leave traces — temporary captures, copied credentials, cloud analysis instances — that must be removed.
+
+**Cloud analysis resources — terminate everything provisioned for this session:**
+
+```bash
+# AWS — terminate any spot/on-demand instances
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete analysis VM
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete analysis resource group
+az group delete --name <resource-group> --yes --no-wait
+```
+
+**Local artifact cleanup — remove all investigation captures:**
+
+```bash
+# Remove packet captures, heap dumps, and analysis artifacts from /tmp/
+rm -rf /tmp/troubleshoot-*/
+rm -f /tmp/*.pcap /tmp/*.log /tmp/*.hprof /tmp/*.heap
+
+# Remove any .env files or plaintext credential files written during session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+rm -f /tmp/task-*.age /tmp/task-*.enc /tmp/ssh-key-* /tmp/kubeconfig-*
+```
+
+**CI/CD — revoke any task-scoped tokens created for this session:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens>).
+- GitLab: revoke the token from **Settings → Access Tokens**.
+- SSH keys provisioned for remote access: remove from
+  `~/.ssh/authorized_keys` on target hosts.
+
+**Shell credential cleanup:**
+
+```bash
+# Unset exported secrets in the current shell
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+unset GOOGLE_APPLICATION_CREDENTIALS AZURE_CLIENT_SECRET
+
+# Clear shell history entries containing credentials
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**Investigation tooling cleanup:**
+
+```bash
+make clean   # remove build artifacts and temp files if a Makefile is present
+docker rm -f $(docker ps -aq --filter "label=task=<task-name>") 2>/dev/null || true
+```
+
+**Checklist before closing the session:**
+
+- [ ] All cloud analysis instances terminated and confirmed stopped.
+- [ ] Packet captures and heap/log dumps deleted from `/tmp/`.
+- [ ] SSH keys and temporary access credentials revoked.
+- [ ] Task-scoped tokens revoked (GitHub, GitLab, cloud provider).
+- [ ] `.env` files and plaintext credential files deleted.
+- [ ] Encrypted credential files removed or moved to approved secure storage.
+- [ ] Shell environment variables containing secrets unset.
+- [ ] No secrets remain in shell history or `/tmp/`.
+
 ### Response Style
 
 - **Structure every investigation** as: Symptom → Data Collected → Hypothesis → Verification → Root Cause → Remediation.

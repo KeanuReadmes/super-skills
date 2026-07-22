@@ -102,6 +102,134 @@ Self-validation pass before presenting:
 - Confirm pre-commit hooks match installed tool versions.
 - Ensure `tools/` scripts run via `uv run` with no extra setup.
 
+### Proactive Validation, Environment Assessment & CI/CD Monitoring
+
+Before starting any build-intensive task and before declaring work done, run this loop end-to-end.
+
+#### 1. Local Resource Check
+
+Run before heavy builds, Playwright installs, or Storybook generation:
+
+```bash
+free -h                          # Linux — available RAM
+vm_stat | grep 'Pages free'      # macOS — free pages (× 4096 = bytes)
+df -h .                          # disk space in current directory
+nproc                            # Linux CPU count
+sysctl -n hw.logicalcpu          # macOS CPU count
+```
+
+Flag early and pause if: RAM < 2 GB for Node/JS builds, < 4 GB for Docker-based builds, or disk < 5 GB. Do not silently continue with an under-resourced environment.
+
+#### 2. Cloud Offload Assessment
+
+If local resources are insufficient, check for cloud CLI access before suggesting workarounds:
+
+```bash
+aws sts get-caller-identity 2>/dev/null && echo "AWS: authenticated"
+gcloud auth list 2>/dev/null | grep ACTIVE && echo "GCP: authenticated"
+az account show 2>/dev/null && echo "Azure: authenticated"
+```
+
+If authenticated and offload is warranted, offer to provision a remote build environment (e.g., AWS `c6i.2xlarge` spot, GCP preemptible VM, Azure spot VM). Always confirm cloud costs with the user before provisioning, and terminate instances immediately after the workload completes. Use least-privileged credentials scoped to the task.
+
+If no credentials are present, ask which cloud provider the user uses and guide them through CLI install (`awscli`, `gcloud`, `az`) and `aws configure` / `gcloud auth login` / `az login`. Credentials must live in the CLI's standard credential store — **never in `.env` files, source code, or plaintext configs**.
+
+#### 3. Credentials & Secrets Handling
+
+When a workflow requires credentials (registry tokens, deployment keys, API keys, cloud access):
+
+1. **Ask upfront** — State exactly what is needed and why before starting.
+2. **Approved storage only** — OS keychain, cloud secret managers (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault), or CI secret stores (GitHub Actions Secrets, GitLab CI Variables). For local encrypted files, use `age -p` or SOPS with a user-held passphrase; share the encrypted file path so the agent can decrypt at runtime.
+3. **Never** hardcode secrets in source files, commit `.env` files, print secrets to stdout, or log them.
+
+#### 4. Local Validation Loop
+
+Before any push, run the full local sequence and fix every failure:
+
+```bash
+make lint     # ESLint + Prettier + Stylelint + tsc --noEmit
+make test     # Vitest / Jest unit + Playwright / Cypress e2e
+make build    # production bundle
+```
+
+Do not propose a push until every check passes locally.
+
+#### 5. CI/CD Pipeline Monitoring
+
+After pushing, watch the pipeline and treat any failure as a blocker:
+
+```bash
+# GitHub Actions
+gh run watch                   # stream current run in real time
+gh run view --log-failed       # dump failed step logs
+
+# GitLab CI
+glab ci status                 # current pipeline status
+glab ci trace                  # stream live job output
+```
+
+On failure: retrieve the full failed-job log → diagnose (code error, flaky test, env issue, missing secret, resource limit) → fix locally → re-run `make lint && make test` → push and re-watch. Repeat until green, or produce a clear blocker report if user input is required (missing secret, upstream quota, external dependency).
+
+**"Done" means**: local validation passes **and** the CI/CD pipeline is green. A passing local build alone is not sufficient.
+
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every task session, regardless of whether cloud resources were provisioned.
+
+**Cloud resources — terminate everything provisioned for this task:**
+
+```bash
+# AWS — terminate any spot/on-demand instances
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+# Confirm termination
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete preemptible/on-demand VM
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete spot VM and its resource group
+az group delete --name <resource-group> --yes --no-wait
+```
+
+**CI/CD — revoke any task-scoped tokens created for this session:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens> if one was created).
+- GitLab: revoke the project/personal access token from
+  **Settings → Access Tokens** in the GitLab UI.
+- NPM registry tokens: `npm token revoke <token-id>`.
+
+**Local credential cleanup:**
+
+```bash
+# Remove any .env files written during the session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+
+# Remove age/SOPS encrypted files if no longer needed
+rm -f /tmp/task-*.age /tmp/task-*.enc
+
+# Clear shell history entries containing secrets (optional but recommended)
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**Node / build artifact cleanup:**
+
+```bash
+make clean                   # removes build/, dist/, .cache/
+npx rimraf node_modules      # only if node_modules is no longer needed locally
+```
+
+**Checklist before closing the session:**
+
+- [ ] All cloud instances/VMs terminated and confirmed stopped.
+- [ ] Task-scoped tokens/credentials revoked.
+- [ ] `.env` files and plaintext secret files deleted.
+- [ ] Encrypted credential files removed or moved to approved secure storage.
+- [ ] No secrets remain in shell history, log files, or `/tmp/`.
+- [ ] `make clean` run to remove build artifacts.
+
 ### Response Style
 
 - Provide complete, runnable component examples.

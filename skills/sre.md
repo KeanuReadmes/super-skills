@@ -142,6 +142,178 @@ Self-validation pass before presenting:
 - Pre-commit hooks are compatible with installed tool versions.
 - `tools/` scripts run via `uv run` without extra setup.
 
+### Proactive Validation, Environment Assessment & CI/CD Monitoring
+
+Before starting any infrastructure, deployment, or automation task and before declaring work done, run this loop end-to-end.
+
+#### 1. Local Resource Check
+
+Run before heavy IaC plans, Docker builds, load tests, or multi-container Compose stacks:
+
+```bash
+free -h                          # Linux — available RAM
+vm_stat | grep 'Pages free'      # macOS — free pages (× 4096 = bytes)
+df -h .                          # disk space in current directory
+nproc                            # Linux CPU count
+sysctl -n hw.logicalcpu          # macOS CPU count
+docker system df                 # Docker layer/image/volume usage
+```
+
+Flag early and pause if: RAM < 4 GB for Docker, < 8 GB for Kubernetes (kind/minikube), or disk < 20 GB for multi-image builds and IaC state. Under-resourced local environments mask real performance and reliability characteristics — flag the constraint explicitly rather than silently continuing.
+
+#### 2. Cloud Offload Assessment
+
+SRE workloads (load tests, large Terraform plans, chaos experiments, DR drills) routinely exceed local machine capacity. Check for cloud CLI access before suggesting a local workaround:
+
+```bash
+aws sts get-caller-identity 2>/dev/null && echo "AWS: authenticated"
+gcloud auth list 2>/dev/null | grep ACTIVE && echo "GCP: authenticated"
+az account show 2>/dev/null && echo "Azure: authenticated"
+```
+
+If authenticated and offload is warranted:
+
+- **AWS**: `c6i.2xlarge` or `m6i.2xlarge` spot for CPU-heavy automation; `r6i.2xlarge` for memory-heavy analysis; `g4dn.xlarge` for GPU-required workloads. Access via `aws ssm start-session` — no inbound ports needed.
+- **GCP**: `gcloud compute instances create --machine-type=n2-standard-8 --preemptible` with `gcloud compute ssh`.
+- **Azure**: `az vm create --priority Spot --eviction-policy Deallocate` with `az ssh vm`.
+
+Always: confirm costs with the user before provisioning; use a least-privileged IAM role / service account scoped to the task; terminate instances immediately after the workload completes; never share production IAM keys across environments.
+
+If no credentials are present, ask which cloud provider the user uses and guide them through CLI install (`awscli`, `gcloud`, `az`) and `aws configure` / `gcloud auth login` / `az login`. Credentials must live in the CLI's standard credential store, never in plaintext config files or source code.
+
+#### 3. Credentials & Secrets Handling
+
+When a workflow requires cloud keys, registry tokens, Terraform state credentials, Vault tokens, or deployment keys:
+
+1. **Ask upfront** — State exactly what is needed and why before starting.
+2. **Approved storage only** — Cloud secret managers (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault), Vault, OS keychain, or CI secret stores (GitHub Actions Secrets, GitLab CI Variables). For local encrypted files, use `age -p` or SOPS with a user-held passphrase; share the encrypted file path so the agent can decrypt at runtime.
+3. **Never** hardcode secrets in IaC, Helm values, source files, or commit `.env` files. Rotate any secret that may have been exposed before continuing.
+
+#### 4. Local Validation Loop
+
+Before any push, run the full local sequence and fix every failure:
+
+```bash
+make lint      # tflint / checkov / hadolint / yamllint / shellcheck
+make validate  # terraform validate / helm lint / kube-score
+make test      # unit tests for automation scripts / runbook validation
+```
+
+Do not propose a push until every check passes locally.
+
+#### 5. CI/CD Pipeline Monitoring
+
+After pushing, watch the pipeline and treat any failure as a blocker:
+
+```bash
+# GitHub Actions
+gh run watch                   # stream current run in real time
+gh run view --log-failed       # dump failed step logs
+
+# GitLab CI
+glab ci status                 # current pipeline status
+glab ci trace                  # stream live job output
+```
+
+On failure: retrieve the full failed-job log → diagnose (IaC syntax error, policy violation, lint failure, secret misconfiguration, quota exceeded) → fix locally → re-run `make lint && make validate` → push and re-watch. Repeat until green, or produce a clear blocker report if user input is required (missing secret, cloud quota, broken upstream dependency).
+
+**"Done" means**: local validation passes **and** the CI/CD pipeline is green. A passing `terraform validate` alone is not sufficient.
+
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every task session. For SRE work this step is **mandatory** — under-provisioned or forgotten cloud resources are a cost and security incident waiting to happen.
+
+**Cloud resources — destroy everything provisioned for this task:**
+
+```bash
+# Terraform — destroy task workspace
+terraform workspace select <task-workspace>
+terraform destroy -auto-approve
+terraform workspace select default
+terraform workspace delete <task-workspace>
+
+# AWS — explicit instance/resource termination if not managed by IaC
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete preemptible/on-demand VMs
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete resource group containing all task resources
+az group delete --name <resource-group> --yes --no-wait
+
+# Kubernetes — delete task namespace and all its resources
+kubectl delete namespace <task-namespace> --wait=true
+```
+
+**Docker / container cleanup:**
+
+```bash
+docker compose down --volumes --remove-orphans
+docker rm -f $(docker ps -aq --filter "label=task=<task-name>") 2>/dev/null || true
+docker rmi $(docker images -q --filter "dangling=true") 2>/dev/null || true
+```
+
+**CI/CD — revoke task-scoped tokens:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens>).
+- GitLab: revoke the token from **Settings → Access Tokens**.
+- Cloud service accounts: disable/delete the task-scoped SA:
+  `gcloud iam service-accounts disable <sa>@<project>.iam.gserviceaccount.com`
+  `aws iam delete-access-key --access-key-id <id> --user-name <user>`
+
+**Local credential cleanup:**
+
+```bash
+# Remove .env files and plaintext credential files written during session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+rm -f /tmp/task-*.age /tmp/task-*.enc /tmp/kubeconfig-* /tmp/tf-creds-*
+
+# Unset exported environment variables in current shell
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+unset GOOGLE_APPLICATION_CREDENTIALS AZURE_CLIENT_SECRET
+
+# Clear shell history entries containing secrets (optional but recommended)
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**IaC state cleanup:**
+
+```bash
+make clean   # removes .terraform/, plan files, temp state, and build artifacts
+```
+
+**Verify no orphaned resources remain:**
+
+```bash
+# AWS — list all instances still running in the task account/region
+aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" \
+  --query 'Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0]]' \
+  --output table
+
+# GCP — list all running instances in the project
+gcloud compute instances list --filter="status=RUNNING"
+
+# Azure — list all VMs in the task resource group
+az vm list --resource-group <resource-group> --output table
+```
+
+**Checklist before closing the session:**
+
+- [ ] IaC destroy completed and confirmed (no resources in task workspace).
+- [ ] All cloud instances/VMs terminated and confirmed stopped.
+- [ ] Kubernetes namespace and all task workloads deleted.
+- [ ] Docker containers, images, and volumes removed.
+- [ ] Task-scoped IAM keys, service accounts, and tokens revoked/deleted.
+- [ ] `.env` files and plaintext credential files deleted.
+- [ ] Encrypted credential files removed or moved to approved secret manager.
+- [ ] Shell environment variables containing secrets unset.
+- [ ] No secrets remain in shell history, log files, or `/tmp/`.
+- [ ] `make clean` run and IaC state left clean.
+
 ### Response Style
 
 - Be direct, precise, and opinionated. State tradeoffs clearly.
