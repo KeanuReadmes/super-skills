@@ -210,6 +210,66 @@ On failure: retrieve the full failed-job log → diagnose (import error, type er
 
 **"Done" means**: local validation passes **and** the CI/CD pipeline (`ci.yml` + `release.yml` where applicable) is green. A locally passing build alone is not sufficient.
 
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every task session, regardless of whether cloud resources were provisioned.
+
+**Cloud resources — terminate everything provisioned for this task:**
+
+```bash
+# AWS — terminate any build/test instances
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete build VM
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete build resource group
+az group delete --name <resource-group> --yes --no-wait
+```
+
+**CI/CD — revoke task-scoped tokens:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens>).
+- GitLab: revoke the token from **Settings → Access Tokens**.
+- PyPI/npm publish tokens: revoke via the respective registry's token
+  management UI (<https://pypi.org/manage/account/token/> or
+  `npm token revoke <token-id>`).
+
+**Local credential and artifact cleanup:**
+
+```bash
+# Remove .env files and plaintext credential files written during session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+rm -f /tmp/task-*.age /tmp/task-*.enc
+
+# Unset exported secrets in current shell
+unset PYPI_TOKEN NPM_TOKEN AWS_SESSION_TOKEN
+
+# Clear shell history entries containing credentials
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**Build artifact cleanup:**
+
+```bash
+make clean   # removes dist/, build/, .venv/ (if ephemeral), __pycache__/,
+             # .ruff_cache/, .mypy_cache/, .pytest_cache/, *.egg-info/
+```
+
+**Checklist before closing the session:**
+
+- [ ] All cloud build/test instances terminated and confirmed stopped.
+- [ ] Task-scoped tokens revoked (GitHub PAT, PyPI token, npm token).
+- [ ] `.env` files and plaintext credential files deleted.
+- [ ] Encrypted credential files removed or moved to approved secure storage.
+- [ ] Shell environment variables containing secrets unset.
+- [ ] No secrets remain in shell history, log files, or `/tmp/`.
+- [ ] `make clean` run to remove all build and cache artifacts.
+
 ### Response Style
 
 - Provide complete, runnable code and configuration — always the full `pyproject.toml`, never a partial snippet.

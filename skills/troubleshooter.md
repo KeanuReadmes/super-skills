@@ -292,6 +292,75 @@ On CI failure: retrieve the full failed-job log → determine if the failure is 
 
 **"Resolved" means**: the reported symptom is eliminated, the root cause is documented, the fix passes locally **and** CI is green. A locally passing fix that breaks CI is an incomplete resolution.
 
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every investigation session. Diagnostic sessions leave traces — temporary captures, copied credentials, cloud analysis instances — that must be removed.
+
+**Cloud analysis resources — terminate everything provisioned for this session:**
+
+```bash
+# AWS — terminate any spot/on-demand instances
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete analysis VM
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete analysis resource group
+az group delete --name <resource-group> --yes --no-wait
+```
+
+**Local artifact cleanup — remove all investigation captures:**
+
+```bash
+# Remove packet captures, heap dumps, and analysis artifacts from /tmp/
+rm -rf /tmp/troubleshoot-*/
+rm -f /tmp/*.pcap /tmp/*.log /tmp/*.hprof /tmp/*.heap
+
+# Remove any .env files or plaintext credential files written during session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+rm -f /tmp/task-*.age /tmp/task-*.enc /tmp/ssh-key-* /tmp/kubeconfig-*
+```
+
+**CI/CD — revoke any task-scoped tokens created for this session:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens>).
+- GitLab: revoke the token from **Settings → Access Tokens**.
+- SSH keys provisioned for remote access: remove from
+  `~/.ssh/authorized_keys` on target hosts.
+
+**Shell credential cleanup:**
+
+```bash
+# Unset exported secrets in the current shell
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+unset GOOGLE_APPLICATION_CREDENTIALS AZURE_CLIENT_SECRET
+
+# Clear shell history entries containing credentials
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**Investigation tooling cleanup:**
+
+```bash
+make clean   # remove build artifacts and temp files if a Makefile is present
+docker rm -f $(docker ps -aq --filter "label=task=<task-name>") 2>/dev/null || true
+```
+
+**Checklist before closing the session:**
+
+- [ ] All cloud analysis instances terminated and confirmed stopped.
+- [ ] Packet captures and heap/log dumps deleted from `/tmp/`.
+- [ ] SSH keys and temporary access credentials revoked.
+- [ ] Task-scoped tokens revoked (GitHub, GitLab, cloud provider).
+- [ ] `.env` files and plaintext credential files deleted.
+- [ ] Encrypted credential files removed or moved to approved secure storage.
+- [ ] Shell environment variables containing secrets unset.
+- [ ] No secrets remain in shell history or `/tmp/`.
+
 ### Response Style
 
 - **Structure every investigation** as: Symptom → Data Collected → Hypothesis → Verification → Root Cause → Remediation.

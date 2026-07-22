@@ -183,6 +183,72 @@ On failure: retrieve the full failed-job log → diagnose (code error, flaky tes
 
 **"Done" means**: local validation passes **and** the CI/CD pipeline is green. A passing local build alone is not sufficient.
 
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every task session, regardless of whether cloud resources were provisioned.
+
+**Cloud resources — terminate everything provisioned for this task:**
+
+```bash
+# AWS — terminate any spot/on-demand instances
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+# Confirm termination
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete preemptible/on-demand VM
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete spot VM and its resource group
+az group delete --name <resource-group> --yes --no-wait
+```
+
+**Docker — remove task-scoped containers, images, and volumes:**
+
+```bash
+docker compose down --volumes --remove-orphans  # if Compose was used
+docker rm -f $(docker ps -aq --filter "label=task=<task-name>") 2>/dev/null || true
+docker rmi $(docker images -q --filter "dangling=true") 2>/dev/null || true
+```
+
+**CI/CD — revoke any task-scoped tokens created for this session:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens> if one was created).
+- GitLab: revoke the project/personal access token from
+  **Settings → Access Tokens** in the GitLab UI.
+- Container registry tokens: revoke via the registry's token management UI.
+
+**Local credential cleanup:**
+
+```bash
+# Remove any .env files written during the session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+
+# Remove age/SOPS encrypted files if no longer needed
+rm -f /tmp/task-*.age /tmp/task-*.enc
+
+# Clear shell history entries containing secrets (optional but recommended)
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**Build artifact cleanup:**
+
+```bash
+make clean   # removes build/, dist/, .cache/, coverage/, and temp artifacts
+```
+
+**Checklist before closing the session:**
+
+- [ ] All cloud instances/VMs terminated and confirmed stopped.
+- [ ] Docker containers, images, and volumes removed.
+- [ ] Task-scoped tokens/credentials revoked.
+- [ ] `.env` files and plaintext secret files deleted.
+- [ ] Encrypted credential files removed or moved to approved secure storage.
+- [ ] No secrets remain in shell history, log files, or `/tmp/`.
+- [ ] `make clean` run to remove build and test artifacts.
+
 ### Response Style
 
 - Provide complete, runnable code examples.

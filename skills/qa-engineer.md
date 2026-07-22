@@ -182,6 +182,72 @@ On failure: retrieve the full failed-job log → diagnose (test failure, flaky t
 
 **"Done" means**: all tests pass locally **and** CI/CD quality gates are green. A locally green test run alone is not sufficient.
 
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every testing session, regardless of whether cloud resources were provisioned.
+
+**Cloud test environments — terminate everything provisioned for this session:**
+
+```bash
+# AWS — terminate any test runner instances
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete test VM
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete test resource group
+az group delete --name <resource-group> --yes --no-wait
+```
+
+**Docker — remove test containers, images, and volumes:**
+
+```bash
+docker compose down --volumes --remove-orphans  # if Compose was used for test services
+docker rm -f $(docker ps -aq --filter "label=task=<task-name>") 2>/dev/null || true
+docker rmi $(docker images -q --filter "dangling=true") 2>/dev/null || true
+```
+
+**CI/CD — revoke task-scoped tokens:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens>).
+- GitLab: revoke the token from **Settings → Access Tokens**.
+- Staging API keys: revoke via the service's key management UI.
+
+**Local credential and artifact cleanup:**
+
+```bash
+# Remove .env files and plaintext credential files written during session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+rm -f /tmp/task-*.age /tmp/task-*.enc
+
+# Unset exported secrets in current shell
+unset STAGING_API_KEY TEST_DB_PASSWORD AWS_SESSION_TOKEN
+
+# Clear shell history entries containing credentials
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**Test artifact cleanup:**
+
+```bash
+make clean   # removes coverage/, test-results/, allure-results/, screenshots/
+```
+
+**Checklist before closing the session:**
+
+- [ ] All cloud test environments terminated and confirmed stopped.
+- [ ] Docker test containers, images, and volumes removed.
+- [ ] Task-scoped tokens/credentials revoked.
+- [ ] `.env` files and plaintext credential files deleted.
+- [ ] Encrypted credential files removed or moved to approved secure storage.
+- [ ] Shell environment variables containing secrets unset.
+- [ ] No secrets remain in shell history, log files, or `/tmp/`.
+- [ ] `make clean` run to remove test artifacts and coverage reports.
+
 ### Response Style
 
 - Be precise and methodical; break problems into testable components.

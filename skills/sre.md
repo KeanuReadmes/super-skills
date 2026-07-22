@@ -219,6 +219,101 @@ On failure: retrieve the full failed-job log → diagnose (IaC syntax error, pol
 
 **"Done" means**: local validation passes **and** the CI/CD pipeline is green. A passing `terraform validate` alone is not sufficient.
 
+#### 6. Session Teardown & Cleanup
+
+Run at the end of every task session. For SRE work this step is **mandatory** — under-provisioned or forgotten cloud resources are a cost and security incident waiting to happen.
+
+**Cloud resources — destroy everything provisioned for this task:**
+
+```bash
+# Terraform — destroy task workspace
+terraform workspace select <task-workspace>
+terraform destroy -auto-approve
+terraform workspace select default
+terraform workspace delete <task-workspace>
+
+# AWS — explicit instance/resource termination if not managed by IaC
+aws ec2 terminate-instances --instance-ids <id> --region <region>
+aws ec2 describe-instances --instance-ids <id> \
+  --query 'Reservations[].Instances[].State.Name'
+
+# GCP — delete preemptible/on-demand VMs
+gcloud compute instances delete <name> --zone <zone> --quiet
+
+# Azure — delete resource group containing all task resources
+az group delete --name <resource-group> --yes --no-wait
+
+# Kubernetes — delete task namespace and all its resources
+kubectl delete namespace <task-namespace> --wait=true
+```
+
+**Docker / container cleanup:**
+
+```bash
+docker compose down --volumes --remove-orphans
+docker rm -f $(docker ps -aq --filter "label=task=<task-name>") 2>/dev/null || true
+docker rmi $(docker images -q --filter "dangling=true") 2>/dev/null || true
+```
+
+**CI/CD — revoke task-scoped tokens:**
+
+- GitHub: `gh auth logout` (or delete the fine-grained PAT from
+  <https://github.com/settings/tokens>).
+- GitLab: revoke the token from **Settings → Access Tokens**.
+- Cloud service accounts: disable/delete the task-scoped SA:
+  `gcloud iam service-accounts disable <sa>@<project>.iam.gserviceaccount.com`
+  `aws iam delete-access-key --access-key-id <id> --user-name <user>`
+
+**Local credential cleanup:**
+
+```bash
+# Remove .env files and plaintext credential files written during session
+find . -name '.env*' -not -name '.env.example' -maxdepth 3 -print -delete
+rm -f /tmp/task-*.age /tmp/task-*.enc /tmp/kubeconfig-* /tmp/tf-creds-*
+
+# Unset exported environment variables in current shell
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+unset GOOGLE_APPLICATION_CREDENTIALS AZURE_CLIENT_SECRET
+
+# Clear shell history entries containing secrets (optional but recommended)
+history -c && history -w    # bash
+fc -p                        # zsh
+```
+
+**IaC state cleanup:**
+
+```bash
+make clean   # removes .terraform/, plan files, temp state, and build artifacts
+```
+
+**Verify no orphaned resources remain:**
+
+```bash
+# AWS — list all instances still running in the task account/region
+aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" \
+  --query 'Reservations[].Instances[].[InstanceId,Tags[?Key==`Name`].Value|[0]]' \
+  --output table
+
+# GCP — list all running instances in the project
+gcloud compute instances list --filter="status=RUNNING"
+
+# Azure — list all VMs in the task resource group
+az vm list --resource-group <resource-group> --output table
+```
+
+**Checklist before closing the session:**
+
+- [ ] IaC destroy completed and confirmed (no resources in task workspace).
+- [ ] All cloud instances/VMs terminated and confirmed stopped.
+- [ ] Kubernetes namespace and all task workloads deleted.
+- [ ] Docker containers, images, and volumes removed.
+- [ ] Task-scoped IAM keys, service accounts, and tokens revoked/deleted.
+- [ ] `.env` files and plaintext credential files deleted.
+- [ ] Encrypted credential files removed or moved to approved secret manager.
+- [ ] Shell environment variables containing secrets unset.
+- [ ] No secrets remain in shell history, log files, or `/tmp/`.
+- [ ] `make clean` run and IaC state left clean.
+
 ### Response Style
 
 - Be direct, precise, and opinionated. State tradeoffs clearly.
