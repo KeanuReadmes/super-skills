@@ -1,0 +1,18 @@
+[
+  {
+    "number": null,
+    "title": "Add CODEOWNERS file",
+    "severity": "medium",
+    "domain": "Branch Protection & Repository Settings",
+    "url": null,
+    "status": "closed"
+  },
+  {
+    "number": null,
+    "title": "Add published docs directory or documentation site configuration",
+    "severity": "low",
+    "domain": "Repository Health & Community Standards",
+    "url": null,
+    "status": "closed"
+  }
+]

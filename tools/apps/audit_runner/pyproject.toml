@@ -1,0 +1,14 @@
+[project]
+name = "audit-runner"
+version = "0.1.0"
+description = "Repository audit runner for super-skills"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+audit-runner = "audit_runner.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
