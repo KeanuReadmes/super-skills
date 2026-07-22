@@ -111,6 +111,77 @@ Self-validation pass before presenting:
 - Pre-commit hooks match installed tool versions.
 - `tools/` scripts work with `uv run` without extra setup.
 
+### Proactive Validation, Environment Assessment & CI/CD Monitoring
+
+Before running heavy test suites or declaring a quality pass, assess the execution environment and validate end-to-end — locally first, then on CI.
+
+#### 1. Local Resource Check
+
+Run before heavy test suites, browser-driver installs, or load tests:
+
+```bash
+free -h                          # Linux — available RAM
+vm_stat | grep 'Pages free'      # macOS — free pages (× 4096 = bytes)
+df -h .                          # disk space in current directory
+nproc                            # Linux CPU count
+sysctl -n hw.logicalcpu          # macOS CPU count
+```
+
+Flag early and pause if: RAM < 4 GB for Playwright/Cypress with multiple browsers, < 8 GB for parallel Selenium grids or k6 load tests, or disk < 5 GB for test artifacts and screenshots. Under-resourced environments produce flaky, misleading results — flag the constraint rather than running incomplete tests.
+
+#### 2. Cloud Offload Assessment
+
+If local resources are insufficient for the required test workload, check for cloud CLI access:
+
+```bash
+aws sts get-caller-identity 2>/dev/null && echo "AWS: authenticated"
+gcloud auth list 2>/dev/null | grep ACTIVE && echo "GCP: authenticated"
+az account show 2>/dev/null && echo "Azure: authenticated"
+```
+
+If authenticated and offload is warranted, offer to provision a remote test runner (e.g., AWS `c6i.2xlarge` spot, GCP preemptible VM, Azure spot VM). Always confirm cloud costs with the user before provisioning, use least-privileged credentials scoped to the task, and terminate instances immediately after the workload completes.
+
+If no credentials are present, ask which cloud provider the user uses and guide them through CLI install (`awscli`, `gcloud`, `az`) and `aws configure` / `gcloud auth login` / `az login`. Credentials must live in the CLI's standard credential store — **never in `.env` files, source code, or plaintext configs**.
+
+#### 3. Credentials & Secrets Handling
+
+When a workflow requires cloud keys, staging API tokens, test database credentials, or deployment keys:
+
+1. **Ask upfront** — State exactly what is needed and why before starting.
+2. **Approved storage only** — OS keychain, cloud secret managers (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault), or CI secret stores (GitHub Actions Secrets, GitLab CI Variables). For local encrypted files, use `age -p` or SOPS with a user-held passphrase; share the encrypted file path so the agent can decrypt at runtime.
+3. **Never** hardcode secrets in test fixtures, commit `.env` files, or log them in test output. Mask or anonymize PII in all test artifacts.
+
+#### 4. Local Validation Loop
+
+Before any push, run the full local test sequence and fix every failure:
+
+```bash
+make lint          # ruff / eslint + format check
+make test-unit     # fast unit tests
+make test-e2e      # e2e suite (with browsers / API)
+make test-performance  # load/perf baseline (if applicable)
+```
+
+Do not propose a push until every check passes locally. A failing test suite is a quality gate — fix it, don't skip it.
+
+#### 5. CI/CD Pipeline Monitoring
+
+After pushing, watch the pipeline and treat any quality gate failure as a blocker:
+
+```bash
+# GitHub Actions
+gh run watch                   # stream current run in real time
+gh run view --log-failed       # dump failed step logs
+
+# GitLab CI
+glab ci status                 # current pipeline status
+glab ci trace                  # stream live job output
+```
+
+On failure: retrieve the full failed-job log → diagnose (test failure, flaky test, env issue, coverage drop, missing secret, resource limit) → fix locally → re-run relevant test targets → push and re-watch. Repeat until green, or produce a clear blocker report if user input is required (missing secret, upstream environment unavailable, quota exceeded).
+
+**"Done" means**: all tests pass locally **and** CI/CD quality gates are green. A locally green test run alone is not sufficient.
+
 ### Response Style
 
 - Be precise and methodical; break problems into testable components.
