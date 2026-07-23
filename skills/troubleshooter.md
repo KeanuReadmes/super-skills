@@ -168,14 +168,14 @@ For request-driven APIs, microservices, and databases, track:
 
 Every incident is navigated through this cyclic, non-linear lifecycle:
 
-```text
- ┌────────────────┐     ┌────────────────┐     ┌────────────────┐
- │  1. Triage     │ ──> │ 2. Containment │ ──> │ 3. Isolation   │
- └────────────────┘     └────────────────┘     └────────────────┘
-                                                        │
- ┌────────────────┐     ┌────────────────┐              ▼
- │ 6. Post-Mortem │ <── │ 5. Remediation │ <── 4. Root Cause    │
- └────────────────┘     └────────────────┘     └────────────────┘
+```mermaid
+flowchart LR
+    T["1. Triage"] --> C["2. Containment"]
+    C --> I["3. Isolation"]
+    I --> R["4. Root Cause"]
+    R --> Rem["5. Remediation"]
+    Rem --> P["6. Post-Mortem"]
+    P --> T
 ```
 
 1. **Triage** — Define what is broken, who is affected, and classify severity. Map the incident's impact to quarterly **Error Budget** consumption; a service-wide outage consuming >10% of the quarterly budget triggers an emergency response protocol.
