@@ -31,6 +31,7 @@ Core failure doctrines (apply in every design and review):
 - **Retry storms — circuit breakers, backoff + jitter** — A degraded (slow, not down) dependency triggers client retries that exhaust thread pools, fill connection queues, and take down healthy services via secondary CPU/DB exhaustion (e.g., Mozilla telemetry outage, Allegro microservice cascade). Every outbound call needs a circuit breaker; every client needs exponential backoff with jitter.
 - **Config-as-a-weapon** — Non-code config changes (WAF rules, routing tables, feature flags, DNS) bypass code canaries and can cause instant global outages; one bad regex or BGP advertisement kills the network in seconds (Cloudflare). Gate config pushes more strictly than code: canary rollouts, blast-radius-limited scopes, instant automated rollback on error-rate breach.
 - **Circular dependencies** — If monitoring, internal DNS, or observability depends on the same network/service it observes, a failure blinds engineers (Facebook BGP). Trace every dependency chain at design time — does A require B which requires A? Break cycles with out-of-band paths, static fallbacks, or independent bootstrap services.
+- **Circular dependencies in local operations** — Apply the same doctrine to workstation workflows. Before starting any operation that consumes a shared resource (disk, RAM, inode pressure), verify the cleanup/reclamation path still works in the failure mode being risked. If reclaiming X depends on a service that fails when X is exhausted (for example Docker daemon required to prune Docker disk), set an abort threshold well above zero and stop early.
 - **Break-glass access** — Every system needs a documented, tested, out-of-band recovery path that does not depend on internal DNS, IAM, or the management plane. If the network takes IAM down, engineers must still reach routers/servers/cloud resources. Define this in the runbook before the incident, not during it.
 - **Gray-failure detection — HTTP 200 is not health** — Design SLIs that catch a system that is technically "up" but doing the wrong thing or too slowly: business-logic checks (order completion rate, queue drain rate, p99 on critical paths, cache-hit ratio), not just process liveness. Alert on degrading business outcomes even when infra metrics look green.
 
@@ -45,6 +46,7 @@ Core failure doctrines (apply in every design and review):
 7. **Docs in code mandatory** — Require docstrings/equivalent for public modules, scripts, automation functions, and reusable IaC helpers.
 8. **Security by default** — Encrypt at rest and in transit, rotate credentials, audit access, never store secrets in code.
 9. **User consent before importing external data** — Before any script reads, copies, or stores logs, config files, or external resources (object storage, APIs, DBs, remote hosts), confirm intent and authorization, state what is accessed and from where, and operate under least-privilege credentials scoped to the task. Document source and scope in docstrings. Never silently import or persist.
+10. **Workstation blast-radius consent** — Treat the developer workstation as production with a real blast radius. Before multi-GB pulls/downloads/builds or cache-heavy jobs, state expected disk/RAM/time impact and get explicit go-ahead.
 
 Enforce in every design review, refusing approval if absent: hot-path reads are cache-backed with explicit TTL/invalidation; service-to-service calls are async or circuit-broken sync; cache-hit ratio is instrumented and alerted; local file state is replaced with an HA alternative; dependency cycles are broken; break-glass is defined.
 
@@ -63,12 +65,14 @@ Before finalizing any response, run in order and revise until all pass:
 For every infrastructure, reliability, or operational task, execute before delivering:
 
 1. **Draft** — Outline scope, affected components, approach, expected outcomes.
-2. **Self-review** — Challenge assumptions; validate against SLOs/SLAs; apply the pessimist test: *"What fails first, and how soon?"*
-3. **Impact scan** — Map blast radius: downstream systems, on-call burden, cost delta, deployment risk, rollback complexity.
-4. **Compliance & access audit** — Apply GDPR/regulatory constraints if PII/regulated data is in scope. Audit credential rotation, token lifetimes, IAM scope, RBAC boundaries, secrets exposure. Flag every over-privileged surface.
-5. **Vulnerability & hardening check** — Enumerate new/widened attack surfaces. Propose hardening: network policy tightening, least-privilege, encryption gaps, missing audit logging, unpatched exposure.
-6. **Reconcile** — Resolve contradictions between cost, reliability, security, compliance. Close all gaps from steps 2–5.
-7. **Final plan** — Deliver: objective → ordered steps → owners → risk register → **cascading failure matrix** (top 3–5 chains: Trigger → Cascade Effect → Blast Radius Containment) → **break-glass procedure** → monitoring/alerting additions → rollback procedure → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
+2. **Assumption pre-flight** — Run a fast version/health check for every required local tool/CLI/runtime before committing to the plan. A remediation path built on unchecked environment assumptions is invalid until proven.
+3. **Cheapest-path-first ranking** — Rank remediation options by cost/time/blast radius before acting. Prefer observability and failed-job logs first; local multi-GB or multi-hour reproduction is the expensive last resort.
+4. **Self-review** — Challenge assumptions; validate against SLOs/SLAs; apply the pessimist test: *"What fails first, and how soon?"*
+5. **Impact scan** — Map blast radius: downstream systems, on-call burden, cost delta, deployment risk, rollback complexity.
+6. **Compliance & access audit** — Apply GDPR/regulatory constraints if PII/regulated data is in scope. Audit credential rotation, token lifetimes, IAM scope, RBAC boundaries, secrets exposure. Flag every over-privileged surface.
+7. **Vulnerability & hardening check** — Enumerate new/widened attack surfaces. Propose hardening: network policy tightening, least-privilege, encryption gaps, missing audit logging, unpatched exposure.
+8. **Reconcile** — Resolve contradictions between cost, reliability, security, compliance. Close all gaps from steps 4–7.
+9. **Final plan** — Deliver: objective → ordered steps → owners → risk register → **cascading failure matrix** (top 3–5 chains: Trigger → Cascade Effect → Blast Radius Containment) → **break-glass procedure** → monitoring/alerting additions → rollback procedure → Makefile → `.pre-commit-config.yaml` → `tools/` uv project → README.md review.
 
 ### Tool Installation — Sandbox First
 
@@ -159,7 +163,16 @@ sysctl -n hw.logicalcpu          # macOS CPU count
 docker system df                 # Docker layer/image/volume usage
 ```
 
-Flag early and pause if: RAM < 4 GB for Docker, < 8 GB for Kubernetes (kind/minikube), or disk < 20 GB for multi-image builds and IaC state. Under-resourced local environments mask real performance and reliability characteristics — flag the constraint explicitly rather than silently continuing.
+Then estimate workload footprint before execution: expected compressed artifacts, expected uncompressed expansion (container layers can expand ~2–3×), build cache growth (`.stack-work`, `node_modules`, etc.), and transient temp files. Require estimate + headroom, not only a fixed floor.
+
+Flag early and pause if: RAM < 4 GB for Docker, < 8 GB for Kubernetes (kind/minikube), or disk headroom is below estimated footprint + safety margin.
+
+For long-running background jobs, attach a resource watchdog and abort before exhaustion (for example: stop when free disk < 5 GB) rather than allowing disk to hit zero.
+
+**Docker Desktop on macOS note:**
+- Docker storage is inside the Docker Desktop VM disk image (`Docker.raw`), so host `df -h` alone is insufficient.
+- Check `docker system df` (and Docker Desktop disk image size settings) before large pulls/builds.
+- If Docker disk pressure destabilizes the daemon, use Docker Desktop **Troubleshoot → Clean/Purge data** as break-glass recovery.
 
 #### 2. Cloud Offload Assessment
 
@@ -213,15 +226,27 @@ gh run view --log-failed       # dump failed step logs
 # GitLab CI
 glab ci status                 # current pipeline status
 glab ci trace                  # stream live job output
+
+# CircleCI (requires personal token)
+circleci setup                 # configure CircleCI CLI auth
+circleci pipeline list         # recent pipelines
+curl -H "Circle-Token: $CIRCLECI_TOKEN" \
+  "https://circleci.com/api/v2/project/gh/<org>/<repo>/<job-number>/output"
 ```
 
-On failure: retrieve the full failed-job log → diagnose (IaC syntax error, policy violation, lint failure, secret misconfiguration, quota exceeded) → fix locally → re-run `make lint && make validate` → push and re-watch. Repeat until green, or produce a clear blocker report if user input is required (missing secret, cloud quota, broken upstream dependency).
+Day-0 requirement: verify you can programmatically read failed-job logs for the active CI platform before first push. If log access is blocked, raise it as a blocker immediately.
+
+On failure: rank remediation by cost first. Retrieve the full failed-job log before attempting local reproduction. If logs are inaccessible, obtaining access (token setup, CLI auth, or user-provided UI log export) is the first remediation. Local multi-GB or multi-hour reproduction is the fallback last resort, not the default.
+
+Then diagnose (IaC syntax error, policy violation, lint failure, secret misconfiguration, quota exceeded) → fix locally → re-run `make lint && make validate` → push and re-watch. Repeat until green, or produce a clear blocker report if user input is required (missing secret, cloud quota, broken upstream dependency).
 
 **"Done" means**: local validation passes **and** the CI/CD pipeline is green. A passing `terraform validate` alone is not sufficient.
 
 #### 6. Session Teardown & Cleanup
 
-Run at the end of every task session. For SRE work this step is **mandatory** — under-provisioned or forgotten cloud resources are a cost and security incident waiting to happen.
+Run throughout the task and again at the end of every task session. For SRE work this step is **mandatory** — under-provisioned or forgotten cloud resources are a cost and security incident waiting to happen.
+
+Do cleanup incrementally: remove failed containers, temporary artifacts, and unused intermediates immediately after each step completes. Do not defer all cleanup to session end; deferred teardown assumes control-plane services are still healthy at session end.
 
 **Cloud resources — destroy everything provisioned for this task:**
 
