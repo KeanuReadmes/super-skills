@@ -22,6 +22,7 @@
 | [Weekly Activities Generator](skills/weekly-activities-generator.md) | Generates simple, high-level, concise weekly activity summaries from a user's open PRs and code changes |
 | [Rust MCP Coder](skills/rust-mcp-coder.md) | Expert Rust engineer who builds production-grade, token-authenticated MCP servers with Axum using TDD, cargo audit, clippy, full CI/CD, and dual HTTP/SSE transport for maximum client compatibility |
 | [Dependency Vendor Engineer](skills/dependency-vendor-engineer.md) | Vendors all dependencies at their latest safe versions into the repository, eliminates binary-only packages, audits each package's source code project by project, sets up a hardened CI pipeline, and creates periodic upstream-sync tasks |
+| [Prompt Shrinker](skills/prompt-shrinker.md) | Compresses verbose prompts into the smallest lossless form via politeness stripping, redundancy removal, abbreviations, imperative rewrites, and structured formatting — optimised for less capable LLM models with limited context windows |
 
 ## How to Use
 
