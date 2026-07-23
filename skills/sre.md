@@ -130,14 +130,28 @@ SRE tools touch cloud providers, container runtimes, and network infrastructure.
 
 **Never install `kubectl`, `helm`, or cloud CLIs system-wide without version pinning.** Version mismatches vs. cluster API cause silent failures. Use Docker-wrapped versions or `asdf`.
 
+### Investigation & Reconnaissance Playbook (Read-Only First)
+
+For incident analysis, drift checks, and operational assessments, default to a discovery workflow before any build/provisioning workflow.
+
+1. **Start auth at t=0 in parallel** — Kick off SSO/device-flow/cloud auth immediately and continue repo/document mining while waiting for user interaction. Capture auth output unbuffered to a file so device URLs/codes are not lost in buffered pipelines.
+2. **Evidence order (low-cost to high-cost)** — `docs/postmortems` → config management (`ansible`, `group_vars`, env overlays) → IaC state/maps → live cloud/runtime state. Treat disagreement between layers as a finding, not noise.
+3. **Move query to credential boundary** — Never copy secrets across boundaries when execution can move instead. Prefer running the query where credentials already live (host environment, workload container, ECS/Kubernetes exec context, app runtime driver) over extracting secrets to a different machine/session.
+4. **Use cheap evidence first** — Prefer metadata/statistics/sampled windows over full scans or broad pulls: planner stats/histograms, cache hit/miss metrics, first/last log timestamps, bounded log windows, targeted API fields.
+5. **Defensive session defaults** — For investigative DB sessions, set protective guardrails (`statement_timeout`, explicit `application_name`, read-only transaction mode where possible) before running analysis queries.
+6. **Version-drift probes before deep queries** — Verify extension/schema/version assumptions first (for example extension column names, counter reset timestamps) before executing expensive or brittle diagnostics.
+7. **Permission-denial protocol** — Expect denied actions. Prefer single-purpose read-only commands that are easy to authorize. If two attempts on the same goal are blocked, stop and present options requiring user choice/escalation instead of repeated retries.
+
 ### Validation & Delivery Standards
 
-Every solution must be functional, verifiable, and operable. Alongside any config or IaC, always produce:
+Every **implementation** solution must be functional, verifiable, and operable. Alongside any config or IaC, always produce:
 
 1. **Makefile** — Root Makefile with self-documenting targets. Mandatory: `install`, `plan`, `apply`, `destroy`, `validate`, `lint`, `test`, `clean`, and `help` (prints all commands with descriptions).
 2. **Pre-commit hooks** — `.pre-commit-config.yaml` with stack-appropriate hooks (`terraform_validate`/`terraform_fmt`/`tflint`, `hadolint`, `yamllint`, `shellcheck`, `ansible-lint`). Always include secrets scanning (`detect-secrets` or `gitleaks`), trailing-whitespace, and end-of-file-fixer. Pin hook versions.
 3. **Test scripts under `tools/`** — Standalone validation, smoke-test, cost-estimation, and drift-detection scripts as a Python `uv` project under `tools/`, with `tools/pyproject.toml` (`[project]` metadata, `[project.scripts]` entry points, declared deps). Runnable via `uv run <script-name>` with no manual `pip install`.
 4. **README.md review** — Update `README.md` for every deliverable: purpose, prerequisites (CLI tool versions, cloud credentials), `make install`, `make plan`, `make apply`, `make validate`, `make test`, `pre-commit install`, and runbook references.
+
+For **read-only investigation tasks**, replace implementation deliverables with: scope, evidence inventory, findings with confidence level, contradictions across evidence layers, explicit blockers, and next-step options.
 
 Self-validation pass before presenting:
 - IaC is syntactically correct and would pass `validate`/`lint`.
