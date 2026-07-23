@@ -154,8 +154,10 @@ If the project lives in a skill collection repo, add an entry to the root `READM
 
 - **Protocol-first** — Start from the MCP spec. Every field, error code, and capability flag must match exactly; non-compliant servers silently break clients.
 - **Security by design** — Token auth, constant-time comparison, no secrets in source, rate limiting, input size bounds are non-negotiable defaults.
+- **Memory safety with intent** — Use ownership/borrowing consciously, clone heap data only when semantic independence is required, and avoid unnecessary allocations.
 - **Fail loudly** — Missing `MCP_AUTH_TOKEN` must refuse startup with a clear message, never silently accept unauthenticated requests. Unknown JSON-RPC method returns `MethodNotFound`, never panics or hangs.
 - **Test-first, always** — Writing tests before code guarantees protocol compliance: an `initialize` test documents the contract; a missing-token test documents the security invariant.
+- **Defensive invariants** — Validate all external input, encode assumptions with assertions, and keep references scoped so borrowed data never outlives owners.
 - **No local file state** — Session state, tool results, and caches use in-memory structures (or Redis for distributed deployments). Never write to the filesystem at runtime unless file I/O is the tool's explicit purpose.
 - **Docstrings are contracts** — `///` on public items is the first documentation for contributors and the source of each tool's `description`. Treat as API contracts.
 - **Conventional Commits** — Every commit uses the format; scope (`feat(tools):`, `fix(auth):`, `test(protocol):`) narrows the blast radius in changelogs and bisects.
@@ -442,6 +444,8 @@ pretty_assertions = "1"
 6. **Version-pin all CI actions** — Every `uses:` references a pinned commit SHA or explicit version tag. Never `@main` or `@latest`.
 7. **Docstrings are user documentation** — A tool's `description` is shown verbatim to the model. Write it for a non-technical user: what it does, its parameters, its return.
 8. **Use Conventional Commits** — Format `type(scope): description`. Every commit includes `Co-authored-by: GitHub Copilot <copilot@github.com>` (or the appropriate AI tool trailer).
+9. **Treat distributed assumptions as false** — Networks fail, latency spikes, and topologies change; every outbound dependency gets deadlines, retries with jitter, and explicit fallback behavior.
+10. **Never ship unbounded collections** — Paginate tool outputs, cap vector/map growth, and enforce request/body/response size limits to prevent memory exhaustion and DoS.
 
 ---
 
@@ -473,7 +477,8 @@ For every MCP server task, execute before delivering a final answer:
 7. **Pre-commit audit** — Confirm `.pre-commit-config.yaml` has trailing-whitespace, end-of-file-fixer, check-yaml, check-toml, `cargo fmt --check`, `cargo clippy`, `cargo audit`, secrets scan.
 8. **Makefile audit** — Confirm all eight targets work end-to-end: `install`, `run`, `test`, `lint`, `audit`, `coverage`, `clean`, `help`.
 9. **Documentation audit** — README covers purpose, all env vars (type, default, required/optional), `make install`, `make run`, `make test`, `make lint`, client config for at least Claude Desktop, VS Code, and Cursor.
-10. **Final delivery** — Present: MCP surface spec → test files → module implementations → `Cargo.toml` → `Makefile` → `.pre-commit-config.yaml` → `ci.yml` → `release.yml` → `README.md`.
+10. **Behavior-level coverage** — Add ATDD/BDD-style end-to-end scenarios for critical MCP flows (initialize, auth failure, tool execution errors, recovery) in addition to unit/integration tests.
+11. **Final delivery** — Present: MCP surface spec → test files → module implementations → `Cargo.toml` → `Makefile` → `.pre-commit-config.yaml` → `ci.yml` → `release.yml` → `README.md`.
 
 ---
 
