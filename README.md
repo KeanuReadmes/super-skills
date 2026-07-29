@@ -23,6 +23,7 @@
 | [Rust MCP Coder](skills/rust-mcp-coder.md) | Expert Rust engineer who builds production-grade, token-authenticated MCP servers with Axum using TDD, cargo audit, clippy, full CI/CD, and dual HTTP/SSE transport for maximum client compatibility |
 | [Dependency Vendor Engineer](skills/dependency-vendor-engineer.md) | Vendors all dependencies at their latest safe versions into the repository, eliminates binary-only packages, audits each package's source code project by project, sets up a hardened CI pipeline, and creates periodic upstream-sync tasks |
 | [Prompt Shrinker](skills/prompt-shrinker.md) | Compresses verbose prompts into the smallest lossless form via politeness stripping, redundancy removal, abbreviations, imperative rewrites, and structured formatting — optimised for less capable LLM models with limited context windows |
+| [Code Quality Agent](skills/code-quality-agent.md) | Autonomous agent that discovers and runs the project's existing code quality tools (linters, formatters, type checkers, vulnerability scanners), fixes every reported issue, and updates libraries scoped to the user's conversation — with full opt-out support |
 
 ## How to Use
 
@@ -382,6 +383,36 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 | [Renovate](https://github.com/renovatebot/renovate) | Automated dependency update PRs with vendor support | `npx renovate --dry-run` |
 | [Dependabot](https://docs.github.com/en/code-security/dependabot) | GitHub-native dependency update and security alerts | Configure via `.github/dependabot.yml` |
 | [mitmproxy](https://mitmproxy.org/) | Intercept and inspect outbound network calls during sandbox runtime profiling | `docker run --rm -v $(pwd):/work -p 8080:8080 mitmproxy/mitmproxy mitmproxy` |
+
+---
+
+### 🧹 Code Quality Agent
+
+| Tool | Purpose | Sandbox Install |
+|------|---------|----------------|
+| [ruff](https://github.com/astral-sh/ruff) | Python linter and formatter (replaces flake8, isort, black) | `uv tool install ruff` |
+| [mypy](https://mypy-lang.org/) | Python static type checker | `uv venv .venv && uv pip install mypy` |
+| [pylint](https://pylint.readthedocs.io/) | Python code analysis and convention checks | `uv venv .venv && uv pip install pylint` |
+| [pip-audit](https://pypi.org/project/pip-audit/) | Python dependency vulnerability audit | `uv tool install pip-audit` |
+| [ESLint](https://eslint.org/) | JavaScript/TypeScript linter | `npm install --save-dev eslint` |
+| [Prettier](https://prettier.io/) | Code formatter (JS/TS/JSON/YAML/Markdown) | `npm install --save-dev prettier` |
+| [TypeScript (`tsc`)](https://www.typescriptlang.org/) | TypeScript type checking | `npm install --save-dev typescript` |
+| [npm audit](https://docs.npmjs.com/cli/commands/npm-audit) | Node.js dependency vulnerability audit | `npm audit` |
+| [clippy](https://github.com/rust-lang/rust-clippy) | Rust linter — always run with `-- -D warnings` | `rustup component add clippy` |
+| [rustfmt](https://github.com/rust-lang/rustfmt) | Rust code formatter | `rustup component add rustfmt` |
+| [cargo-audit](https://rustsec.org/) | Rust dependency vulnerability scanner | `cargo install cargo-audit --locked` |
+| [cargo-nextest](https://nexte.st/) | Fast Rust test runner | `cargo install cargo-nextest --locked` |
+| [golangci-lint](https://golangci-lint.run/) | Go meta-linter (vet, staticcheck, errcheck, …) | `docker run --rm -v $(pwd):/app golangci/golangci-lint golangci-lint run` |
+| [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck) | Go vulnerability scanner | `go install golang.org/x/vuln/cmd/govulncheck@latest` |
+| [Semgrep](https://semgrep.dev/) | Multi-language SAST with auto-fix support | `docker run --rm -v $(pwd):/src semgrep/semgrep semgrep scan --config=auto` |
+| [Trivy](https://aquasecurity.github.io/trivy/) | Dependency and container vulnerability scanning | `docker run --rm -v $(pwd):/work aquasec/trivy fs /work` |
+| [pre-commit](https://pre-commit.com/) | Run all configured pre-commit hooks | `uv tool install pre-commit` |
+| [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets baseline scanning and pre-commit hook | `uv tool install detect-secrets` |
+| [gitleaks](https://github.com/gitleaks/gitleaks) | Detect secrets in git history and staged changes | `docker run --rm -v $(pwd):/path zricethezav/gitleaks detect` |
+| [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) | Markdown documentation linting | `npx markdownlint-cli` |
+| [yamllint](https://github.com/adrienverge/yamllint) | YAML configuration file linting | `uv tool install yamllint` |
+| [shellcheck](https://www.shellcheck.net/) | Shell script static analysis | `docker run --rm -v $(pwd):/mnt koalaman/shellcheck` |
+| [hadolint](https://github.com/hadolint/hadolint) | Dockerfile linting | `docker run --rm -i hadolint/hadolint < Dockerfile` |
 
 </details>
 
