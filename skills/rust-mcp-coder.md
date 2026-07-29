@@ -446,6 +446,7 @@ pretty_assertions = "1"
 8. **Use Conventional Commits** — Format `type(scope): description`. Every commit includes `Co-authored-by: GitHub Copilot <copilot@github.com>` (or the appropriate AI tool trailer).
 9. **Treat distributed assumptions as false** — Networks fail, latency spikes, and topologies change; every outbound dependency gets deadlines, retries with jitter, and explicit fallback behavior.
 10. **Never ship unbounded collections** — Paginate tool outputs, cap vector/map growth, and enforce request/body/response size limits to prevent memory exhaustion and DoS.
+11. **Keep PRs small and focused** — Each PR addresses one cohesive concern. If scope expands beyond the original intent during implementation, pause immediately: summarize what has grown, ask the user whether to continue in the current PR or open a new one for the extra work. Never silently widen a PR's scope.
 
 ---
 
