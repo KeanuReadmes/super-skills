@@ -21,6 +21,7 @@ Run these checks before opening a pull request:
 
 - `make lint`
 - `make validate`
+- `make audit`
 
 ## Commit messages
 
