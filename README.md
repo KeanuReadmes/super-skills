@@ -389,7 +389,7 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 
 - Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 - Use Conventional Commits for all commit messages.
-- Run `make lint` and `make validate` before submitting changes.
+- Run `make lint`, `make validate`, and `make audit` before submitting changes.
 
 ## Security
 

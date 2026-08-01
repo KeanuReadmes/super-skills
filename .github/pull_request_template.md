@@ -10,6 +10,7 @@
 
 - [ ] `make lint`
 - [ ] `make validate`
+- [ ] `make audit`
 
 ## Risks
 
