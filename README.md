@@ -25,6 +25,7 @@
 | [Dependency Vendor Engineer](skills/dependency-vendor-engineer.md) | Vendors all dependencies at their latest safe versions into the repository, eliminates binary-only packages, audits each package's source code project by project, sets up a hardened CI pipeline, and creates periodic upstream-sync tasks |
 | [Prompt Shrinker](skills/prompt-shrinker.md) | Compresses verbose prompts into the smallest lossless form via politeness stripping, redundancy removal, abbreviations, imperative rewrites, and structured formatting — optimised for less capable LLM models with limited context windows |
 | [Code Quality Agent](skills/code-quality-agent.md) | Autonomous agent that discovers and runs the project's existing code quality tools (linters, formatters, type checkers, vulnerability scanners), fixes every reported issue, and updates libraries scoped to the user's conversation — with full opt-out support |
+| [Local Module Coder](skills/local-module-coder.md) | Correctness-first coder for small, local module changes using strict test-first development, frequent tool-based validation, typo/name checks, and minimal blast radius execution |
 
 ## How to Use
 
