@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD013 MD033 -->
 # super-skills
 
 **Super Skills** is a collection of expert-level system prompts designed to supercharge AI assistants (Claude, Gemini, Cursor, OpenAI) into specialized senior engineers. Each skill gives the AI a deep, opinionated persona with clear behavioral guidelines, so you get expert-level assistance — not generic answers.
