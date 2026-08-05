@@ -178,6 +178,56 @@ OUTPUT_FORMAT: { summary: "...", confidence: High|Medium|Low|Speculative, unveri
 TOKEN_LIMIT: 2000 input / 500 output
 ```
 
+#### 6. Bias Analysis & Neutral Rewrite
+
+This two-phase template runs on any fetched source content before that content enters the evidence pipeline. Phase 1 surfaces author bias; Phase 2 rewrites the content neutrally. Both phases are worker tasks — the controller reviews the substitution log for quality before the neutralized text is admitted to the evidence registry.
+
+**Phase 1 — Bias Analysis:**
+
+```
+TASK: bias_analysis
+SOURCE_URL: {url}
+SOURCE_TEXT: {fetched_plain_text}
+INSTRUCTIONS:
+  1. Scan the text for the following bias markers. For each marker found, quote the exact passage and label it:
+     - LOADED_LANGUAGE: emotionally charged words or phrases that presuppose a conclusion
+     - FRAMING: selective emphasis that favors one interpretation without stating alternatives
+     - SELECTIVE_OMISSION: factual context that an objective account would include but is absent
+     - FALSE_BALANCE: presenting fringe views as equivalent to well-supported positions
+     - APPEAL_TO_AUTHORITY: citing authority to substitute for evidence
+     - HEDGING_ASYMMETRY: stronger hedging on claims that oppose the author's position than on claims that support it
+  2. For each identified instance, record: { passage, marker_type, explanation }
+  3. Assign an overall bias score: Low (0–2 instances) | Moderate (3–5) | High (6+).
+  4. Identify the apparent direction of bias (e.g., pro-X, anti-Y, institutional, commercial, ideological) with a one-sentence rationale.
+OUTPUT_FORMAT: JSON { bias_score: Low|Moderate|High, bias_direction: "...", instances: [{passage, marker_type, explanation}] }
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+**Phase 2 — Neutral Rewrite:**
+
+```
+TASK: neutral_rewrite
+SOURCE_URL: {url}
+ORIGINAL_TEXT: {fetched_plain_text}
+BIAS_REPORT: {output_of_bias_analysis}
+INSTRUCTIONS:
+  1. For each bias instance in BIAS_REPORT, rewrite only the flagged passage to remove the bias marker while preserving the factual content. Do not alter passages not flagged.
+  2. Apply these rewrite rules per marker type:
+     - LOADED_LANGUAGE: replace with a neutral term carrying the same denotative meaning
+     - FRAMING: add the missing perspective in one clause (e.g., "while others argue...")
+     - SELECTIVE_OMISSION: insert the missing factual context as a parenthetical if verifiable, or flag [CONTEXT_NEEDED]
+     - FALSE_BALANCE: qualify the fringe view with its evidential standing (e.g., "a minority view not supported by...")
+     - APPEAL_TO_AUTHORITY: replace with the underlying evidence if available; otherwise flag [EVIDENCE_NEEDED]
+     - HEDGING_ASYMMETRY: normalize hedge strength across claims
+  3. Produce the full rewritten text with substitutions inline.
+  4. Append a substitution log: each row maps original_passage → rewritten_passage with rule applied.
+  5. Do not introduce new claims. Do not remove facts. Do not editorialize.
+OUTPUT_FORMAT: { rewritten_text: "...", substitution_log: [{original, rewritten, rule}] }
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+**Controller review after Phase 2:** Scan the substitution log for any rewrite that changes factual meaning (not just tone). Revert those entries and flag them as `[REWRITE_CONTESTED: requires human review]`.
+
 ---
 
 ### Anti-Redundancy Rules
@@ -335,6 +385,245 @@ Budget used: X%
 
 ---
 
+### Academic Research Mode
+
+Activate this mode when the research question is academic in nature (literature reviews, thesis preparation, conference proposals, methodology design, hypothesis generation). In Academic Research Mode, the controller selects from the following specialized subtask templates in addition to the standard ones. Workers execute them with the same token and cost limits as standard templates.
+
+**Activation syntax:**
+```
+Use the cost-effective-deep-research skill.
+Mode: academic
+Field: {field_of_study}
+Focus: {specific_subfield_or_topic}
+Experience level: {undergraduate | postgraduate | advanced | expert}
+```
+
+#### AR-1. Topic Brainstorm
+
+```
+TASK: academic_topic_brainstorm
+FIELD: {field_of_study}
+FOCUS: {specific_subfield}
+YEAR: 2025
+INSTRUCTIONS:
+  Generate 5 cutting-edge research topics within FIELD/FOCUS that are particularly relevant in YEAR.
+  For each topic provide:
+    - Topic Title: specific, not generic
+    - Why It Matters in 2025: 2–3 sentences on current relevance, real-world impact, or urgency
+    - One Challenge: a single methodological, ethical, technical, or resource-based obstacle
+    - One Key Question: focused, answerable, with meaningful implications
+  Ensure topics span different sub-areas for breadth. Prioritize practical implications over purely theoretical concerns.
+OUTPUT_FORMAT: numbered list 1–5, four labeled components each
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-2. Literature Review
+
+```
+TASK: academic_literature_review
+FIELD: {field_of_study}
+FOCUS: {specific_subfield}
+DATE_RANGE: 2020–2025
+TOP_N: 5
+INSTRUCTIONS:
+  Identify the top 5 most significant peer-reviewed studies on FIELD/FOCUS published within DATE_RANGE.
+  Selection criteria (in order): citation count, journal impact factor, methodological rigor, theoretical contribution, field influence.
+  For each study document:
+    - Full citation (authors, year, journal, title, volume, pages, DOI/URL)
+    - Theoretical framework employed
+    - Research methods (study design, participants, data collection, analytical approach)
+    - Primary findings with specific data points where available
+    - Limitations and gaps identified by the authors
+    - How the study advances or challenges existing theories
+    - Practical implications
+  After all 5 studies, provide a cross-study analysis:
+    - Common frameworks and methods
+    - Convergent and divergent findings
+    - Evolution of approaches 2020–2025
+    - Major unaddressed research gaps
+    - Recommendations for future research
+  Mark any citation you cannot verify with [UNVERIFIED — verify via Google Scholar / DOI lookup].
+OUTPUT_FORMAT: structured academic entries + cross-study analysis section
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-3. Research Question Builder
+
+```
+TASK: academic_research_questions
+FIELD: {field_of_study}
+FOCUS: {specific_subfield}
+YEAR: 2025
+INSTRUCTIONS:
+  Generate exactly 5 research questions exploring different dimensions of FIELD/FOCUS as they manifest in YEAR.
+  Each question must:
+    - Be tied to measurable or observable 2025 impacts
+    - Address a distinct dimension (no overlap)
+    - Be specific enough to guide empirical investigation
+    - Focus on causal relationships, trends, correlations, or comparative outcomes
+  For each question, develop one testable hypothesis that:
+    - Makes a clear, directional, falsifiable prediction about the 2025 impact
+    - Specifies measurable variables or factors
+    - Connects logically to its question
+OUTPUT_FORMAT: Research Question N: / Hypothesis N: pairs, 5 total
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-4. Historical Timeline
+
+```
+TASK: academic_timeline
+FIELD: {field_of_study}
+FOCUS: {specific_subfield}
+DATE_RANGE: 1990–2025
+INSTRUCTIONS:
+  Identify 10–15 transformative events, discoveries, or developments in FIELD/FOCUS within DATE_RANGE.
+  Prioritize lasting impact over temporary prominence.
+  For each event provide (strict chronological order):
+    - Year and event title
+    - What happened (2–3 sentences: theoretical development, empirical finding, or methodological innovation)
+    - Key people/organizations (names, roles, affiliations)
+    - Immediate implications (direct theoretical, methodological, or empirical impact)
+    - Broader implications (interdisciplinary, pedagogical, or long-term consequences)
+  Distinguish publication dates from dates research was actually conducted.
+  Note when developments were initially overlooked, when credit was disputed, or when parallel independent developments occurred.
+OUTPUT_FORMAT: chronological entries, four labeled components each
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-5. Gap Finder
+
+```
+TASK: academic_gap_finder
+SOURCES: {list_of_source_urls_or_summaries}
+FOCUS: {specific_research_question_or_subfield}
+INSTRUCTIONS:
+  Analyze SOURCES and identify 5 research gaps — areas where evidence is absent, methods are insufficient, populations are understudied, or findings are contradictory.
+  For each gap:
+    - Describe the gap precisely (1–2 sentences)
+    - Cite which sources reveal or imply it
+    - Propose one concrete experiment or study design that would address it (include: type of study, data needed, feasibility note)
+OUTPUT_FORMAT: numbered list 1–5, three labeled components each
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-6. Methodology Drafter
+
+```
+TASK: academic_methodology
+TOPIC: {research_topic}
+RESEARCH_QUESTION: {primary_research_question}
+EXPERIENCE_LEVEL: {undergraduate | postgraduate | advanced | expert}
+INSTRUCTIONS:
+  Draft a step-by-step methodology section covering:
+    1. Research design and rationale (qualitative / quantitative / mixed)
+    2. Data sources and collection strategy (databases, tools, participant criteria if applicable)
+    3. Analytical approach and techniques
+    4. Ethical considerations (consent, privacy, data handling, potential biases)
+    5. Logistical requirements and timeline
+    6. Expected outcomes and how they will be measured
+  Tailor detail level to EXPERIENCE_LEVEL.
+  Flag any step that requires institutional ethics approval as [ETHICS_REVIEW_REQUIRED].
+OUTPUT_FORMAT: numbered methodology steps with sub-bullets; one paragraph per step
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-7. Credibility Check
+
+```
+TASK: academic_credibility_check
+SOURCE_URL: {url_or_citation}
+SOURCE_TEXT: {abstract_or_excerpt}
+FOCUS: {research_question_or_topic}
+INSTRUCTIONS:
+  Evaluate the source on the following dimensions, scoring each 1–10:
+    - Bias: 10 = fully neutral, 1 = heavily biased (cite specific evidence for score)
+    - Evidence quality: 10 = robust empirical support, 1 = anecdotal or unverified
+    - Relevance: 10 = directly addresses FOCUS, 1 = tangential
+  Provide an overall credibility score (average) and a one-sentence verdict.
+  Suggest 3 alternative sources of higher credibility for the same claim or topic.
+OUTPUT_FORMAT: { bias: N/10, evidence: N/10, relevance: N/10, overall: N/10, verdict: "...", alternatives: [{title, url, reason}] }
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-8. Hypothesis Generator
+
+```
+TASK: academic_hypothesis_generator
+RESEARCH_QUESTION: {specific_research_question}
+FIELD: {field_of_study}
+INSTRUCTIONS:
+  Generate 5 testable hypotheses for RESEARCH_QUESTION.
+  Each hypothesis must specify:
+    - Independent variable(s)
+    - Dependent variable(s)
+    - Predicted direction of relationship
+    - Validation method (how it could be tested with available 2025 data/methods)
+    - One potential confound to control for
+OUTPUT_FORMAT: numbered list 1–5, five labeled components each
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-9. Interdisciplinary Linker
+
+```
+TASK: academic_interdisciplinary_linker
+TOPIC_A: {first_field_or_concept}
+TOPIC_B: {second_field_or_concept}
+INSTRUCTIONS:
+  Identify 4 substantive connections between TOPIC_A and TOPIC_B — where methods, findings, or frameworks from one illuminate the other.
+  For each connection:
+    - Describe the link (1–2 sentences)
+    - Cite at least one existing study or precedent that demonstrates or suggests the connection
+    - Propose one hybrid 2025 research project that operationalizes the connection
+OUTPUT_FORMAT: numbered list 1–4, three labeled components each
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-10. Summary & Future Research
+
+```
+TASK: academic_summary_future
+RESEARCH_FINDINGS: {summary_of_completed_research_or_paper}
+FIELD: {field_of_study}
+FOCUS: {specific_subfield}
+INSTRUCTIONS:
+  1. Summarize the key findings in 150–200 words. Every claim must cite its source from RESEARCH_FINDINGS.
+  2. Identify 3–5 future research directions, each addressing a gap or limitation surfaced by the current findings.
+  3. For each future direction specify: the gap it addresses, the proposed method, and the expected contribution.
+  4. Recommend 3–5 resources (journals, databases, institutions) for deeper investigation.
+OUTPUT_FORMAT: Summary paragraph + numbered future directions + resources list
+TOKEN_LIMIT: 2000 input / 500 output
+```
+
+#### AR-11. Conference Proposal Scaffold
+
+```
+TASK: academic_conference_proposal
+INSTRUCTIONS:
+  Conduct a one-question-at-a-time Q&A session to gather the following information:
+    Q1: What is the title or main research question your paper will address?
+    Q2: What field and subfield does it belong to?
+    Q3: What gap in the existing literature does it fill?
+    Q4: What methodology did you use?
+    Q5: What are your key findings or expected contributions?
+    Q6: What are the practical or theoretical implications?
+    Q7: What is the target conference and its word/page limit for proposals?
+  Ask Q1 first. Wait for response. Then ask Q2. Continue sequentially.
+  After all answers are received, draft a structured conference paper proposal using formal academic language, respecting the stated word limit, with sections: Title, Research Problem, Methodology, Findings, Implications, Contribution to Field.
+OUTPUT_FORMAT: Q&A phase followed by complete proposal draft
+TOKEN_LIMIT: 2000 input / 500 output per turn
+```
+
+**Academic Mode output contract additions:** When Academic Research Mode is active, append the following sections to the standard output contract:
+
+- **Research Questions & Hypotheses** — the 5 questions and hypotheses generated (if AR-3 was invoked).
+- **Literature Review Summary** — cross-study analysis from AR-2 (if invoked).
+- **Methodology Notes** — any methodology steps flagged `[ETHICS_REVIEW_REQUIRED]`.
+- **Credibility Audit Log** — scores and verdicts for all sources that underwent AR-7 checking.
+
+---
+
 ## How to Use This Skill
 
 ### Basic Invocation
@@ -380,6 +669,20 @@ Time limit: 10 minutes
 Priority: Primary sources (official blogs, papers, policy documents) only. Do not rely on secondary commentary.
 ```
 
+**Example 4 — Academic research (Advanced mode):**
+```
+Use the cost-effective-deep-research skill.
+Mode: academic
+Field: Cognitive linguistics
+Focus: Metaphor theory
+Experience level: advanced
+
+Research question: What are the dominant metaphorical frames used by CEOs in annual reports during financial downturns versus growth years, and what linguistic patterns differentiate them?
+Budget cap: $2.00
+Time limit: 20 minutes
+Priority: Credibility — peer-reviewed sources only. Run AR-2 (literature review 2020–2025), AR-3 (research questions), AR-7 (credibility check all sources), and template 6 (bias analysis + neutral rewrite) on all fetched sources.
+```
+
 ### Tips for Best Results
 
 - **Set a realistic budget cap.** $1–2 covers most focused research questions with 3–5 sub-questions. Increase for broad surveys.
@@ -387,3 +690,5 @@ Priority: Primary sources (official blogs, papers, policy documents) only. Do no
 - **Answer clarification batches promptly.** Skipping them triggers default assumptions that may not match your intent.
 - **Review the Cost Ledger.** If a session used less than 50% of the budget, consider deepening one sub-question in a follow-up session rather than raising the cap next time.
 - **Use `[EVIDENCE_GAP]` items as follow-up seeds.** Items flagged as evidence gaps are prime candidates for targeted follow-up research sessions.
+- **In Academic Research Mode, run AR-7 (Credibility Check) on every source before it enters the evidence pipeline.** This is especially important for interdisciplinary research where source quality varies widely across fields.
+- **Use the Bias Analysis & Neutral Rewrite template (template 6) on any source that scores Moderate or High bias in AR-7.** Neutralized text enters the evidence registry; the original text and substitution log are preserved in the session for transparency.
