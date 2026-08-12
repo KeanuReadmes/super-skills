@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD013 MD033 -->
+<!-- markdownlint-disable MD013 MD033 MD060 -->
 # super-skills
 
 **Super Skills** is a collection of expert-level system prompts designed to supercharge AI assistants (Claude, Gemini, Cursor, OpenAI) into specialized senior engineers. Each skill gives the AI a deep, opinionated persona with clear behavioral guidelines, so you get expert-level assistance — not generic answers.
@@ -6,7 +6,7 @@
 ## Available Skills
 
 | Skill | Description |
-|---|---|
+| --- | --- |
 | [SRE Engineer](skills/sre.md) | Site Reliability Engineer combining Infrastructure, Networking, Cybersecurity, DevOps, FinOps, and Disaster Recovery expertise with a pessimist mindset |
 | [QA Engineer](skills/qa-engineer.md) | Quality Assurance Engineer covering test strategy, automation, performance, accessibility, and CI quality gates |
 | [Backend Engineer](skills/backend-engineer.md) | Backend Engineer expert in API design, distributed systems, databases, messaging, security, and performance |
@@ -26,6 +26,7 @@
 | [Prompt Shrinker](skills/prompt-shrinker.md) | Compresses verbose prompts into the smallest lossless form via politeness stripping, redundancy removal, abbreviations, imperative rewrites, and structured formatting — optimised for less capable LLM models with limited context windows |
 | [Code Quality Agent](skills/code-quality-agent.md) | Autonomous agent that discovers and runs the project's existing code quality tools (linters, formatters, type checkers, vulnerability scanners), fixes every reported issue, and updates libraries scoped to the user's conversation — with full opt-out support |
 | [Local Module Coder](skills/local-module-coder.md) | Correctness-first coder for small, local module changes using strict test-first development, frequent tool-based validation, typo/name checks, and minimal blast radius execution |
+| [Coder](skills/coder.md) | Autonomous delivery orchestrator that selects issues, refines architecture and acceptance criteria, delegates to specialist skills, enforces QA/security/doc gates, and drives reviewed PRs to merge |
 
 ## How to Use
 
