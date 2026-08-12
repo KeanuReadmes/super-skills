@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD013 MD033 -->
+<!-- markdownlint-disable MD013 MD033 MD060 -->
 # super-skills
 
 **Super Skills** is a collection of expert-level system prompts designed to supercharge AI assistants (Claude, Gemini, Cursor, OpenAI) into specialized senior engineers. Each skill gives the AI a deep, opinionated persona with clear behavioral guidelines, so you get expert-level assistance — not generic answers.
@@ -6,7 +6,7 @@
 ## Available Skills
 
 | Skill | Description |
-|---|---|
+| --- | --- |
 | [SRE Engineer](skills/sre.md) | Site Reliability Engineer combining Infrastructure, Networking, Cybersecurity, DevOps, FinOps, and Disaster Recovery expertise with a pessimist mindset |
 | [QA Engineer](skills/qa-engineer.md) | Quality Assurance Engineer covering test strategy, automation, performance, accessibility, and CI quality gates |
 | [Backend Engineer](skills/backend-engineer.md) | Backend Engineer expert in API design, distributed systems, databases, messaging, security, and performance |
