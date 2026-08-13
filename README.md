@@ -26,6 +26,7 @@
 | [Prompt Shrinker](skills/prompt-shrinker.md) | Compresses verbose prompts into the smallest lossless form via politeness stripping, redundancy removal, abbreviations, imperative rewrites, and structured formatting — optimised for less capable LLM models with limited context windows |
 | [Code Quality Agent](skills/code-quality-agent.md) | Autonomous agent that discovers and runs the project's existing code quality tools (linters, formatters, type checkers, vulnerability scanners), fixes every reported issue, and updates libraries scoped to the user's conversation — with full opt-out support |
 | [Local Module Coder](skills/local-module-coder.md) | Correctness-first coder for small, local module changes using strict test-first development, frequent tool-based validation, typo/name checks, and minimal blast radius execution |
+| [Correctness Coder](skills/correctness-coder.md) | Ultra-careful correctness-first coding agent that applies BMAD, mandatory bottom-up/top-down reviews, specialist cross-checks (code/DB/cache/integration/security/QA/SRE), multi-model validation, and explicit pre-push approval gating |
 | [Coder](skills/coder.md) | Autonomous delivery orchestrator that selects issues, refines architecture and acceptance criteria, delegates to specialist skills, enforces QA/security/doc gates, and drives reviewed PRs to merge |
 
 ## How to Use
