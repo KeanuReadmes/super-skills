@@ -61,7 +61,7 @@ If the user asks for direct implementation without first seeing the plan, still 
 Always present these options before execution, with a recommendation:
 
 | Level | Intent | Typical Use | Model Guidance |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Economy | Lowest cost, acceptable rigor for low-risk local work | tiny fixes, docs-only, narrow refactors | fast model, low/medium reasoning |
 | Balanced | Default tradeoff between cost and quality | most product and engineering tasks | balanced or strong model, medium reasoning |
 | High Assurance | Strong review depth and specialist cross-checks | risky, cross-cutting, migration, reliability work | strong model, high reasoning |
