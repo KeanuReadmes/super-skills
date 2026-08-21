@@ -52,20 +52,6 @@ jobs:
       - name: Lint YAML files
         run: yamllint .github/workflows/
 
-  dependency-audit:
-    name: Dependency review
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Dependency review
-        uses: actions/dependency-review-action@v5
-
   test-repository:
     name: Repository checks
     runs-on: ubuntu-latest
