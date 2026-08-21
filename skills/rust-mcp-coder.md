@@ -334,6 +334,9 @@ pretty_assertions = "1"
 - Out of scope: general-purpose Rust CLI packaging, argument parsing, and man-page generation — covered by the `cli-tools-engineer` skill.
 - Out of scope: PostgreSQL/database tuning for a tool's backing store — covered by the `postgres-engineer` skill.
 - Out of scope: fleet-level deployment, IaC, and production observability infrastructure beyond in-process metrics/tracing — covered by the `sre` skill.
+- Out of scope: adversarial testing of the MCP/tool attack surface (tool-description poisoning, rug-pull redefinition, tool-call interception, namespace collision) — covered by the `red-team-engineer` skill; this skill builds the server to be resistant, `red-team-engineer` attacks it.
+- Out of scope: dependency-CVE/SBOM/provenance depth and SHA-pinned action policy beyond `cargo audit`/`cargo deny` — covered by the `supply-chain-specialist` skill.
+- Out of scope: final high-confidence PR review — covered by the `code-reviewer` skill.
 
 ### Protocol — Sequential Execution
 
@@ -362,7 +365,7 @@ Execute in order for a new server or a change to the MCP surface. For adding a s
 10. **Makefile** — targets `install`, `run`, `test`, `lint`, `audit`, `coverage`, `clean`, `help`, each doing real work end-to-end.
 11. **Final delivery** — self-validate against the checklist in Validation & Delivery Standards, then present in the order defined in Output Format. If the project lives in a skill-collection repo, add an entry to the root `README.md` table and Open Source Tools Reference.
 
-**Fast path — adding one tool/resource to an already-compliant server:** write the failing test in the relevant `tests/test_mcp_*.rs` file → implement in the registry → run `cargo fmt`, `cargo clippy -- -D warnings`, `cargo audit`, `cargo nextest run` → commit `feat(tools): add <name>`. Full steps 6–11 are not required unless the change also touches CI, docs, or the dependency stack.
+**Fast path — adding one tool/resource to an already-compliant server:** write the failing test in the relevant `tests/test_mcp_*.rs` file → implement in the registry (with a `///` doc comment on every new `pub` item) → run `cargo fmt`, `cargo clippy -- -D warnings`, `cargo audit`, `cargo deny check`, `cargo nextest run`, and `cargo tarpaulin` to confirm the ≥80% branch-coverage gate still holds → commit `feat(tools): add <name>`. Full steps 6–11 are not required unless the change also touches CI, docs, or the dependency stack. The fast path never skips the license (`cargo deny`), coverage, or doc-comment gates.
 
 **Approval gate:** never push commits, open a PR, create a git tag, or trigger `release.yml` without the user explicitly confirming the diff and (for releases) the version bump.
 
@@ -373,9 +376,10 @@ Execute these checks in order before finalizing any response:
 1. **Answer Relevancy** — the response answers exactly what was asked; no scope drift.
 2. **Hallucination** — every crate name, version, API signature, MCP method name, and error code is verifiable against the spec or crate docs; uncertain items are labeled as uncertain, not asserted.
 3. **MCP Compliance** — every `InitializeResult` includes `protocolVersion`, `serverInfo`, `capabilities`; every error uses a valid JSON-RPC code; the SSE `endpoint` event is emitted on connection; test files were created before implementation files (git log shows `test:` preceding `feat:`) — if not, note the deviation explicitly.
-4. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
-5. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
-6. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
+4. **Security Invariants** — none of the Security Invariants is weakened: auth tokens are compared in constant time and sourced from the environment (never hardcoded), rate limiting and request-size bounds are present, CORS is not wildcarded on authenticated routes, and no secret appears in logs or errors. License compatibility (`cargo deny check`) holds for every dependency.
+5. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
+6. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
+7. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
 
 ### Tool Installation — Sandbox First
 

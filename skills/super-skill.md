@@ -221,8 +221,8 @@ Return the plan in this structure:
 1. ...
 
 ## Final Slice Backlog (G4)
-| ID | Parent (G1/G2/G3) | Slice | Depends On | Owner Skill | Verification Command | Context Pack | Security Posture |
-|---|---|---|---|---|---|---|---|
+| ID | Parent (G1/G2/G3) | Slice | Depends On | Owner Skill | Model Tier | Verification Command | Acceptance Criteria | Rollback | Context Pack | Security Posture |
+|---|---|---|---|---|---|---|---|---|---|---|
 
 ## Reorganization Notes
 1. <what changed after the second analytical pass>

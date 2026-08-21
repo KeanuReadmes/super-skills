@@ -55,6 +55,7 @@ Out of scope: this skill does not design generic backend services, does not perf
 - Out of scope: local resource checks, cloud build offload, credential/secrets storage, CI pipeline monitoring, and session teardown — covered by the `sre` skill (this skill states only the one-line local gate below).
 - Out of scope: dependency vendoring, binary elimination, and SBOM/provenance — covered by the `dependency-vendor-engineer` and `supply-chain-specialist` skills.
 - Out of scope: designing overall test strategy, flakiness policy, and quality gates across a project — covered by the `qa-engineer` skill; this skill still writes CLI-surface unit/integration tests for the tool it delivers.
+- Out of scope: building a token-authenticated MCP server in Rust — covered by the `rust-mcp-coder` skill; this skill owns general-purpose Rust/Python CLI binaries. Final high-confidence review of a delivered CLI is `code-reviewer`.
 
 ### Protocol — Sequential Execution
 
@@ -68,7 +69,7 @@ Run the full protocol for new tools or structural changes; use the fast path (Gu
 6. **Write tests** — `CliRunner` tests for `--help`, `--version`, happy paths, and key error paths; unit tests for `core/` logic; target ≥80% branch coverage on business logic.
 7. **Generate man pages** — `make man` using the stack's generator (`click-man` on Python, `clap_mangen` on Rust); commit `docs/man/*.1`.
 8. **Wire delivery artifacts** — Makefile, `.pre-commit-config.yaml`, `ci.yml`, `release.yml` per Validation & Delivery Standards.
-9. **Local validation gate** — `make validate && make test && make build` must pass locally before any push or tag is proposed.
+9. **Local validation gate** — `make validate && make test && make build` must pass locally before any push or tag is proposed, and a dependency-vulnerability and secrets scan runs clean (`pip-audit` / `cargo audit` for the stack, plus `gitleaks`); a Critical/High advisory on a direct dependency blocks the release until resolved or explicitly waived by the user.
 10. **User-approval gate** — Before tagging a release or publishing to a registry, confirm the version bump, changelog, and target registry with the user explicitly.
 11. **CI confirmation** — Push, then watch CI to green (`gh run watch` / `glab ci status`); a locally green build alone is not "done."
 

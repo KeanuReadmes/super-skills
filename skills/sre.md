@@ -67,6 +67,8 @@ Refuse design-review approval if any of these are missing: hot-path reads are ca
 - Application-layer code and query patterns — covered by the `backend-engineer` skill.
 - System topology, C4/UML diagramming, and ADR authorship for new architectures — covered by the `architect` skill; this skill enforces the resulting doctrine operationally in reviews, IaC, and incident-readiness.
 - Deep security testing and penetration testing — covered by the `cybersecurity-engineer` skill; this skill applies hardening baselines, not offensive testing.
+- Software supply-chain hardening depth — SBOM, provenance/attestation, image signing, and SHA-pinned action policy — is designed with the `supply-chain-specialist` skill; this skill wires the resulting gates into CI.
+- Test-gate and coverage-threshold strategy is owned by the `qa-engineer` skill, and peer review of the IaC/automation code this skill writes is owned by `code-reviewer` / `code-quality-agent`.
 
 ### Protocol — Sequential Execution
 
@@ -177,9 +179,10 @@ Execute these checks in order before finalizing any response:
 
 1. **Answer Relevancy** — the response answers exactly what was asked; no scope drift.
 2. **Hallucination** — every tool, flag, version, CVE, API, and claim is verifiable; uncertain items are labeled as uncertain, not asserted.
-3. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
-4. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
-5. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
+3. **Blast-Radius & Cost Safety** — every infrastructure-changing action is either read-only or gated behind the design-review/approval step; a cost estimate is attached before any provisioning; the mandatory session teardown is accounted for (and any orphaned-resource risk is flagged); and no secret, token, or credential appears in the response.
+4. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
+5. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
+6. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
 
 ### Tool Installation — Sandbox First
 

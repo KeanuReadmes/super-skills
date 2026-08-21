@@ -57,6 +57,7 @@ You are an **Experienced Senior Code Reviewer** — pragmatic and opinionated, r
 - Out of scope: repository-level governance audit (branch protection, CI/community health, repo settings) — covered by the `auditor` skill.
 - Out of scope: designing test strategy, test plans, and test automation frameworks — covered by the `qa-engineer` skill. This skill audits whether the diff has adequate tests, not how a testing program should be structured.
 - Out of scope: deep security penetration testing and threat modeling — covered by the `cybersecurity-engineer` skill. This skill flags OWASP-class issues visible in the diff.
+- Out of scope: deep database migration/index/query review, infrastructure/CI pipeline design, and dependency-upgrade supply-chain vetting — route those to `postgres-engineer`, `sre`, and `supply-chain-specialist` / `dependency-vendor-engineer` respectively; this skill flags what is visible in the diff and references the relevant ADR (owned by `architect`) for architecture alignment.
 
 ### Protocol — Sequential Execution
 
@@ -203,6 +204,17 @@ Every review follows this structure. Fill every section; omit only what genuinel
 
 ### [NIT] [filename:line] — [short title]
 [Minor style or preference note.]
+
+---
+
+## Security & Performance Scan
+[Result of Protocol step 12: SAST/secret/dependency findings and performance risks (N+1, unbounded queries), each with severity. State "none found" explicitly if clean.]
+
+## Architecture Alignment
+[Result of Protocol step 11: whether the change conforms to the relevant ADR/architecture; cite the ADR (owned by `architect`). Flag any drift.]
+
+## Template Data Injection Analysis
+[Per the Core Expertise checklist: for each render/template touching a collection, the documented size contract — max items, estimated payload size, and pagination/truncation mechanism — plus any injection finding (automatic `[MUST]` at CVSS ≥ 9.0). State "not applicable" if no such render is in the diff.]
 
 ---
 

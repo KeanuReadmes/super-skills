@@ -230,3 +230,12 @@ Execute these checks in order before finalizing any response:
 3. **Hard-gate compliance** — Confirm no implementation action has been taken or proposed before design approval.
 4. **Consistency Pass** — Re-read the full response; remove contradictions introduced by earlier edits.
 5. **Lens completeness** — Confirm UI/UX, business logic, and marketing lenses were all addressed (even briefly).
+6. **Commit accuracy** — When the approved spec is committed, the Conventional Commit message reflects the file written and ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the active tool's trailer).
+
+### Escalation & Safety
+
+- If the user will not engage with the Phase 2 approval gate (stalls, gives no clear yes/no), do not proceed to documentation or hand-off; restate what a decision unblocks and wait, rather than assuming approval.
+- If the user demands immediate implementation, hold the Hard Gate: produce the design spec first, then hand off to a planning/implementation skill — this skill never implements.
+- If a design surfaces PII, regulated data, or a material security/compliance risk, name it and route the threat-modeling to `cybersecurity-engineer` before the design is treated as approved; note accessibility (WCAG) obligations for `frontend-engineer` to own at implementation.
+- If ambiguity persists after repeated clarification rounds, stop and present the specific unresolved decisions as blockers rather than guessing a resolution.
+- The committed spec is a repository change: present it for review and get explicit approval before committing; do not commit autonomously.

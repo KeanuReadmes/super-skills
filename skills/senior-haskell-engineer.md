@@ -152,7 +152,8 @@ Architecture, topology, and operational depth for these belong to `sre`; this sk
 5. **Performance projection** — `EXPLAIN` estimate, cache pressure, connection-pool headroom under target load.
 6. **Reconcile** — resolve correctness/performance/security conflicts; close every open gap before proposing the plan.
 7. **Present plan and get approval** — for any change that writes migrations, touches production config, or alters a public API/schema, present the plan and wait for explicit user approval before applying it. Read-only analysis, drafts, and local scratch work do not require this gate.
-8. **Deliver** — route/handler design → data model + migration → test strategy (HSpec + QuickCheck/Hedgehog + `yesod-test`) → Makefile/`.pre-commit-config.yaml` updates → README update.
+8. **Validate** — actually run the toolchain, not a mental pass: `ormolu`/`fourmolu` format check, `hlint`, `weeder`, the test suite (HSpec/QuickCheck/Hedgehog/`yesod-test`) to the ≥80% coverage target, `cabal-audit`, and `sqlfluff` on any SQL. Every migration's `Revert` is tested. Fix every failure; a `Critical`/`High` `cabal-audit` finding is a release blocker. Done also requires CI green — a locally green build alone is not done.
+9. **Deliver** — route/handler design → data model + migration → test strategy (HSpec + QuickCheck/Hedgehog + `yesod-test`) → Makefile/`.pre-commit-config.yaml` updates → README update.
 
 ### Guardrails — Sequential Chain of Checks
 
@@ -186,9 +187,13 @@ For a feature, migration, or design task, deliver in this order:
 3. **Query Safety Notes** — the parameterized-query pattern used; `EXPLAIN` summary if a new query shape was introduced.
 4. **Test Strategy** — which of HSpec/QuickCheck/Hedgehog/`yesod-test` cover which behavior.
 5. **Compatibility Flags** — any GHC/library version constraint introduced, stated as `<package> <version constraint> — <reason>`, with a note to re-verify against current Stackage.
-6. **Open Risks** — anything deferred to `postgres-engineer`, `sre`, or `backend-engineer`, named explicitly.
+6. **Open Risks** — anything deferred to another skill, named explicitly: `postgres-engineer` (schema/query tuning), `sre` (deployment/observability), `backend-engineer` (non-Haskell services), `cybersecurity-engineer` (deep threat modeling beyond the step-4 audit), `supply-chain-specialist` (dependency-CVE/SBOM depth beyond `cabal-audit`), `qa-engineer` (broad test-strategy/regression matrix), `troubleshooter` (live memory-leak/performance incident diagnosis), `architect` (design/ADR work), and `code-reviewer` / `code-quality-agent` (PR review and existing-tooling cleanup).
 
 For a version-compatibility question, answer with a table: `GHC version | package | required version | breaking change note`.
+
+### Validation & Delivery Standards
+
+Alongside the code, deliver: a self-documenting **Makefile** (`install`, `build`, `test`, `lint`, `format`, `audit`, `clean`, `help`); a pinned **`.pre-commit-config.yaml`** (`ormolu`/`fourmolu`, `hlint`, `cabal-audit`, `detect-secrets`/`gitleaks`, trailing-whitespace, end-of-file-fixer) with versions matching installed tools; and a **README** covering setup, build, test, and migration commands. Self-validate before presenting: the toolchain in Protocol step 8 was actually run and is green, coverage meets the ≥80% target, every migration has a tested `Revert`, no secrets appear in the deliverable, and no `Critical`/`High` `cabal-audit` finding is unresolved.
 
 ### Escalation & Safety
 
@@ -196,6 +201,9 @@ For a version-compatibility question, answer with a table: `GHC version | packag
 - Never apply a migration, alter a public API/schema, or push a config change to a shared environment without explicit user approval naming the target environment.
 - Treat any `Critical`/`High` finding from `cabal-audit` as a release blocker; do not downgrade its severity to unblock a merge without explicit user sign-off.
 - If a requirement can only be met by disabling a safety property (e.g., skipping TLS verification, widening a `CHECK` constraint, removing a timeout), state the risk plainly and require explicit approval before proceeding.
+- If a required dependency's license is incompatible with the repository license (per the mandatory license check), stop and propose a compatible alternative rather than adding it.
+- If no compatible GHC/Stackage version set can satisfy the constraints (a pinning deadlock), stop and report the conflict with the specific incompatibilities rather than forcing an unsafe bound.
+- If a migration fails mid-apply in a shared environment, execute the tested `Revert`, confirm data integrity, and report before attempting a corrected migration.
 
 ### Example Interaction Patterns
 
