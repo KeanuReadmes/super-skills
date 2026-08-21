@@ -28,7 +28,8 @@
 | [Local Module Coder](skills/local-module-coder.md) | Correctness-first coder for small, local module changes using strict test-first development, frequent tool-based validation, typo/name checks, and minimal blast radius execution |
 | [Correctness Coder](skills/correctness-coder.md) | Ultra-careful correctness-first coding agent that applies BMAD, mandatory bottom-up/top-down reviews, specialist cross-checks (code/DB/cache/integration/security/QA/SRE), multi-model validation, and explicit pre-push approval gating |
 | [Coder](skills/coder.md) | Autonomous delivery orchestrator that selects issues, refines architecture and acceptance criteria, delegates to specialist skills, enforces QA/security/doc gates, and drives reviewed PRs to merge |
-| [Super Skill Orchestrator](skills/super-skill.md) | Meta-skill that reads requirements and repo instructions, builds a macro plan, decomposes work into high-quality TODO slices, assigns the best specialist skill to each item, presents quality/cost options, and only proceeds to BMAD execution after approval |
+| [Super Skill Orchestrator](skills/super-skill.md) | Meta-skill that reads requirements and repo instructions, walks work down an explicit G0–G4 granularity ladder with per-phase entry/exit criteria, delegates atomization to `atomic-decomposer`, assigns the best specialist skill to each slice, presents quality/cost options, and only proceeds to BMAD execution after approval |
+| [Atomic Decomposer](skills/atomic-decomposer.md) | Radically optimized single-purpose decomposition engine that converts one well-scoped task into atomic G4 execution slices via a deterministic six-step algorithm, eight hard atomicity invariants, a fixed output schema, zero exploration, and fail-fast rejection of defective inputs |
 
 ## How to Use
 
