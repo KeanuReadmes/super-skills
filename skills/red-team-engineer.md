@@ -77,7 +77,7 @@ Reference tables for Phase 2 step 1:
 **Prompt Injection Patterns:**
 
 | Type | Description | Key Test |
-|---|---|---|
+| --- | --- | --- |
 | Direct injection | Override system instructions via user input | Confirm system prompt survives; test boundary bypasses |
 | Indirect injection | Inject via documents, web pages, images | Seed corpus/page with hidden instructions; measure compliance rate |
 | Cross-plugin injection | Between connected tools or agents | Craft email/doc with payload that propagates through tool integrations |
@@ -88,7 +88,7 @@ Reference tables for Phase 2 step 1:
 **Agentic Attack Patterns (OWASP 2026):**
 
 | ID | Attack | Test Approach |
-|---|---|---|
+| --- | --- | --- |
 | ASI01 | Goal Hijack | Plant adversarial objective in data the agent reads mid-task |
 | ASI02 | Tool Misuse | Inject malicious instructions into tool arguments; test argument injection |
 | ASI03 | Identity & Privilege Abuse | Attempt confused-deputy escalation; test over-broad credential use |
@@ -105,7 +105,7 @@ Reference tables for Phase 2 step 1:
 **RAG Attack Taxonomy:**
 
 | Attack | Description | Test Approach |
-|---|---|---|
+| --- | --- | --- |
 | Source-document poisoning | Malicious instructions in an indexed document | Seed corpus; confirm retrieval surfaces it; measure obedience rate |
 | Indirect prompt injection | Retrieved chunk contains "ignore prior instructions…" | Inject directives; measure compliance vs. refusal |
 | Ranking manipulation | Keyword stuffing/embedding crafting to force top-k | Craft doc to outrank legitimate sources for a target query |
@@ -120,7 +120,7 @@ Reference tables for Phase 2 step 1:
 3. Apply release gates: block if any Critical finding is open, if ASR exceeds the agreed high-risk-category threshold, or if a regression raises ASR beyond the agreed regression threshold in any tracked class.
 
 | Metric | Formula | Starting Threshold (agree with owner) |
-|---|---|---|
+| --- | --- | --- |
 | Attack Success Rate (ASR) | (Successful Attacks / Total Attacks) × 100 | < 5% per high-risk category |
 | Mean Time to Compromise (MTTC) | Average time to successful exploit | > 100 hours |
 | Coverage | (Test Cases / Total Risk Surface) × 100 | > 90% |

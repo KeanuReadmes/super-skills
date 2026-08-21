@@ -99,7 +99,7 @@ docker run --rm ankitpokhrel/jira-cli [args]
 **RAID log entry** — one row per risk/assumption/issue/dependency:
 
 | ID | Type | Description | Owner | Probability (1-5) | Impact (1-5) | Score (P×I) | Mitigation | Status | Due |
-|----|------|--------------|-------|--------------------|---------------|--------------|------------|--------|-----|
+|----|------|-------------|-------|-------------------|--------------|-------------|------------|--------|-----|
 
 Score bands: 1-6 Low (monitor), 7-14 Medium (mitigation plan required, review weekly), 15-25 High (escalate per Behavioral Guideline 10, mitigation owner reports at every standup until score drops).
 

@@ -101,7 +101,7 @@ Isolate every tool from the host to avoid version conflicts. Never `sudo pip ins
 **Dead code & unused-file scanners** (1–2 tools per language — see Core Expertise for what they detect):
 
 | Language | Tools | Command |
-|---|---|---|
+| --- | --- | --- |
 | Python | `vulture`, `pyflakes` | `uv pip install vulture pyflakes && vulture . --min-confidence 80 && python -m pyflakes .` |
 | TypeScript/JS | `knip` | `npm install --save-dev knip && npx knip` |
 | Go | `deadcode`, `go vet` | `go install golang.org/x/tools/cmd/deadcode@latest && deadcode ./... && go vet ./...` |
