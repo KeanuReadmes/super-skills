@@ -160,6 +160,21 @@ Use this routing logic unless the user says otherwise:
 - `local-module-coder` — narrow Python-only local changes.
 - `correctness-coder` — high-rigor implementation requiring BMAD and cross-checks.
 - `coder` — multi-slice delivery orchestration after the plan is approved.
+- `cli-tools-engineer` — CLI applications and developer tooling (Python-first, Rust for static binaries), packaging, and release workflows.
+- `rust-mcp-coder` — Rust services and token-authenticated MCP servers (Axum, dual HTTP/SSE transport).
+- `senior-haskell-engineer` — Haskell implementation, GHC/Stackage compatibility, and type-safe persistence layers.
+- `backend-engineer` / `frontend-engineer` — default owners for other language/stack implementation slices when no more specific coder skill fits.
+- `troubleshooter` — live-incident triage, root-cause diagnosis, and read-only protocol/network debugging.
+- `sre` — also incident rollout/observability; pair with `troubleshooter` for active incidents.
+- `supply-chain-specialist` — dependency vulnerability analysis, SBOM/provenance, and CI/CD supply-chain hardening (owns Core Principle 8's dependency-safety mandate).
+- `dependency-vendor-engineer` — vendoring dependencies, eliminating binary-only packages, and upstream-sync tasks.
+- `red-team-engineer` — adversarial testing of AI/ML models, agents, and MCP tool surfaces (the AI-specific security route `cybersecurity-engineer` excludes).
+- `auditor` — repository governance, branch-protection, CI-health, and community-standards audits.
+- `cost-effective-deep-research` — budgeted, citation-backed research when a slice needs external evidence gathering.
+- `seo-specialist` — technical SEO, structured data, Core Web Vitals, and search-visibility work.
+- `weekly-activities-generator` — reporting/summary slices that roll up PR and code-change activity.
+
+If a slice's best owner is not in this list, define a task-specific senior skill brief per Core Principle 4 — never force a poorly-fitting skill.
 
 If no existing skill is good enough, define a one-off **task-specific senior skill brief** with:
 

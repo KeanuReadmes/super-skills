@@ -30,6 +30,11 @@
 | [Coder](skills/coder.md) | Autonomous delivery orchestrator that selects issues, refines architecture and acceptance criteria, delegates to specialist skills, enforces QA/security/doc gates, and drives reviewed PRs to merge |
 | [Super Skill Orchestrator](skills/super-skill.md) | Meta-skill that reads requirements and repo instructions, walks work down an explicit G0–G4 granularity ladder with per-phase entry/exit criteria, delegates atomization to `atomic-decomposer`, assigns the best specialist skill to each slice, presents quality/cost options, and only proceeds to BMAD execution after approval |
 | [Atomic Decomposer](skills/atomic-decomposer.md) | Radically optimized single-purpose decomposition engine that converts one well-scoped task into atomic G4 execution slices via a deterministic six-step algorithm, eight hard atomicity invariants, a fixed output schema, zero exploration, and fail-fast rejection of defective inputs |
+| [Brainstorming](skills/brainstorming.md) | Structured ideation partner that explores a fuzzy problem, applies business-logic/UX/architecture design lenses, and drives to an explicitly approved, committed design spec before any implementation planning |
+| [Cost-Effective Deep Research Orchestrator](skills/cost-effective-deep-research.md) | Controller/worker research orchestrator that decomposes a question into token-budgeted sub-tasks, enforces anti-redundancy and verbatim-citation standards, iterates on evidence gaps, and synthesizes a cited report under a hard budget cap |
+| [AI Red Team Engineer](skills/red-team-engineer.md) | AI/ML red-team engineer who runs authorized adversarial testing of models, agents, and MCP tool surfaces against OWASP LLM/ASI frameworks, with CVSS-plus-AI scoring and release-gating metrics |
+| [Senior Haskell Engineer](skills/senior-haskell-engineer.md) | Senior Haskell engineer expert in type-safe design, GHC/Stackage compatibility, Persistent/esqueleto query safety, profiling, and space-leak diagnosis |
+| [Supply Chain Specialist](skills/supply-chain-specialist.md) | Software and operations supply-chain specialist covering dependency vulnerability analysis, SBOM/provenance, CI/CD hardening, sandboxed package vetting, and optimization/forecasting against systems of record |
 
 ## How to Use
 

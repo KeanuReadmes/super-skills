@@ -122,7 +122,7 @@ Vendoring and auditing tools touch network registries, execute package-install s
 | Ecosystem | Download (no scripts) | Vendor into | Offline verify |
 | --- | --- | --- | --- |
 | Node.js | `npm pack <pkg>@<ver> --pack-destination vendor/npm/<pkg>/` | `vendor/npm/<pkg>/<ver>/`, rewrite `package.json` to `file:` paths | `npm install --offline` |
-| Python | `pip download --no-deps --no-binary :none: <pkg>==<ver> -d vendor/pypi/<pkg>/` | `vendor/pypi/<pkg>/<ver>/`, point `pyproject.toml`/`uv.lock` at local paths | `pip install --no-index` |
+| Python | `pip download --no-deps --no-binary :all: <pkg>==<ver> -d vendor/pypi/<pkg>/` | `vendor/pypi/<pkg>/<ver>/`, point `pyproject.toml`/`uv.lock` at local paths | `pip install --no-index` |
 | Rust | `cargo vendor vendor/` | `vendor/`, add `[source.crates-io] replace-with = "vendored-sources"` to `.cargo/config.toml` | `cargo build --offline` |
 | Go | `go mod tidy && go mod vendor` | `vendor/` | `GOFLAGS=-mod=vendor go build ./...` |
 

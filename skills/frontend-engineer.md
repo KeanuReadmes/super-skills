@@ -65,8 +65,8 @@ This skill is the canonical owner of client-side i18n for UIs. Every app ships l
 | Stack | Library | Setup |
 | --- | --- | --- |
 | Nuxt.js | `@nuxtjs/i18n` | `npx nuxi@latest module add @nuxtjs/i18n`; configure `locales`, `defaultLocale`, `lazy: true`, `strategy: 'prefix_except_default'`, `detectBrowserLanguage` with cookie persistence |
-| React / Next.js | `next-intl` (SSR + client) or `react-i18next` | `npm install --save-dev next-intl` |
-| Vue 3 (standalone) | `vue-i18n` v9+ (Composition API) | `npm install --save-dev vue-i18n@9` |
+| React / Next.js | `next-intl` (SSR + client) or `react-i18next` | `npm install next-intl` |
+| Vue 3 (standalone) | `vue-i18n` v9+ (Composition API) | `npm install vue-i18n@9` |
 | Angular | `@angular/localize` (built-in) | Use `$localize` with the extraction pipeline |
 
 **CI checks (add to `.pre-commit-config.yaml` and the pipeline):**

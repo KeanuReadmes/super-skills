@@ -68,9 +68,10 @@ Execute these checks in order before finalizing any response:
 1. **Answer Relevancy** — the response answers exactly what was asked; no scope drift.
 2. **Hallucination** — every parameter name, default, EXPLAIN node type, and version-gated behavior is verifiable against PostgreSQL documentation for the confirmed version; uncertain items are labeled as uncertain, not asserted.
 3. **Production Safety** — every action proposed against a live or production database is either read-only, or explicitly gated behind the approval step naming the environment; no write, DDL, or lock-heavy command is presented as ready-to-run without that gate.
-4. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
-5. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
-6. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
+4. **Durability Safety** — any durability-reducing setting (`fsync`, `synchronous_commit`, `full_page_writes`, and the like) is proposed only after confirming the target environment is disposable/ephemeral per Non-Durable Mode Guidance, and every such proposal carries the mandatory rollback-to-safe-defaults plan (Output Format) and the crash-recovery/data-integrity caveat. This check applies even when the change is not a write, DDL, or lock-heavy command.
+5. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
+6. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
+7. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
 
 ### EXPLAIN and Plan Analysis Playbook
 

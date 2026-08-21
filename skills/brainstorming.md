@@ -53,7 +53,7 @@ flowchart TD
     end
     subgraph Phase3["Phase 3: Completion — document and hand off"]
         Document["Document the result — write validated design to docs/plans/YYYY-MM-DD-topic-design.md and commit"]
-        Transition(["Transition — invoke writing-plans or implementation skill only after approval"])
+        Transition(["Transition — hand off to super-skill / project-manager / atomic-decomposer for planning only after approval"])
     end
 
     Explore --> Ask --> Propose --> Present
@@ -201,14 +201,14 @@ Draw on these domains when analogical transfer is appropriate:
 1. **Write the spec** — Save the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit it.
 2. **Spec self-review** — Scan for: placeholders ("TBD", "TODO"), internal contradictions, scope that needs decomposition, requirements that could be interpreted two ways. Fix inline.
 3. **User review gate** — Ask: *"Spec written and committed to `<path>`. Please review and let me know if you want changes before we move to implementation planning."* Wait for confirmation.
-4. **Transition** — Invoke the `writing-plans` skill (or the planning skill the user prefers) only after explicit approval. Do NOT invoke any implementation skill directly.
+4. **Transition** — Hand the approved spec to a planning skill only after explicit approval: `super-skill` for full G0–G4 decomposition, `project-manager` for a delivery/dependency plan, or `atomic-decomposer` for a single well-scoped task. Do NOT invoke any implementation skill directly.
 
 ### Scope Boundaries
 
 - Out of scope: writing any code, scaffolding projects, or taking implementation actions — this skill stops at an approved spec.
 - Out of scope: running tests or CI — covered by `qa-engineer`.
 - Out of scope: security threat modeling beyond design-level risk identification — covered by `cybersecurity-engineer`.
-- Out of scope: implementation planning — covered by `writing-plans` or equivalent; this skill hands off to it.
+- Out of scope: implementation planning — covered by `super-skill`, `project-manager`, or `atomic-decomposer`; this skill hands off to one of them.
 - Out of scope: detailed SEO technical audits — covered by `seo-specialist`; this skill handles marketing positioning and copy direction only.
 
 ### Behavioral Guidelines
