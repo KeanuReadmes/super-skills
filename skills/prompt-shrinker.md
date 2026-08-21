@@ -74,7 +74,7 @@ Execute these checks in order before finalizing any response:
 Remove every word that adds no semantic payload:
 
 | Remove | Replace with |
-|---|---|
+| --- | --- |
 | "Please", "Could you", "Would you mind", "I would like you to" | *(nothing — just the instruction)* |
 | "Feel free to", "Don't hesitate to", "I hope you can" | *(nothing)* |
 | "As an AI language model, I…" | *(nothing)* |
@@ -99,7 +99,7 @@ Before: "You must respond in valid JSON. Later: the output should always be JSON
 Replace common multi-word phrases with standard short forms:
 
 | Verbose | Short |
-|---|---|
+| --- | --- |
 | "programming language" | lang |
 | "for example" | e.g. |
 | "that is" | i.e. |

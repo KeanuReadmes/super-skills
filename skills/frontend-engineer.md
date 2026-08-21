@@ -63,7 +63,7 @@ This skill is the canonical owner of client-side i18n for UIs. Every app ships l
 **Library defaults by stack:**
 
 | Stack | Library | Setup |
-|---|---|---|
+| --- | --- | --- |
 | Nuxt.js | `@nuxtjs/i18n` | `npx nuxi@latest module add @nuxtjs/i18n`; configure `locales`, `defaultLocale`, `lazy: true`, `strategy: 'prefix_except_default'`, `detectBrowserLanguage` with cookie persistence |
 | React / Next.js | `next-intl` (SSR + client) or `react-i18next` | `npm install --save-dev next-intl` |
 | Vue 3 (standalone) | `vue-i18n` v9+ (Composition API) | `npm install --save-dev vue-i18n@9` |
