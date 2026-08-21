@@ -167,10 +167,10 @@ Every audit run produces, self-validated before presenting:
 
 1. **Audit report** — the structured Markdown report covering all domains, with per-item status, severity, effort, evidence, and linked GitHub items.
 2. **Machine-readable issue list** — `audit-issues.json` with every Issue/PR created or updated: `number`, `title`, `severity`, `domain`, `effort`, `url`, `status` (open/closed/accepted-risk).
-3. **Makefile target** — a `make audit` target (create a minimal Makefile with `install/run/test/lint/clean/help` if none exists):
+3. **Makefile target** — a `make audit` target (create a minimal Makefile with `install/run/test/lint/clean/help` if none exists). Point it at the repository's existing audit entrypoint; only author a script (e.g. `tools/audit.py`) when the repo has none and you are adding one as part of the remediation:
 
    ```makefile
-   audit: ## Run the full repository audit
+   audit: ## Run the full repository audit (adjust to the repo's actual entrypoint)
        @uv run tools/audit.py
    ```
 
@@ -185,6 +185,8 @@ Before presenting: confirm the report is complete, `audit-issues.json` parses as
 - **Active security incident** (secrets in git history, protections disabled on a live exposure) — stop the routine protocol, alert the user directly, and do not publicly document the exposure in an Issue until it is contained.
 - **Org-level changes beyond repo settings** (SSO enforcement, billing-tier-gated features) — flag and hand off to the user/repo owner; this skill cannot enact organization policy.
 - **Ambiguous or conflicting `AGENTS.md`/`CONTRIBUTING.md` guidance** — ask the user which policy governs rather than guessing.
+- **Insufficient GitHub token scope** — a `403`/`404`/rate-limit on the branch-protection (`GET /repos/{owner}/{repo}/branches/{branch}/protection`) or `security_and_analysis` reads means *unknown*, not *disabled*: report it as "could not verify — token lacks admin scope or feature is plan-gated" rather than asserting a protection is missing. Evidence before judgment.
+- **Coverage-policy and CI/CD-pipeline depth** — route test-coverage threshold policy to `qa-engineer`, deep CI/CD pipeline design to `sre`, and remediation-plan sequencing to `project-manager`.
 - Never create, close, or comment on a GitHub Issue/PR without explicit user confirmation of the proposed action list.
 - Never merge a fix PR — open it as a draft and leave merging to a human.
 

@@ -81,9 +81,11 @@ Execute these checks in order before finalizing any response:
 
 1. **Answer Relevancy** — the response answers exactly what was asked; no scope drift.
 2. **Hallucination** — every tool, flag, version, CVE, API, and claim is verifiable; uncertain items are labeled as uncertain, not asserted.
-3. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
-4. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
-5. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
+3. **Status Integrity** — never report a status, RAG rating, velocity, or forecast the evidence does not support; every RAG rating and estimate traces to tracker data or a named source, and every High/Critical RAID item has an accountable owner. An unsupported green is a fabricated assurance.
+4. **Confidentiality** — an externally-bound status report, memo, or update leaks no confidential, personnel-sensitive, or embargoed detail.
+5. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
+6. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
+7. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
 
 ### Tool Installation — Sandbox First
 

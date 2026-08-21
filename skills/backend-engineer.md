@@ -75,7 +75,8 @@ Run this sequence before delivering any API design, service implementation, or d
 5. **Vulnerability & hardening check** — Enumerate injection, broken auth, IDOR, mass assignment, missing rate limiting, thundering-herd exposure on cache/DB paths, and known dependency CVEs; propose targeted hardening per finding.
 6. **Reconcile** — Resolve performance/security/simplicity conflicts; close all gaps from steps 2–5.
 7. **Approval gate** — Before implementing anything that touches shared infrastructure, applies a schema migration, or breaks API compatibility, present the plan and request explicit go-ahead naming the target environment.
-8. **Final delivery** — API contract → data model → i18n middleware and locale catalog → security controls → error-handling matrix → observability hooks → test strategy (TDD for internals, ATDD/BDD for business-critical flows) → migration steps → validation & delivery artifacts (see below).
+8. **Implement & validate** — write the code and tests, then actually run them: `make lint && make test && make build` must pass locally, and the locale-parity CI check (a check that fails when a locale file is missing keys present in the default) is in place. Fix every failure before proceeding; hand off to `code-quality-agent` if pre-existing failures block a green run. "Done" also requires CI green (`gh run watch` / `glab ci status`) — a locally green build alone is not done.
+9. **Final delivery** — API contract → data model → i18n middleware and locale catalog → security controls → error-handling matrix → observability hooks → test strategy (TDD for internals, ATDD/BDD for business-critical flows) → migration steps → rollback plan and acceptance criteria → validation evidence and delivery artifacts (see below).
 
 ### Guardrails — Sequential Chain of Checks
 
@@ -83,9 +84,10 @@ Execute these checks in order before finalizing any response:
 
 1. **Answer Relevancy** — the response answers exactly what was asked; no scope drift.
 2. **Hallucination** — every tool, flag, version, CVE, API, and claim is verifiable; uncertain items are labeled as uncertain, not asserted.
-3. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
-4. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
-5. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
+3. **Security & Validation Coverage** — the Protocol's compliance/access audit (step 4) and vulnerability/hardening check (step 5) were actually performed and their findings addressed, and the delivery ran `make lint && make test && make build` with results shown (not "mentally" reviewed).
+4. **Commit Message Accuracy** — cross-check the Conventional Commit type/scope/description against `git diff --staged --name-only`; the message must reflect every changed file.
+5. **Co-Authored-By** — every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the equivalent trailer for the active tool). Never any other attribution.
+6. **Consistency Pass** — re-read the full response; remove contradictions introduced by earlier fixes.
 
 ### Tool Installation — Sandbox First
 
@@ -116,7 +118,7 @@ Every deliverable is functional, verifiable, and operable. Alongside code, alway
 3. **`tools/` uv project** — Standalone validation, helper, and smoke-test scripts as a Python `uv` project with `pyproject.toml` metadata and `[project.scripts]` entry points; runnable via `uv run <script-name>` with no manual `pip install`.
 4. **README.md review** — Purpose, prerequisites (with tool versions), install/run/test/lint commands, pre-commit setup, contribution guidelines.
 
-Self-validate before presenting: mentally lint for syntax errors, unused imports, missing docs, missing error handling, hardcoded secrets; confirm every Makefile target runs end-to-end; confirm pre-commit hook versions match installed tool versions; confirm `tools/` scripts run via `uv run` with no extra setup.
+Self-validate before presenting: run the linter/formatter and test suite (not a mental pass) and check for syntax errors, unused imports, missing docs, missing error handling, and hardcoded secrets; confirm every Makefile target runs end-to-end; confirm pre-commit hook versions match installed tool versions; confirm `tools/` scripts run via `uv run` with no extra setup. Done means local `make lint && make test && make build` passes and CI is green.
 
 ### Escalation & Safety
 

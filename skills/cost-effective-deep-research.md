@@ -640,6 +640,35 @@ TOKEN_LIMIT: 2000 input / 500 output per turn
 - **Methodology Notes** — any methodology steps flagged `[ETHICS_REVIEW_REQUIRED]`.
 - **Credibility Audit Log** — scores and verdicts for all sources that underwent AR-7 checking.
 
+### Scope Boundaries
+
+- Out of scope: implementation of anything the research recommends — hand off to the relevant coder/specialist skill.
+- Out of scope: design decomposition and delivery planning — the controller/worker split is a research decomposition, not a work plan; defer to `super-skill` / `atomic-decomposer` / `project-manager` for that.
+- Out of scope: open-ended design ideation on a fuzzy problem — defer to `brainstorming`; this skill answers a stated question with cited evidence.
+- Out of scope: deep dependency-adoption or CVE research beyond surface evidence — route to `supply-chain-specialist` / `dependency-vendor-engineer` (dependencies) or `cybersecurity-engineer` (vulnerabilities) when the question turns operational.
+- Out of scope: personalized legal, medical, or financial advice — report findings with sources and explicit non-advice framing; escalate per Escalation & Safety.
+- When a worker template's verbatim requirements exceed the token budget, hand the template to `prompt-shrinker` before dispatch rather than silently truncating.
+
+### Guardrails — Sequential Chain of Checks
+
+Execute these checks in order before returning any synthesis:
+
+1. **Answer Relevancy** — the report answers the actual question asked; no drift into an adjacent topic.
+2. **Citation Integrity** — every non-obvious claim carries a `[Source: URL]` that points to text the source actually contains; a neutral-rewrite of a passage is never cited as if it were the source's own wording, and the original passage travels with any rewrite.
+3. **No Fabricated Evidence** — every citation was actually retrieved; any topic, date, name, affiliation, or precedent generated from model priors (including in Academic Research templates) is labeled `[UNVERIFIED]` and never presented as a retrieved fact.
+4. **Contested-Claim Coverage** — any contested claim presents at least two independent perspectives, or is explicitly flagged as single-sourced.
+5. **Budget Honesty** — the reported token/controller spend matches what was actually consumed, and a hard-budget stop is disclosed rather than hidden behind a confident-looking partial answer.
+6. **Consistency Pass** — re-read the report; remove contradictions between the evidence registry, the synthesis, and the recommendations.
+
+### Escalation & Safety
+
+- **Access barriers** — if a source is paywalled, auth-gated, robots/ToS-restricted, or rate-limited beyond one retry, do not attempt to bypass it; record the gap as `[EVIDENCE_GAP]`, and ask the user how to proceed when it blocks a P0 sub-question.
+- **Consent before ingestion** — confirm scope with the user before ingesting private, internal, or user-supplied corpora; never persist such data beyond the session without explicit consent.
+- **Sensitive PII / regulated content** — if fetched pages contain personal data or the question touches medical/legal/financial decisions, surface findings with sources and a clear non-advice disclaimer; do not compile personal data across sources.
+- **Harmful-research refusal** — decline questions whose evident purpose is wrongdoing (weaponization, targeted harm, evasion) and explain why.
+- **Budget exhaustion** — when the hard cap is reached mid-synthesis, return the minimum viable cited answer covering the P0 sub-questions with the gaps stated, rather than an uncited best-effort narrative.
+- **All-gaps terminal state** — if every P0 sub-question ends in `[EVIDENCE_GAP]`, stop and report that the question could not be answered from available evidence rather than synthesizing from priors.
+
 ---
 
 ## How to Use This Skill
