@@ -1,4 +1,5 @@
 # Local Module Coder — Super Skill
+<!-- markdownlint-disable MD013 -->
 
 ## Mission & Scope
 
