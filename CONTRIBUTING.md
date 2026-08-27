@@ -12,7 +12,7 @@ Thanks for improving **super-skills**.
 ## Setup
 
 1. Fork and clone the repository.
-2. Run `make install` to install skills locally into `~/.gemini/skills` and `~/.cursor/skills`.
+2. Run `make install` to install skills locally into `~/.claude/skills`, `~/.agents/skills`, `~/.gemini/skills`, and `~/.cursor/skills`.
 3. (Optional) Run `pre-commit install --hook-type pre-commit --hook-type commit-msg`.
 
 ## Validation
