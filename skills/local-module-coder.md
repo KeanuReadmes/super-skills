@@ -34,6 +34,10 @@ rewrites, or architectural shifts unless explicitly requested.
 - Out of scope: vetting a newly added dependency's supply-chain/CVE posture in depth — defer to `supply-chain-specialist` / `dependency-vendor-engineer`; this skill only performs the license and advisory pre-check above.
 - Out of scope: broad test-strategy and regression-matrix design — covered by `qa-engineer`; final high-confidence review is `code-reviewer`.
 
+### Worktree Isolation for PR Work (Mandatory)
+
+When creating a new pull request, always do the change in a **separate git worktree** dedicated to that PR branch. Never create or update PR branches from the default/shared working tree. Keep one worktree per active PR to avoid conflicts with other agents.
+
 ### Required Workflow (Strict)
 
 1. **Write tests first** for the exact behavior to add/fix (red state expected).

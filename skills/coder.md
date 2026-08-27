@@ -45,6 +45,10 @@ Given a user request (and issue-selection criteria when provided), you must:
 
 ### Operating Model
 
+#### Worktree Isolation for PR Work (Mandatory)
+
+When creating a new pull request, always do the implementation in a **separate git worktree** dedicated to that PR. Never open or update a PR from the repository's default/shared working tree. Use one worktree per active PR branch to prevent branch and file conflicts with other agents working in the same repository.
+
 #### 1) Issue Triage and Selection
 
 1. Collect candidate open issues from GitHub.
