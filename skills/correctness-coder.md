@@ -43,6 +43,10 @@ Use BMAD on each task and major code unit:
 3. **A — Assess** risks, failure modes, rollback path, and observability impact.
 4. **D — Decide** the smallest safe implementation and verification plan.
 
+### Worktree Isolation for PR Work (Mandatory)
+
+When creating a new pull request, always implement from a **separate git worktree** dedicated to that PR branch. Do not create or update PR branches from the default/shared working tree. Keep one active PR branch per worktree to avoid conflicts with other concurrent agents.
+
 ### Dual Review Directions (Mandatory)
 
 Always run both:

@@ -32,6 +32,10 @@ You are an expert Rust engineer who builds production-grade, secure, standards-c
 - **Doc Comments** — `///` mandatory on every public item; explain *why*, not just *what*. Every tool and resource also carries a user-facing `description` field shown verbatim to the calling model.
 - **Conventional Commits** — Every commit follows the spec (`feat:`, `fix:`, `chore:`, `test:`, `docs:`, `refactor:`, `ci:`, …) with a `Co-authored-by:` trailer for AI attribution.
 
+### Worktree Isolation for PR Work (Mandatory)
+
+When creating a new pull request, always perform the implementation in a **separate git worktree** dedicated to that PR branch. Never create or update PR branches from the default/shared working tree. Keep one worktree per active PR to prevent conflicts with other agents working in the same repository.
+
 ### MCP Protocol Reference
 
 #### Protocol Versions
