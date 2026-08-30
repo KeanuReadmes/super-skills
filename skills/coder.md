@@ -111,6 +111,36 @@ For each delegated slice:
 7. Request bot reviews from `@coderabbit` and `@copilot` when those reviewers are available in the repository.
 8. Merge only after all required gates pass **and** a human has explicitly approved the merge. Passing gates make a PR *mergeable*, not *merged*; you never merge autonomously. Present the merge-ready summary (green checks, review outcomes, residual risk) and wait for explicit human confirmation before merging. If merge authority is ambiguous or unavailable, leave the PR ready-to-merge and hand off to a human — never merge to satisfy a deadline.
 
+#### 6) CI Monitoring and Auto-Fix (Mandatory)
+
+After every push and after opening a PR, monitor CI using the `gh` CLI:
+
+1. **Watch CI status** — poll until all checks complete:
+
+   ```bash
+   gh run watch --exit-status
+   ```
+
+2. **On failure** — fetch the full logs for the failing job and read them:
+
+   ```bash
+   gh run view --log-failed
+   ```
+
+3. **Diagnose and fix** — identify the root cause from the logs, apply the minimal fix, and push again. Repeat the watch/fix cycle until all checks pass or the failure is outside the implementer's scope.
+
+4. **Escalate when blocked** — if a failure cannot be fixed autonomously (flaky infrastructure, secrets missing, required human action), report the raw failure output and the recommended remediation before pausing.
+
+5. **Open the PR** — once all checks pass on the branch, create the PR with the repository's template:
+
+   ```bash
+   gh pr create --fill
+   ```
+
+   Link the PR to the relevant issue using `Closes #<number>` in the body.
+
+6. **Track review status** — after the PR is open, use `gh pr checks` and `gh pr view --json reviews` to monitor required reviews and any new CI runs triggered by the PR. Recheck after every new push to the branch.
+
 ### Execution Protocol (Strict Order)
 
 1. **Discover** — collect issue candidates and constraints.
@@ -118,10 +148,12 @@ For each delegated slice:
 3. **Plan** — split into independent PR-sized tasks with owners.
 4. **Delegate** — dispatch each task to the best-fit specialist.
 5. **Integrate** — reconcile cross-PR dependencies and conflicts.
-6. **Assure** — verify docs, readability, security, tests, and CI status.
-7. **Review** — ensure QA + code review + optional bot reviews complete.
-8. **Merge** — after explicit human approval (see PR Lifecycle Ownership 5.8), merge approved PRs in safe dependency order. Never merge without that approval.
-9. **Report** — return final changelog, risks, and follow-ups.
+6. **Push & Monitor CI** — after each push, run `gh run watch --exit-status`; on failure read `gh run view --log-failed`, fix the root cause, and push again until all checks are green.
+7. **Open PR** — once CI is green on the branch, open the PR with `gh pr create --fill` and link to the issue.
+8. **Assure** — verify docs, readability, security, tests, and CI status.
+9. **Review** — ensure QA + code review + optional bot reviews complete; track with `gh pr checks` and `gh pr view --json reviews`.
+10. **Merge** — after explicit human approval (see PR Lifecycle Ownership 5.8), merge approved PRs in safe dependency order. Never merge without that approval.
+11. **Report** — return final changelog, risks, and follow-ups.
 
 ### Quality Gates (All Must Pass)
 
@@ -159,6 +191,16 @@ Return:
 ### Failure Handling
 
 - If a required skill is unavailable, pause and provide fallback options.
-- If checks fail, block merge and return a remediation plan.
+- If CI checks fail, read the logs with `gh run view --log-failed`, apply the minimal fix, push, and re-run CI. Repeat until green or the failure requires human intervention.
 - If review feedback conflicts, escalate with explicit tradeoffs and a recommended decision.
 - If the issue scope is too large, split into phased deliverables before coding.
+
+### Running Inside Herdr
+
+When the environment variable `HERDR_ENV=1` is set, this agent is running inside a Herdr-managed pane. Apply the `herdr` skill for layout, pane coordination, agent delegation, and output inspection. Verify the environment before issuing any Herdr control command:
+
+```bash
+test "${HERDR_ENV:-}" = 1
+```
+
+If the check fails, continue without Herdr features.
