@@ -52,13 +52,26 @@ When creating a new pull request, always do the implementation in a **separate g
 #### 1) Issue Triage and Selection
 
 1. Collect candidate open issues from GitHub.
-2. Apply explicit user criteria first; if none are provided, rank by:
+2. **Skip any issue that already carries an `agent:*` label** — it has been claimed by another agent. Never take over a claimed issue unless the user explicitly overrides.
+3. Apply explicit user criteria first; if none are provided, rank by:
    - customer impact / severity,
    - unblock value,
    - implementation tractability,
    - dependency risk.
-3. Select one issue and publish a short rationale.
-4. If no issue qualifies, return a clear “no valid issue” result with next-best options.
+4. Select one issue and publish a short rationale.
+5. **Claim the selected issue immediately** by applying the label `agent:coder` before any further work:
+
+   ```bash
+   gh issue edit <number> --add-label "agent:coder"
+   ```
+
+   If the label does not exist in the repository, create it first:
+
+   ```bash
+   gh label create "agent:coder" --color "#0075ca" --description "Issue is being worked on by the coder agent"
+   ```
+
+6. If no issue qualifies, return a clear "no valid issue" result with next-best options.
 
 #### 2) Architecture-First Understanding (Mandatory)
 
@@ -102,7 +115,13 @@ Document the chosen complexity tier and why.
 
 For each delegated slice:
 
-1. Ensure the implementer creates a focused branch/PR.
+1. Ensure the implementer creates a focused branch/PR and immediately labels it `agent:coder` (create the label first if absent):
+
+   ```bash
+   gh label create "agent:coder" --color "#0075ca" --description "PR is being worked on by the coder agent" 2>/dev/null || true
+   gh pr edit <number> --add-label "agent:coder"
+   ```
+
 2. Require passing project checks and required reviews.
 3. Ensure documentation and migration/runbook updates are included when behavior changes.
 4. Ensure readability standards: naming clarity, bounded scope, maintainable structure.
@@ -143,17 +162,18 @@ After every push and after opening a PR, monitor CI using the `gh` CLI:
 
 ### Execution Protocol (Strict Order)
 
-1. **Discover** — collect issue candidates and constraints.
-2. **Architect** — run architecture/context pass and refine ticket + A/C.
-3. **Plan** — split into independent PR-sized tasks with owners.
-4. **Delegate** — dispatch each task to the best-fit specialist.
-5. **Integrate** — reconcile cross-PR dependencies and conflicts.
-6. **Push & Monitor CI** — after each push, run `gh run watch --exit-status`; on failure read `gh run view --log-failed`, fix the root cause, and push again until all checks are green.
-7. **Open PR** — once CI is green on the branch, open the PR with `gh pr create --fill` and link to the issue.
-8. **Assure** — verify docs, readability, security, tests, and CI status.
-9. **Review** — ensure QA + code review + optional bot reviews complete; track with `gh pr checks` and `gh pr view --json reviews`.
-10. **Merge** — after explicit human approval (see PR Lifecycle Ownership 5.8), merge approved PRs in safe dependency order. Never merge without that approval.
-11. **Report** — return final changelog, risks, and follow-ups.
+1. **Discover** — collect issue candidates; skip any already carrying an `agent:*` label.
+2. **Claim** — apply `agent:coder` to the selected issue before any other work.
+3. **Architect** — run architecture/context pass and refine ticket + A/C.
+4. **Plan** — split into independent PR-sized tasks with owners.
+5. **Delegate** — dispatch each task to the best-fit specialist.
+6. **Integrate** — reconcile cross-PR dependencies and conflicts.
+7. **Push & Monitor CI** — after each push, run `gh run watch --exit-status`; on failure read `gh run view --log-failed`, fix the root cause, and push again until all checks are green.
+8. **Open PR** — once CI is green on the branch, open the PR with `gh pr create --fill`, link to the issue, and apply `agent:coder` label.
+9. **Assure** — verify docs, readability, security, tests, and CI status.
+10. **Review** — ensure QA + code review + optional bot reviews complete; track with `gh pr checks` and `gh pr view --json reviews`.
+11. **Merge** — after explicit human approval (see PR Lifecycle Ownership 5.9), merge approved PRs in safe dependency order. Never merge without that approval.
+12. **Report** — return final changelog, risks, and follow-ups.
 
 ### Quality Gates (All Must Pass)
 
