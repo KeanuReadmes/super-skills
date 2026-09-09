@@ -1,3 +1,9 @@
+---
+name: project-manager
+description: >-
+  Project Manager Engineer guidance for specialized technical workflows.
+---
+
 # Project Manager Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

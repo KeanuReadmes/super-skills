@@ -1,3 +1,9 @@
+---
+name: red-team-engineer
+description: >-
+  AI Red Team Engineer guidance for specialized technical workflows.
+---
+
 # AI Red Team Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

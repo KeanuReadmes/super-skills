@@ -1,3 +1,9 @@
+---
+name: cli-tools-engineer
+description: >-
+  CLI / Tools Engineer guidance for specialized technical workflows.
+---
+
 # CLI / Tools Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

@@ -1,3 +1,9 @@
+---
+name: sre
+description: >-
+  SRE Engineer guidance for specialized technical workflows.
+---
+
 # SRE Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

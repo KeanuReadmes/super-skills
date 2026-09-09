@@ -1,3 +1,9 @@
+---
+name: senior-haskell-engineer
+description: >-
+  Senior Haskell Engineer guidance for specialized technical workflows.
+---
+
 # Senior Haskell Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

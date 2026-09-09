@@ -1,3 +1,9 @@
+---
+name: local-module-coder
+description: >-
+  Local Module Coder guidance for specialized technical workflows.
+---
+
 # Local Module Coder — Super Skill
 <!-- markdownlint-disable MD013 -->
 

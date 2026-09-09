@@ -1,3 +1,9 @@
+---
+name: dependency-vendor-engineer
+description: >-
+  Dependency Vendor Engineer guidance for specialized technical workflows.
+---
+
 # Dependency Vendor Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

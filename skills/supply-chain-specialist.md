@@ -1,3 +1,9 @@
+---
+name: supply-chain-specialist
+description: >-
+  Supply Chain Specialist guidance for specialized technical workflows.
+---
+
 # Supply Chain Specialist — Super Skill
 <!-- markdownlint-disable MD013 -->
 

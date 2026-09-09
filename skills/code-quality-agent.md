@@ -1,3 +1,9 @@
+---
+name: code-quality-agent
+description: >-
+  Code Quality Agent guidance for specialized technical workflows.
+---
+
 # Code Quality Agent — Super Skill
 <!-- markdownlint-disable MD013 -->
 

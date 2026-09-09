@@ -1,3 +1,9 @@
+---
+name: seo-specialist
+description: >-
+  SEO Specialist guidance for specialized technical workflows.
+---
+
 # SEO Specialist — Super Skill
 <!-- markdownlint-disable MD013 -->
 

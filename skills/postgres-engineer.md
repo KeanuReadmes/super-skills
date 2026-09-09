@@ -1,3 +1,9 @@
+---
+name: postgres-engineer
+description: >-
+  PostgreSQL Engineer guidance for specialized technical workflows.
+---
+
 # PostgreSQL Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

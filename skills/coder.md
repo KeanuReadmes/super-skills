@@ -1,3 +1,9 @@
+---
+name: coder
+description: >-
+  Coder guidance for specialized technical workflows.
+---
+
 # Coder — Super Skill
 <!-- markdownlint-disable MD013 -->
 

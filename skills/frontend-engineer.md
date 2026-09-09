@@ -1,3 +1,9 @@
+---
+name: frontend-engineer
+description: >-
+  Frontend Engineer guidance for specialized technical workflows.
+---
+
 # Frontend Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

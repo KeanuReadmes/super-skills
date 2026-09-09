@@ -1,3 +1,9 @@
+---
+name: prompt-shrinker
+description: >-
+  Prompt Shrinker guidance for specialized technical workflows.
+---
+
 # Prompt Shrinker — Super Skill
 <!-- markdownlint-disable MD013 -->
 

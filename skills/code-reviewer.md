@@ -1,3 +1,9 @@
+---
+name: code-reviewer
+description: >-
+  Code Reviewer guidance for specialized technical workflows.
+---
+
 # Code Reviewer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

@@ -6,6 +6,8 @@ AGENTS_SKILLS_DIR := $(HOME)/.agents/skills
 GEMINI_SKILLS_DIR := $(HOME)/.gemini/skills
 CURSOR_SKILLS_DIR := $(HOME)/.cursor/skills
 COPILOT_SKILLS_DIR := $(HOME)/.copilot/skills
+CODEX_HOME ?= $(HOME)/.codex
+CODEX_SKILLS_DIR := $(CODEX_HOME)/skills
 
 .PHONY: help install uninstall lint validate audit
 
@@ -13,9 +15,11 @@ help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
-install: ## Install skill symlinks into ~/.claude, ~/.agents, ~/.gemini, ~/.cursor, and ~/.copilot skill dirs
-	@echo "Installing skills to $(CLAUDE_SKILLS_DIR), $(AGENTS_SKILLS_DIR), $(GEMINI_SKILLS_DIR), $(CURSOR_SKILLS_DIR), and $(COPILOT_SKILLS_DIR)..."
+install: ## Install skill symlinks into Codex and other supported skill dirs
+	@echo "Installing skills to $(CODEX_SKILLS_DIR), $(CLAUDE_SKILLS_DIR), $(AGENTS_SKILLS_DIR), $(GEMINI_SKILLS_DIR), $(CURSOR_SKILLS_DIR), and $(COPILOT_SKILLS_DIR)..."
 	@$(foreach name,$(SKILLS), \
+		mkdir -p "$(CODEX_SKILLS_DIR)/$(name)" && \
+		ln -sf "$(REPO_DIR)/skills/$(name).md" "$(CODEX_SKILLS_DIR)/$(name)/SKILL.md" && \
 		mkdir -p "$(CLAUDE_SKILLS_DIR)/$(name)" && \
 		ln -sf "$(REPO_DIR)/skills/$(name).md" "$(CLAUDE_SKILLS_DIR)/$(name)/SKILL.md" && \
 		mkdir -p "$(AGENTS_SKILLS_DIR)/$(name)" && \
@@ -29,9 +33,11 @@ install: ## Install skill symlinks into ~/.claude, ~/.agents, ~/.gemini, ~/.curs
 	) true
 	@echo "Done. $(words $(SKILLS)) skill(s) installed."
 
-uninstall: ## Remove installed skill symlinks from ~/.claude, ~/.agents, ~/.gemini, ~/.cursor, and ~/.copilot skill dirs
-	@echo "Uninstalling skills from $(CLAUDE_SKILLS_DIR), $(AGENTS_SKILLS_DIR), $(GEMINI_SKILLS_DIR), $(CURSOR_SKILLS_DIR), and $(COPILOT_SKILLS_DIR)..."
+uninstall: ## Remove installed skill symlinks from Codex and other supported skill dirs
+	@echo "Uninstalling skills from $(CODEX_SKILLS_DIR), $(CLAUDE_SKILLS_DIR), $(AGENTS_SKILLS_DIR), $(GEMINI_SKILLS_DIR), $(CURSOR_SKILLS_DIR), and $(COPILOT_SKILLS_DIR)..."
 	@$(foreach name,$(SKILLS), \
+		rm -f "$(CODEX_SKILLS_DIR)/$(name)/SKILL.md" && \
+		rmdir --ignore-fail-on-non-empty "$(CODEX_SKILLS_DIR)/$(name)" 2>/dev/null; \
 		rm -f "$(CLAUDE_SKILLS_DIR)/$(name)/SKILL.md" && \
 		rmdir --ignore-fail-on-non-empty "$(CLAUDE_SKILLS_DIR)/$(name)" 2>/dev/null; \
 		rm -f "$(AGENTS_SKILLS_DIR)/$(name)/SKILL.md" && \
