@@ -1,3 +1,9 @@
+---
+name: auditor
+description: >-
+  Auditor guidance for specialized technical workflows.
+---
+
 # Auditor — Super Skill
 <!-- markdownlint-disable MD013 -->
 

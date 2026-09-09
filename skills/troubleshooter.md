@@ -1,3 +1,9 @@
+---
+name: troubleshooter
+description: >-
+  Troubleshooter guidance for specialized technical workflows.
+---
+
 # Troubleshooter — Super Skill
 <!-- markdownlint-disable MD013 -->
 

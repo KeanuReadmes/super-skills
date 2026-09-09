@@ -1,3 +1,9 @@
+---
+name: weekly-activities-generator
+description: >-
+  Weekly Activities Generator guidance for specialized technical workflows.
+---
+
 # Weekly Activities Generator — Super Skill
 <!-- markdownlint-disable MD013 -->
 

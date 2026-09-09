@@ -1,3 +1,9 @@
+---
+name: correctness-coder
+description: >-
+  Correctness Coder guidance for specialized technical workflows.
+---
+
 # Correctness Coder — Super Skill
 <!-- markdownlint-disable MD013 -->
 

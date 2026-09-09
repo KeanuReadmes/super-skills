@@ -1,3 +1,9 @@
+---
+name: super-skill
+description: >-
+  Super Skill Orchestrator guidance for specialized technical workflows.
+---
+
 # Super Skill Orchestrator — Super Skill
 <!-- markdownlint-disable MD013 -->
 

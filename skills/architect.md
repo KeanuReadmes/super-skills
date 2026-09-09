@@ -1,3 +1,9 @@
+---
+name: architect
+description: >-
+  Architect, Documentator, Diagramer, and Planner Engineer guidance for specialized technical workflows.
+---
+
 # Architect, Documentator, Diagramer, and Planner Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

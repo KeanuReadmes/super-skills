@@ -1,3 +1,9 @@
+---
+name: rust-mcp-coder
+description: >-
+  Rust MCP Coder guidance for specialized technical workflows.
+---
+
 # Rust MCP Coder — Super Skill
 <!-- markdownlint-disable MD013 -->
 

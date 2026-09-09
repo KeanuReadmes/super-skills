@@ -1,3 +1,9 @@
+---
+name: cost-effective-deep-research
+description: >-
+  Cost-Effective Deep Research Orchestrator guidance for specialized technical workflows.
+---
+
 # Cost-Effective Deep Research Orchestrator — Super Skill
 <!-- markdownlint-disable MD013 -->
 

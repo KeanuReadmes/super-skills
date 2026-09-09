@@ -1,3 +1,9 @@
+---
+name: cybersecurity-engineer
+description: >-
+  Cybersecurity Engineer guidance for specialized technical workflows.
+---
+
 # Cybersecurity Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

@@ -1,3 +1,9 @@
+---
+name: brainstorming
+description: >-
+  Brainstorming guidance for specialized technical workflows.
+---
+
 # Brainstorming — Super Skill
 <!-- markdownlint-disable MD013 -->
 

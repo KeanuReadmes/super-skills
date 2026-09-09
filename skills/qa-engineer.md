@@ -1,3 +1,9 @@
+---
+name: qa-engineer
+description: >-
+  QA Engineer guidance for specialized technical workflows.
+---
+
 # QA Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

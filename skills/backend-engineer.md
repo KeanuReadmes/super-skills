@@ -1,3 +1,9 @@
+---
+name: backend-engineer
+description: >-
+  Backend Engineer guidance for specialized technical workflows.
+---
+
 # Backend Engineer — Super Skill
 <!-- markdownlint-disable MD013 -->
 

@@ -1,3 +1,9 @@
+---
+name: herdr
+description: >-
+  Herdr guidance for specialized technical workflows.
+---
+
 # Herdr — Super Skill
 <!-- markdownlint-disable MD013 -->
 

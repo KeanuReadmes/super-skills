@@ -1,3 +1,9 @@
+---
+name: atomic-decomposer
+description: >-
+  Atomic Decomposer guidance for specialized technical workflows.
+---
+
 # Atomic Decomposer — Super Skill
 <!-- markdownlint-disable MD013 -->
 
