@@ -15,15 +15,19 @@ help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
-install: ## Install skill symlinks into Codex and other supported skill dirs
+# Codex discovery requires a regular SKILL.md. Stage then rename to replace legacy
+# file symlinks without writing through them. Re-run install after editing skills.
+install: ## Install Codex skill files and symlinks for other supported tools
 	@echo "Installing skills to $(CODEX_SKILLS_DIR), $(CLAUDE_SKILLS_DIR), $(AGENTS_SKILLS_DIR), $(GEMINI_SKILLS_DIR), $(CURSOR_SKILLS_DIR), and $(COPILOT_SKILLS_DIR)..."
 	@$(foreach name,$(SKILLS), \
 		mkdir -p "$(CODEX_SKILLS_DIR)/$(name)" && \
-		ln -sf "$(REPO_DIR)/skills/$(name).md" "$(CODEX_SKILLS_DIR)/$(name)/SKILL.md" && \
+		cp "$(REPO_DIR)/skills/$(name).md" "$(CODEX_SKILLS_DIR)/$(name)/.SKILL.md.tmp" && \
+		mv -f "$(CODEX_SKILLS_DIR)/$(name)/.SKILL.md.tmp" "$(CODEX_SKILLS_DIR)/$(name)/SKILL.md" && \
 		mkdir -p "$(CLAUDE_SKILLS_DIR)/$(name)" && \
 		ln -sf "$(REPO_DIR)/skills/$(name).md" "$(CLAUDE_SKILLS_DIR)/$(name)/SKILL.md" && \
 		mkdir -p "$(AGENTS_SKILLS_DIR)/$(name)" && \
-		ln -sf "$(REPO_DIR)/skills/$(name).md" "$(AGENTS_SKILLS_DIR)/$(name)/SKILL.md" && \
+		cp "$(REPO_DIR)/skills/$(name).md" "$(AGENTS_SKILLS_DIR)/$(name)/.SKILL.md.tmp" && \
+		mv -f "$(AGENTS_SKILLS_DIR)/$(name)/.SKILL.md.tmp" "$(AGENTS_SKILLS_DIR)/$(name)/SKILL.md" && \
 		mkdir -p "$(GEMINI_SKILLS_DIR)/$(name)" && \
 		ln -sf "$(REPO_DIR)/skills/$(name).md" "$(GEMINI_SKILLS_DIR)/$(name)/SKILL.md" && \
 		mkdir -p "$(CURSOR_SKILLS_DIR)/$(name)" && \
@@ -33,7 +37,7 @@ install: ## Install skill symlinks into Codex and other supported skill dirs
 	) true
 	@echo "Done. $(words $(SKILLS)) skill(s) installed."
 
-uninstall: ## Remove installed skill symlinks from Codex and other supported skill dirs
+uninstall: ## Remove installed skills from Codex and other supported skill dirs
 	@echo "Uninstalling skills from $(CODEX_SKILLS_DIR), $(CLAUDE_SKILLS_DIR), $(AGENTS_SKILLS_DIR), $(GEMINI_SKILLS_DIR), $(CURSOR_SKILLS_DIR), and $(COPILOT_SKILLS_DIR)..."
 	@$(foreach name,$(SKILLS), \
 		rm -f "$(CODEX_SKILLS_DIR)/$(name)/SKILL.md" && \
