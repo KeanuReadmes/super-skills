@@ -1,7 +1,7 @@
 ---
 name: weekly-activities-generator
 description: >-
-  Weekly Activities Generator guidance for specialized technical workflows.
+  Turns a user's recent pull requests and code changes into a short, plain-language weekly summary that a non-technical stakeholder can read in a minute, with every bullet traceable to a PR. Use when asked for a weekly update, activity report, or summary of recent work; not for code review or project status reporting (project-manager).
 ---
 
 # Weekly Activities Generator — Super Skill

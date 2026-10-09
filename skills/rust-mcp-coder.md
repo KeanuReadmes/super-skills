@@ -1,7 +1,7 @@
 ---
 name: rust-mcp-coder
 description: >-
-  Rust MCP Coder guidance for specialized technical workflows.
+  Builds production-grade Model Context Protocol (MCP) servers in Rust on Axum with bearer-token authentication, dual Streamable-HTTP and SSE transport, spec-exact JSON-RPC errors, TDD, clippy, and cargo audit/deny. Use when creating or extending a Rust MCP server or a Rust service exposing MCP tools; not for MCP servers in other languages or generic HTTP APIs (backend-engineer).
 ---
 
 # Rust MCP Coder — Super Skill

@@ -1,7 +1,7 @@
 ---
 name: cost-effective-deep-research
 description: >-
-  Cost-Effective Deep Research Orchestrator guidance for specialized technical workflows.
+  Runs budgeted, citation-backed research: a high-capability controller plans and synthesizes while cheaper workers harvest sources, extract verbatim evidence, and flag contradictions, under a hard token budget with anti-redundancy rules, gap iteration, and a cost ledger; includes an academic research mode. Use when a question needs multi-source evidence with verifiable citations and cost control; not for quick lookups answerable from one source.
 ---
 
 # Cost-Effective Deep Research Orchestrator — Super Skill

@@ -1,7 +1,7 @@
 ---
 name: senior-haskell-engineer
 description: >-
-  Senior Haskell Engineer guidance for specialized technical workflows.
+  Builds and maintains Haskell services with GHC, Cabal/Stack, Yesod or Servant, Persistent/esqueleto, dbmigrations, and crypton, verifying GHC and Stackage compatibility and diagnosing space leaks with profiling. Use when writing, upgrading, or debugging Haskell code or its build; not for language-agnostic API design (backend-engineer) or PostgreSQL internals (postgres-engineer).
 ---
 
 # Senior Haskell Engineer — Super Skill

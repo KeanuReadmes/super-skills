@@ -1,7 +1,7 @@
 ---
 name: seo-specialist
 description: >-
-  SEO Specialist guidance for specialized technical workflows.
+  Audits and prioritizes search visibility: technical SEO, Core Web Vitals measurement, structured data, E-E-A-T content quality, hreflang, GitHub repository SEO, and AI search (GEO and AEO), with impact-ranked, confidence-labeled findings. Use when a site, page, or repository needs to rank or be cited better; diagnoses and recommends only, leaving implementation to frontend-engineer.
 ---
 
 # SEO Specialist — Super Skill
