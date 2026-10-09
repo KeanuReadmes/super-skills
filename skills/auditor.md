@@ -1,7 +1,7 @@
 ---
 name: auditor
 description: >-
-  Auditor guidance for specialized technical workflows.
+  Audits repository governance against a fixed checklist (branch protection, security and supply-chain guardrails, CI coverage, pre-commit, community health files) using GitHub API and filesystem evidence, then opens one issue per gap and PRs for mechanical fixes. Use when asked to audit a repository's settings, CI health, or community standards; not for reviewing code changes (code-reviewer).
 ---
 
 # Auditor — Super Skill

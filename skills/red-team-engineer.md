@@ -1,7 +1,7 @@
 ---
 name: red-team-engineer
 description: >-
-  AI Red Team Engineer guidance for specialized technical workflows.
+  Performs authorized adversarial testing of AI/LLM models, agents, RAG pipelines, and MCP tool surfaces (prompt injection, jailbreaks, tool abuse, data exfiltration), mapped to OWASP LLM and Agentic Top 10 and MITRE ATLAS with CVSS-plus-AI scoring and release-gating metrics. Use when an AI system needs red-teaming and written authorization is in place; not for conventional application security (cybersecurity-engineer).
 ---
 
 # AI Red Team Engineer — Super Skill

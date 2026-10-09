@@ -1,7 +1,7 @@
 ---
 name: cybersecurity-engineer
 description: >-
-  Cybersecurity Engineer guidance for specialized technical workflows.
+  Finds and fixes security weaknesses in conventional applications and cloud infrastructure: threat modeling, AppSec review, authentication and authorization, secrets handling, hardening, penetration testing, and incident response, scored by CVSS and exploitability. Use when a change crosses a security boundary or a system needs a security assessment; not for AI/LLM adversarial testing (red-team-engineer) or dependency and SBOM analysis (supply-chain-specialist).
 ---
 
 # Cybersecurity Engineer — Super Skill

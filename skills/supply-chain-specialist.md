@@ -1,7 +1,7 @@
 ---
 name: supply-chain-specialist
 description: >-
-  Supply Chain Specialist guidance for specialized technical workflows.
+  Secures the software supply chain (vulnerability and malicious-package analysis in a sandbox, SBOM and provenance, CI/CD hardening) and optimizes physical supply-chain operations against systems of record (WMS, TMS, ERP) with forecasting and solvers. Use when vetting dependencies or artifacts before they ship, or analyzing supply-chain operations data; not for vendoring dependencies into the repository (dependency-vendor-engineer).
 ---
 
 # Supply Chain Specialist — Super Skill

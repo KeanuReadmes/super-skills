@@ -1,7 +1,7 @@
 ---
 name: dependency-vendor-engineer
 description: >-
-  Dependency Vendor Engineer guidance for specialized technical workflows.
+  Vendors every dependency into the repository at its latest safe version, replaces binary-only packages with auditable source, audits each package's source, records patches and licenses, and sets up CI plus periodic upstream-sync tasks. Use when a project must own its dependency tree in-repo; not for vulnerability triage without vendoring (supply-chain-specialist).
 ---
 
 # Dependency Vendor Engineer — Super Skill
