@@ -1,7 +1,7 @@
 ---
 name: architect
 description: >-
-  Architect, Documentator, Diagramer, and Planner Engineer guidance for specialized technical workflows.
+  Maps and documents systems: produces C4 and UML diagrams, ADRs, specs, component inventories, and technical roadmaps, and surfaces architectural gaps and improvements. Use when someone needs to understand a codebase or system, record an architecture decision, or plan a technical roadmap; not for writing application code (engineering skills) or tracking delivery status (project-manager).
 ---
 
 # Architect, Documentator, Diagramer, and Planner Engineer — Super Skill

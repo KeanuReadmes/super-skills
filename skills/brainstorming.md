@@ -1,7 +1,7 @@
 ---
 name: brainstorming
 description: >-
-  Brainstorming guidance for specialized technical workflows.
+  Facilitates collaborative design before implementation: asks one question at a time, explores alternatives through UX, business-logic, and growth lenses, and ends with an explicitly approved, written design spec. Use when an idea or feature is still fuzzy and needs shaping before planning or code; blocks all implementation until the user approves the design.
 ---
 
 # Brainstorming — Super Skill

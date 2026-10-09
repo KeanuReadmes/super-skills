@@ -1,7 +1,7 @@
 ---
 name: prompt-shrinker
 description: >-
-  Prompt Shrinker guidance for specialized technical workflows.
+  Compresses verbose prompts, system prompts, and task briefs into the smallest form that keeps every instruction, constraint, and safety rule, and reports the size reduction. Use when a prompt or context pack must fit a smaller context window or a cheaper model; not for writing new prompts from scratch.
 ---
 
 # Prompt Shrinker — Super Skill

@@ -1,7 +1,7 @@
 ---
 name: herdr
 description: >-
-  Herdr guidance for specialized technical workflows.
+  Controls the Herdr terminal workspace from inside a Herdr-managed pane with the herdr CLI: inspects workspaces, tabs, and panes, splits panes, starts and prompts coding agents, runs commands in sibling panes, reads their output, and waits for state changes. Use when running inside Herdr (HERDR_ENV=1) and the work needs parallel agents or commands in other panes; refuses to act outside Herdr.
 ---
 
 # Herdr — Super Skill

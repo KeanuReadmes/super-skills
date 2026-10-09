@@ -1,7 +1,7 @@
 ---
 name: project-manager
 description: >-
-  Project Manager Engineer guidance for specialized technical workflows.
+  Produces delivery plans, dependency maps, risk registers, RAG status reports, and stakeholder updates that keep scope, timeline, and quality aligned. Use when planning or tracking a project, sequencing milestones, escalating risks, or writing status communications; does not make technical design decisions (architect) or write code.
 ---
 
 # Project Manager Engineer — Super Skill
