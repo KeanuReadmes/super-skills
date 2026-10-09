@@ -10,7 +10,7 @@ description: >-
 
 ### Repository Context & License Compatibility (Mandatory)
 
-Before proposing or applying any repository change, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present. Before adding or upgrading any third-party component (including any `uv add`), read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`uvx pip-licenses --format=markdown`). Never recommend an incompatible component; propose a compatible alternative.
+Before proposing or applying any repository change, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present. Before suggesting, adding, or upgrading any third-party component (including any `uv add`), read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`uvx pip-licenses --format=markdown`). Never recommend an incompatible component; propose a compatible alternative.
 
 ### Role
 

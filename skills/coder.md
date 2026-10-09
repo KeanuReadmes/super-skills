@@ -10,7 +10,7 @@ description: >-
 
 ### Repository Context & License Compatibility (Mandatory)
 
-Before proposing or applying any repository change, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present. Before adding or upgrading a third-party component, read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`npx --yes license-checker --summary`, `uvx pip-licenses --format=markdown`, `cargo deny check licenses`, `go-licenses check ./...`). Never recommend an incompatible component; propose a compatible alternative. When a delegated slice adds or upgrades dependencies, route supply-chain verification to `supply-chain-specialist` / `dependency-vendor-engineer`.
+Before proposing or applying any repository change, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present. Before suggesting, adding, or upgrading a third-party component, read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`npx --yes license-checker --summary`, `uvx pip-licenses --format=markdown`, `cargo deny check licenses`, `go-licenses check ./...`). Never recommend an incompatible component; propose a compatible alternative. When a delegated slice adds or upgrades dependencies, route supply-chain verification to `supply-chain-specialist` / `dependency-vendor-engineer`.
 
 ### Role
 
