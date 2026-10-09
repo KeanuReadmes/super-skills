@@ -1,7 +1,7 @@
 ---
 name: backend-engineer
 description: >-
-  Backend Engineer guidance for specialized technical workflows.
+  Designs and implements server-side APIs, services, data models, messaging, and integrations with versioned contracts, bounded queries, resilience patterns, and server-side i18n. Use when building or changing backend endpoints, service logic, schemas, or integrations; not for UI (frontend-engineer), infrastructure (sre), or deep PostgreSQL tuning (postgres-engineer).
 ---
 
 # Backend Engineer — Super Skill

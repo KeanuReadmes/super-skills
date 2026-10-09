@@ -1,7 +1,7 @@
 ---
 name: qa-engineer
 description: >-
-  QA Engineer guidance for specialized technical workflows.
+  Designs risk-based test strategy and automation: test pyramids, regression matrices, performance and accessibility testing, flaky-test triage, and CI quality gates. Use when deciding what to test, adding test automation, or setting quality gates for a feature or release; not for reviewing a diff (code-reviewer) or fixing existing lint and test tooling (code-quality-agent).
 ---
 
 # QA Engineer — Super Skill

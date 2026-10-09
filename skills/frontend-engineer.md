@@ -1,7 +1,7 @@
 ---
 name: frontend-engineer
 description: >-
-  Frontend Engineer guidance for specialized technical workflows.
+  Builds performant, accessible, internationalized UIs in React, Vue, Angular, and their meta-frameworks, owning everything from the API boundary to the pixel: components, state, Core Web Vitals, WCAG accessibility, and i18n. Use when implementing or reviewing client-side UI work; not for backend services or SEO audits (seo-specialist).
 ---
 
 # Frontend Engineer — Super Skill

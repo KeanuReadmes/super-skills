@@ -1,7 +1,7 @@
 ---
 name: cli-tools-engineer
 description: >-
-  CLI / Tools Engineer guidance for specialized technical workflows.
+  Builds, packages, and releases command-line tools and developer utilities, Python-first with uv and Rust for static binaries, with complete help text, pinned lockfiles, tests, and a release pipeline. Use when creating or improving a CLI, dev tool, or automation script meant to be installed and distributed; not for backend services or repo-wide quality cleanup (code-quality-agent).
 ---
 
 # CLI / Tools Engineer — Super Skill

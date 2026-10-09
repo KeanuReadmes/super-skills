@@ -1,7 +1,7 @@
 ---
 name: postgres-engineer
 description: >-
-  PostgreSQL Engineer guidance for specialized technical workflows.
+  Diagnoses and tunes PostgreSQL safely: EXPLAIN plan analysis, lock contention, planner statistics, bulk-load performance, and runtime parameters, using read-only investigation and quantified impact before any change. Use when Postgres queries are slow, locks pile up, or configuration needs review; requires environment-named approval before touching a live database.
 ---
 
 # PostgreSQL Engineer — Super Skill
