@@ -32,6 +32,63 @@ _SKILL_LINK = re.compile(r"\(([^)]*?skills/([a-z0-9-]+)\.md)\)")
 # frontmatter included, at 100 lines; detail beyond that is cut, not split.
 MAX_SKILL_LINES = 100
 
+# Agent Skills frontmatter limits: `name` is lowercase/digits/hyphens, at most
+# 64 characters, and must not use reserved words; `description` is at most
+# 1024 characters and must not contain XML tags.
+_SKILL_NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+MAX_NAME_CHARS = 64
+MAX_DESCRIPTION_CHARS = 1024
+RESERVED_NAME_WORDS = ("anthropic", "claude")
+
+# The description is all an agent sees when choosing a skill, so it must say
+# when to use the skill, not repeat the old generic placeholder.
+PLACEHOLDER_DESCRIPTION = "guidance for specialized technical workflows"
+TRIGGER_PHRASE = "Use when"
+
+_FRONTMATTER_KEY = re.compile(r"([a-z][a-z0-9_-]*):\s*(.*)")
+_BLOCK_SCALAR = re.compile(r"[>|][+-]?")
+
+
+def parse_frontmatter(content: str) -> dict[str, str] | None:
+    """Parse the flat YAML frontmatter subset used by skill files.
+
+    Supports top-level ``key: value`` pairs, optionally quoted, and folded or
+    literal block scalars (``>-``, ``|``) whose indented lines are joined with
+    spaces. Avoids a YAML dependency; nested mappings are not supported.
+
+    Args:
+        content: Full skill file text.
+
+    Returns:
+        Mapping of frontmatter keys to string values, or None when the file
+        does not open with a ``---`` delimited frontmatter block.
+    """
+    lines = content.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return None
+    try:
+        end = next(i for i in range(1, len(lines)) if lines[i].strip() == "---")
+    except StopIteration:
+        return None
+
+    fields: dict[str, str] = {}
+    key: str | None = None
+    for line in lines[1:end]:
+        if key is not None and (line.startswith((" ", "\t")) or not line.strip()):
+            fields[key] = f"{fields[key]} {line.strip()}".strip()
+            continue
+        key = None
+        match = _FRONTMATTER_KEY.fullmatch(line)
+        if not match:
+            continue
+        name, value = match.groups()
+        if _BLOCK_SCALAR.fullmatch(value.strip()):
+            fields[name] = ""
+            key = name
+        else:
+            fields[name] = value.strip().strip("\"'")
+    return fields
+
 
 def validate_skill_compliance(root: Path) -> int:
     """Validate repository context and license checks exist in all skills.
@@ -139,6 +196,63 @@ def validate_line_budget(root: Path) -> int:
     return 1 if over_budget else 0
 
 
+def frontmatter_problems(stem: str, fields: dict[str, str] | None) -> list[str]:
+    """List every way one skill's frontmatter breaks the authoring rules.
+
+    Args:
+        stem: Skill file name without extension; ``name`` must equal it.
+        fields: Parsed frontmatter, or None when the block is missing.
+
+    Returns:
+        Human-readable problems; empty when the frontmatter is valid.
+    """
+    if fields is None:
+        return ["missing --- frontmatter block"]
+
+    problems: list[str] = []
+    name = fields.get("name", "")
+    if name != stem:
+        problems.append(f"name {name!r} must equal file stem {stem!r}")
+    if not _SKILL_NAME.fullmatch(name) or len(name) > MAX_NAME_CHARS:
+        problems.append(f"name must be lowercase/digits/hyphens, max {MAX_NAME_CHARS} chars")
+    if any(word in name for word in RESERVED_NAME_WORDS):
+        problems.append(f"name must not contain {' or '.join(RESERVED_NAME_WORDS)}")
+
+    description = fields.get("description", "")
+    if not description:
+        problems.append("description is empty")
+    if len(description) > MAX_DESCRIPTION_CHARS:
+        problems.append(f"description has {len(description)} chars (max {MAX_DESCRIPTION_CHARS})")
+    if "<" in description or ">" in description:
+        problems.append("description must not contain XML tags or angle brackets")
+    if PLACEHOLDER_DESCRIPTION in description:
+        problems.append("description is the generic placeholder")
+    if description and TRIGGER_PHRASE not in description:
+        problems.append(f"description must say when to use the skill ({TRIGGER_PHRASE!r} ...)")
+    return problems
+
+
+def validate_frontmatter(root: Path) -> int:
+    """Validate every skill's name and description frontmatter.
+
+    Args:
+        root: Repository root path.
+
+    Returns:
+        Zero when every skill file has valid frontmatter.
+    """
+    problems_by_file: dict[str, list[str]] = {}
+    for skill_file in sorted((root / "skills").glob("*.md")):
+        fields = parse_frontmatter(skill_file.read_text())
+        problems = frontmatter_problems(skill_file.stem, fields)
+        if problems:
+            problems_by_file[str(skill_file.relative_to(root))] = problems
+
+    for skill_path, problems in problems_by_file.items():
+        print(f"[frontmatter] {skill_path}: {'; '.join(problems)}")
+    return 1 if problems_by_file else 0
+
+
 def run(cmd: list[str], cwd: Path) -> int:
     """Run one command in the repository root.
 
@@ -157,8 +271,8 @@ def main() -> int:
     """Run lint, YAML validation, and skill structural checks.
 
     Runs ``make lint`` and ``make validate``, then the skill-compliance,
-    canonical-section, cross-reference, and line-budget checks over
-    ``skills/*.md``.
+    canonical-section, cross-reference, line-budget, and frontmatter checks
+    over ``skills/*.md``.
 
     Returns:
         Zero when all checks pass, non-zero otherwise.
@@ -183,6 +297,7 @@ def main() -> int:
         validate_canonical_sections,
         validate_cross_references,
         validate_line_budget,
+        validate_frontmatter,
     )
     # Run every check (do not short-circuit) so all failures are reported at once.
     results = [check(root) for check in checks]
