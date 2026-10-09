@@ -10,7 +10,7 @@ description: >-
 
 ### Repository Context & License Compatibility (Mandatory)
 
-Before changing a repository through Herdr panes, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present, and pass the relevant rules to every agent you start. Before any pane or agent adds or upgrades a third-party component, read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`npx --yes license-checker --summary`, `uvx pip-licenses`, `cargo deny check licenses`, `go-licenses check ./...`). Never recommend an incompatible component.
+Before proposing or applying any repository change through Herdr panes, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present, and pass the relevant rules to every agent you start. Before any pane or agent adds or upgrades a third-party component, read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`npx --yes license-checker --summary`, `uvx pip-licenses`, `cargo deny check licenses`, `go-licenses check ./...`). Never recommend an incompatible component.
 
 ### Preconditions
 

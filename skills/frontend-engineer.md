@@ -10,7 +10,7 @@ description: >-
 
 ### Repository Context & License Compatibility (Mandatory)
 
-Before changing anything, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present. Before adding or upgrading a third-party component, read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`npx --yes license-checker --summary`, `uvx pip-licenses`, `cargo deny check licenses`, `go-licenses check ./...`). Never recommend an incompatible component; propose a compatible alternative.
+Before proposing or applying any repository change, read `AGENTS.md`, `CONTRIBUTING.md`, every file under `/docs`, and `CONVENTIONS.md` / `CONTEXT.md` if present. Before adding or upgrading a third-party component, read `/LICENSE`, confirm the component's license is compatible, and report license-check tooling output (`npx --yes license-checker --summary`, `uvx pip-licenses`, `cargo deny check licenses`, `go-licenses check ./...`). Never recommend an incompatible component; propose a compatible alternative.
 
 ### Role
 
