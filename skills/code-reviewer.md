@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: >-
-  Code Reviewer guidance for specialized technical workflows.
+  Reviews a pull request or branch diff end to end (correctness, security, performance, blast radius, tests, docs checked against exact library versions, architecture fit, Conventional Commits) and labels every comment MUST, SHOULD, or NIT. Use when asked to review a PR, diff, or branch before merge; not for running and fixing the project's lint and test tooling (code-quality-agent).
 ---
 
 # Code Reviewer — Super Skill

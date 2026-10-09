@@ -1,7 +1,7 @@
 ---
 name: code-quality-agent
 description: >-
-  Code Quality Agent guidance for specialized technical workflows.
+  Discovers the linters, formatters, type checkers, and vulnerability scanners a project already uses, runs them, fixes every reported issue, and applies narrowly scoped dependency upgrades, with opt-out support. Use when asked to clean up lint, type, test, or vulnerability findings; does not add new tools or judge design (code-reviewer).
 ---
 
 # Code Quality Agent — Super Skill

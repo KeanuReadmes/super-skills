@@ -1,7 +1,7 @@
 ---
 name: troubleshooter
 description: >-
-  Troubleshooter guidance for specialized technical workflows.
+  Finds root causes of live problems with read-only investigation: system state and process anomalies, HTTP, REST, gRPC, and GraphQL failures, network, VPN, and SSH issues, and memory leaks, proposing but never running state-changing commands without approval. Use when something is broken, slow, or behaving oddly right now and needs diagnosis; not for designing infrastructure (sre).
 ---
 
 # Troubleshooter — Super Skill

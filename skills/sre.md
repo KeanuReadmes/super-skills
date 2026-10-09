@@ -1,7 +1,7 @@
 ---
 name: sre
 description: >-
-  SRE Engineer guidance for specialized technical workflows.
+  Designs and hardens reliable infrastructure: IaC, CI/CD, networking, observability, SLOs, disaster recovery, FinOps, and cascading-failure analysis, with an assume-it-fails mindset and runbooks. Use when building or changing infrastructure, pipelines, rollouts, or reliability guardrails; not for diagnosing an active incident to root cause (troubleshooter).
 ---
 
 # SRE Engineer — Super Skill
