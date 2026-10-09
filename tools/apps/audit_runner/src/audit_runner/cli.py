@@ -27,6 +27,11 @@ _SKILL_REF = re.compile(r"`([a-z][a-z0-9]*(?:-[a-z0-9]+)+)`\s+skill\b")
 # Matches a markdown link into the skills/ directory, e.g. (skills/coder.md).
 _SKILL_LINK = re.compile(r"\(([^)]*?skills/([a-z0-9-]+)\.md)\)")
 
+# A triggered skill is loaded whole into the agent's context window, so every
+# line competes with the conversation. Repository policy caps each skill file,
+# frontmatter included, at 100 lines; detail beyond that is cut, not split.
+MAX_SKILL_LINES = 100
+
 
 def validate_skill_compliance(root: Path) -> int:
     """Validate repository context and license checks exist in all skills.
@@ -114,6 +119,26 @@ def validate_cross_references(root: Path) -> int:
     return 1 if broken_by_file else 0
 
 
+def validate_line_budget(root: Path) -> int:
+    """Validate every skill file stays within MAX_SKILL_LINES lines.
+
+    Args:
+        root: Repository root path.
+
+    Returns:
+        Zero when no skill file exceeds the line budget.
+    """
+    over_budget: dict[str, int] = {}
+    for skill_file in sorted((root / "skills").glob("*.md")):
+        count = len(skill_file.read_text().splitlines())
+        if count > MAX_SKILL_LINES:
+            over_budget[str(skill_file.relative_to(root))] = count
+
+    for skill_path, count in over_budget.items():
+        print(f"[line-budget] {skill_path} has {count} lines (max {MAX_SKILL_LINES})")
+    return 1 if over_budget else 0
+
+
 def run(cmd: list[str], cwd: Path) -> int:
     """Run one command in the repository root.
 
@@ -132,7 +157,8 @@ def main() -> int:
     """Run lint, YAML validation, and skill structural checks.
 
     Runs ``make lint`` and ``make validate``, then the skill-compliance,
-    canonical-section, and cross-reference checks over ``skills/*.md``.
+    canonical-section, cross-reference, and line-budget checks over
+    ``skills/*.md``.
 
     Returns:
         Zero when all checks pass, non-zero otherwise.
@@ -156,6 +182,7 @@ def main() -> int:
         validate_skill_compliance,
         validate_canonical_sections,
         validate_cross_references,
+        validate_line_budget,
     )
     # Run every check (do not short-circuit) so all failures are reported at once.
     results = [check(root) for check in checks]
