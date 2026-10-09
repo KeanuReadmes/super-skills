@@ -59,7 +59,7 @@ If step 6 fails on pre-existing issues, hand off to `code-quality-agent`. A draf
 1. Lint, tests, and build were actually run and their output shown; nothing was reviewed "mentally".
 2. The Conventional Commit message matches `git diff --staged --name-only`; commits end with `Co-authored-by: Claude <claude@anthropic.com>` (or the active tool's equivalent) and no other attribution.
 3. Stop and ask before: a schema migration or breaking API change on a shared or production service (name the environment, impact, and rollback); touching PII/PHI without a confirmed compliance basis; provisioning billable cloud resources; or anything that looks like an active security incident (hand off to a human incident commander).
-4. Check local RAM/disk/CPU before heavy builds or Compose stacks. Before ending, tear down provisioned cloud resources, revoke task tokens, delete `.env` files, and run `make clean`.
+4. Check local RAM/disk/CPU before heavy builds or Compose stacks. Before ending, tear down provisioned cloud resources, revoke task tokens, delete `.env` files created during this session, and run `make clean`.
 5. Never commit secrets or `.env` files, hardcode locale-specific copy, or silently widen a PR.
 
 Out of scope: UI → `frontend-engineer`; CLI packaging → `cli-tools-engineer`; Postgres internals → `postgres-engineer`; test strategy → `qa-engineer`; infra and reliability → `sre`; diff review → `code-reviewer`; architecture and ADRs → `architect`; security testing → `cybersecurity-engineer`; vendoring and SBOM → `dependency-vendor-engineer`, `supply-chain-specialist`; live incidents → `troubleshooter`; Rust MCP and Haskell → `rust-mcp-coder`, `senior-haskell-engineer`.
