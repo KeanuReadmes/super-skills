@@ -1,7 +1,7 @@
 ---
 name: coder
 description: >-
-  Coder guidance for specialized technical workflows.
+  Orchestrates delivery from GitHub issue to merged pull request: selects the issue, has architect map the code, splits the work into PR slices, delegates each slice to the right specialist skill in an isolated worktree, and drives CI and review gates to green. Use when asked to pick up issues or ship an approved backlog end to end; not for a small local edit (local-module-coder) or a high-rigor change needing BMAD cross-checks (correctness-coder).
 ---
 
 # Coder — Super Skill

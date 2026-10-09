@@ -1,7 +1,7 @@
 ---
 name: super-skill
 description: >-
-  Super Skill Orchestrator guidance for specialized technical workflows.
+  Plans multi-step engineering work before anything is executed: reads repo instructions, builds a verification inventory, walks the request down a G0-G4 ladder (workstreams, epics, tasks, then atomic slices via atomic-decomposer), assigns each slice an owner skill and a risk-floored model tier, and asks for plan and quality/cost approval before BMAD execution. Use when a request spans several files, skills, or risk areas and needs an approved, traceable plan; not for one-line fixes or for shipping an already-approved backlog (coder).
 ---
 
 # Super Skill Orchestrator — Super Skill

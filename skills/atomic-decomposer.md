@@ -1,7 +1,7 @@
 ---
 name: atomic-decomposer
 description: >-
-  Atomic Decomposer guidance for specialized technical workflows.
+  Converts one well-scoped task brief (a single change surface plus context pack, verification commands, and constraints) into at most 12 atomic slices, each touching at most 5 files with one owner skill and one verification command, or rejects the brief with a fixed reason code. Use when super-skill or another planner needs a single task atomized into executable slices; not for planning a whole request, implementing, or reviewing code.
 ---
 
 # Atomic Decomposer — Super Skill

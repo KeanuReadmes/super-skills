@@ -1,7 +1,7 @@
 ---
 name: correctness-coder
 description: >-
-  Correctness Coder guidance for specialized technical workflows.
+  Implements risky or unfamiliar changes with maximum rigor: BMAD (Break down, Map, Assess, Decide), bottom-up and top-down reviews, specialist cross-checks for database, cache, integration, security, QA, and SRE impact, multi-model verification, and an explicit pre-push approval gate. Use when correctness matters more than speed, such as data, money, concurrency, or an unfamiliar stack; not for routine small edits (local-module-coder) or issue-to-merge orchestration (coder).
 ---
 
 # Correctness Coder — Super Skill

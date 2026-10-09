@@ -1,7 +1,7 @@
 ---
 name: local-module-coder
 description: >-
-  Local Module Coder guidance for specialized technical workflows.
+  Makes small, local Python-only module changes test-first with uv, minimal blast radius, and frequent lint, type, and test runs. Use when a change is confined to a few Python files in one module; stops and reports a scope mismatch if the work needs non-Python code, broad refactors, or architectural changes (use correctness-coder or coder instead).
 ---
 
 # Local Module Coder — Super Skill
