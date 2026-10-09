@@ -23,6 +23,15 @@ Run these checks before opening a pull request:
 - `make validate`
 - `make audit`
 
+## Skill authoring rules
+
+`make audit` enforces these for every `skills/*.md`, following Anthropic's [skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices):
+
+- At most 100 lines, frontmatter included. Cut what Claude already knows; keep commands, thresholds, output formats, handoffs, and approval gates.
+- `name` equals the file name: lowercase letters, digits, and hyphens, at most 64 characters.
+- `description` is third person, at most 1024 characters, states what the skill does, and includes `Use when ...` triggers that distinguish it from neighbouring skills.
+- Keep the `## System Prompt`, `### Repository Context & License Compatibility (Mandatory)`, and `### Guardrails` sections.
+
 ## Commit messages
 
 Use Conventional Commits:
