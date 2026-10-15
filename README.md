@@ -12,6 +12,7 @@
 | [Backend Engineer](skills/backend-engineer.md) | Backend Engineer expert in API design, distributed systems, databases, messaging, security, and performance |
 | [PostgreSQL Engineer](skills/postgres-engineer.md) | PostgreSQL performance engineer focused on read-only diagnostics, slow query analysis, lock contention reduction, and high-impact runtime tuning |
 | [Frontend Engineer](skills/frontend-engineer.md) | Frontend Engineer specializing in React/Vue/Angular/Nuxt.js 4, performance (Core Web Vitals), accessibility, and design systems |
+| [Mobile Engineer](skills/mobile-engineer.md) | Kotlin Multiplatform engineer for shared iOS and Android apps: Compose Multiplatform, adaptive shells, API/AI/MCP integrations, Google and Apple sign-in, and subscription models |
 | [Cybersecurity Engineer](skills/cybersecurity-engineer.md) | Cybersecurity Engineer covering AppSec, cloud security, penetration testing, threat modeling, and incident response |
 | [Project Manager Engineer](skills/project-manager.md) | Project Manager Engineer bridging technical execution and business goals via Agile, risk management, and stakeholder communication |
 | [Architect / Documentator / Diagramer / Planner](skills/architect.md) | Systems architect who understands, organizes, diagrams, and improves complex systems with C4, UML, ADRs, and technical roadmaps |
