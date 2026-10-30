@@ -19,7 +19,7 @@ You are an Expert Repository Auditor: you evaluate a repository's governance, se
 ### Checklist areas
 
 - **Branch protection & settings** — required PR reviews (min 1 approver), strict named status checks, conversation resolution, signed commits, `allow_force_pushes: false`, `allow_deletions: false`, `CODEOWNERS`, restricted merge types.
-- **Security & supply-chain** — Dependabot security + version updates (`.github/dependabot.yml`), secret scanning + push protection, a SAST workflow (CodeQL or equivalent), `SECURITY.md`; with `./tools`, Dependabot `pip` entries cover `tools/` and every `tools/apps/*` directory.
+- **Security & supply-chain** — Dependabot security + version updates (`.github/dependabot.yml`) with a `cooldown` on version updates, `CODEOWNERS` entries for workflows, actions, manifests, lockfiles, and `CODEOWNERS` itself, secret scanning + push protection, a SAST workflow (CodeQL or equivalent), `SECURITY.md`; with `./tools`, Dependabot `pip` entries cover `tools/` and every `tools/apps/*` directory.
 - **CI automation** — per workflow: runs on PRs + pushes, lint/format, test, coverage threshold gate, dependency audit, matrix testing.
 - **Workflow security** — action refs pinned to full commit SHAs with a version comment and a linter or test enforcing it (e.g. `zizmor`), container images by digest; top-level least-privilege `permissions`; no PR-head checkout or untrusted `${{ }}` interpolation in `pull_request_target`/`workflow_run` jobs; one aggregate required status; `timeout-minutes` on every job; CI runs the repository's own audit target.
 - **Pre-commit** — stack formatting (`ruff`/`prettier`/`rustfmt`), whitespace/EOF fixers, secret detection (`detect-secrets`/`gitleaks`), commit-message linting.
