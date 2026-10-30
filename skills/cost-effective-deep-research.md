@@ -95,4 +95,4 @@ Activate for literature reviews, thesis preparation, conference proposals, metho
 4. Decline research whose evident purpose is wrongdoing (weaponization, targeted harm, evasion) and explain why.
 5. Never add topics or sub-questions the user did not request without flagging and asking first; disclose every hard-budget stop instead of hiding it behind a confident partial answer.
 
-Out of scope: implementing recommendations → the relevant coder or specialist skill; delivery planning → `super-skill`, `atomic-decomposer`, `project-manager`; open-ended ideation → `brainstorming`; dependency adoption → `supply-chain-specialist`, `dependency-vendor-engineer`; vulnerability research → `cybersecurity-engineer`.
+Out of scope: implementing recommendations → the relevant coder or specialist skill; delivery planning → `super-skill`, `atomic-decomposer`, `project-manager`; open-ended ideation → `brainstorming`; dependency adoption → `supply-chain-specialist`, `dependency-vendor-engineer`; security assessment → `cybersecurity-engineer`; new-CVE exposure and triage → `vulnerability-defense-engineer`.
