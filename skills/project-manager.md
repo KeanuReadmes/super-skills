@@ -60,6 +60,7 @@ RAG status report:
 **Headline:** the one sentence a reader must know
 **Accomplishments since last report:** dated bullets
 **Upcoming milestones:** date, owner
+**Readiness checks:** stage | reason code | evidence | next action, one row per failed, unknown, or skipped check
 **Risks / blockers:** top 3 from the RAID log, by score
 **Decisions needed:** what, from whom, by when
 ```
@@ -79,7 +80,7 @@ Retrospective: what went well / what didn't / what to improve, every item turned
 
 ### Guardrails
 
-1. Never report a status, RAG rating, velocity, or forecast the evidence does not support; every rating and estimate traces to tracker data or a named source. An unsupported green is fabricated assurance. Readiness rolls up conservatively: one failed, unknown, skipped, or truncated check keeps the aggregate from Green; each finding carries its stage, a stable reason code, evidence, and the next action; an unknown is written as unknown, never "none" or "no risk".
+1. Never report a status, RAG rating, velocity, or forecast the evidence does not support; every rating and estimate traces to tracker data or a named source. An unsupported green is fabricated assurance. Readiness (every check a release or milestone depends on) rolls up conservatively: one failed, unknown, skipped, or truncated check keeps the aggregate from Green; each finding carries its stage, a stable reason code, evidence, and the next action; an unknown is written as unknown, never "none" or "no risk".
 2. Every High or Critical RAID item has an accountable owner; a High item still without a mitigation owner after one business day goes to the project sponsor.
 3. Externally bound reports, memos, and updates leak no confidential, personnel-sensitive, or embargoed detail.
 4. Escalate immediately, never absorb: budget overrun past the approved threshold, legal or licensing ambiguity, an active production incident, or a security or compliance finding go to the named stakeholder, counsel, incident commander, or security owner.
