@@ -36,7 +36,7 @@
 | [Cost-Effective Deep Research Orchestrator](skills/cost-effective-deep-research.md) | Controller/worker research orchestrator that decomposes a question into token-budgeted sub-tasks, enforces anti-redundancy and verbatim-citation standards, iterates on evidence gaps, and synthesizes a cited report under a hard budget cap |
 | [AI Red Team Engineer](skills/red-team-engineer.md) | AI/ML red-team engineer who runs authorized adversarial testing of models, agents, and MCP tool surfaces against OWASP LLM/ASI frameworks, with CVSS-plus-AI scoring and release-gating metrics |
 | [Senior Haskell Engineer](skills/senior-haskell-engineer.md) | Senior Haskell engineer expert in type-safe design, GHC/Stackage compatibility, Persistent/esqueleto query safety, profiling, and space-leak diagnosis |
-| [Supply Chain Specialist](skills/supply-chain-specialist.md) | Software and operations supply-chain specialist covering dependency vulnerability analysis, SBOM/provenance, CI/CD hardening, sandboxed package vetting, and optimization/forecasting against systems of record |
+| [Supply Chain Specialist](skills/supply-chain-specialist.md) | Software and operations supply-chain specialist covering pre-adoption dependency vetting, SBOM/provenance, CI/CD hardening, sandboxed package vetting, and optimization/forecasting against systems of record |
 
 ## How to Use
 
@@ -161,10 +161,10 @@ Replace `<version>` with an exact release and pin images by digest (`<image>:<ve
 | Tool | Purpose | Sandbox Install | Licence |
 |------|---------|----------------|---------|
 | [Trivy](https://github.com/aquasecurity/trivy) | Filesystem, IaC, secret, and image-tarball scanning | `docker run --rm -v "$PWD":/src:ro aquasec/trivy:<version> fs --disable-telemetry /src` | Apache-2.0 |
-| [OSV-Scanner](https://github.com/google/osv-scanner) | Lockfile vulnerability scanning against OSV, with offline databases | `docker run --rm -v "$PWD":/src:ro ghcr.io/google/osv-scanner:<version> scan source --offline --download-offline-databases -r /src` | Apache-2.0 |
-| [Syft](https://github.com/anchore/syft) + [Grype](https://github.com/anchore/grype) | SBOM generation and a second-opinion vulnerability match | `docker run --rm -v "$PWD":/src:ro anchore/syft:<version> scan dir:/src -o cyclonedx-json`, then `anchore/grype:<version> sbom:<file>` | Apache-2.0 |
+| [OSV-Scanner](https://github.com/google/osv-scanner) | Lockfile vulnerability scanning against OSV, with offline databases | `docker run --rm -v "$PWD":/src:ro ghcr.io/google/osv-scanner:<version> scan source --offline -r /src` after one networked `--download-offline-databases` run into a cache mount | Apache-2.0 |
+| [Syft](https://github.com/anchore/syft) + [Grype](https://github.com/anchore/grype) | SBOM generation and a second-opinion vulnerability match | `docker run --rm -v "$PWD":/src:ro anchore/syft:<version> scan dir:/src -o cyclonedx-json`, then `docker run --rm -v "$PWD":/src:ro anchore/grype:<version> sbom:/src/<file>` | Apache-2.0 |
 | [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck) | Go vulnerabilities filtered by call-graph reachability | `go run golang.org/x/vuln/cmd/govulncheck@<version> ./...` | BSD-3-Clause |
-| [pip-audit](https://github.com/pypa/pip-audit) | Python dependency audit | `uvx pip-audit@<version> --disable-pip -r <hashed-requirements>` | Apache-2.0 |
+| [pip-audit](https://github.com/pypa/pip-audit) | Python dependency audit (online: queries PyPI or OSV, so opt-in) | `uvx pip-audit@<version> --disable-pip -r <hashed-requirements>` | Apache-2.0 |
 | [cargo-audit](https://github.com/rustsec/rustsec) + [cargo-deny](https://github.com/EmbarkStudios/cargo-deny) | Rust advisories, bans, and source policy | `cargo install --locked cargo-audit@<version> cargo-deny@<version>` | Apache-2.0 OR MIT |
 | [Semgrep CE](https://github.com/semgrep/semgrep) | Multi-language SAST, diff-aware with `--baseline-commit` | `uvx semgrep@<version> scan --metrics=off --config <rules>` | LGPL-2.1-or-later engine; ⚠️ registry rules are under the non-OSI Semgrep Rules License |
 | [Bandit](https://github.com/PyCQA/bandit) / [gosec](https://github.com/securego/gosec) | Python and Go SAST | `uvx bandit@<version> -r <src>`; `docker run --rm -v "$PWD":/src:ro -w /src securego/gosec:<version> ./...` | Apache-2.0 |

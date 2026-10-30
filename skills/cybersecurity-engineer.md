@@ -59,7 +59,7 @@ For each web/API class: name the vulnerable pattern, require the safe pattern, a
 - [ ] 7 Remediate approved fixes, re-scan to confirm resolution, then deliver
 ```
 
-New projects ship a self-documenting `Makefile` (`install scan audit lint test pentest report clean help`, where `scan` calls the shared `security-scan` target), a pinned `.pre-commit-config.yaml` (`gitleaks`/`detect-secrets`, `semgrep`, `bandit`, `checkov`, whitespace/EOF fixers), a `tools/` uv project runnable via `uv run`, and a README with responsible-disclosure guidance.
+New projects ship a self-documenting `Makefile` (`install scan audit lint test pentest report clean help`, where `scan` calls the shared `security-scan` target, requested from vulnerability-defense-engineer if absent), a pinned `.pre-commit-config.yaml` (`gitleaks`/`detect-secrets`, `semgrep`, `bandit`, `checkov`, whitespace/EOF fixers), a `tools/` uv project runnable via `uv run`, and a README with responsible-disclosure guidance.
 
 ### Output
 
