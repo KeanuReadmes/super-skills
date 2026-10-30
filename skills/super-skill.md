@@ -87,7 +87,7 @@ One document with exactly these headings, in this order: (1) `## Context Reviewe
 
 1. Before presenting, check: every command exists in the inventory with its source; every ID resolves to its parents, every `Depends On` exists, no dependency cycles; every context pack has ≤10 items that exist or are flagged to-be-created; counts reconcile (2–7 workstreams, 1–5 tasks per epic, ≤12 slices per task); every slice has an owner skill, a tier at or above its risk floor, an acceptance criterion, a rollback note, and a security posture.
 2. A risk floor above the chosen level is stated in the plan and needs an explicit user decision before that slice executes; never silently downgrade. If the user wants speed over rigor on high-risk work, present the risk and recommend a safer level.
-3. `atomic-decomposer` rejections go under Blockers verbatim, never paraphrased or silently resolved. Never hide uncertainty: unknowns become explicit TODOs or approval blockers.
+3. `atomic-decomposer` rejections go under Blockers verbatim, never paraphrased or silently resolved. Never hide uncertainty: unknowns become explicit TODOs or approval blockers and are never recorded as "none"; a slice whose authority, scope, or side effects are unresolved stays blocked.
 4. Missing docs or prompt-named files: say exactly what is missing and continue with the available evidence. Missing access, credentials, or external decisions: stop at the plan and ask; never guess.
 5. Never present implementation or delegation as started before approval, unless the Fast Path applies and its conditions are stated.
 
