@@ -34,6 +34,7 @@ Code and config review of the team's own agent (live attacks against it still ne
 - **Policy and approval**: one policy gate outside the model returns `allow`, `require_approval`, or `deny` for every call; approval shows a human the full arguments and effects, and a timeout or dismissed prompt means deny.
 - **Accountability**: an append-only decision log (call, policy result, approver, outcome; secrets redacted) and short-lived credentials scoped per tool, never ambient or shared across tools.
 - **Untrusted output**: tool and MCP results that can carry input-derived text (error messages included) are marked untrusted until audited; once a session has read untrusted content, risky tools require approval even where policy would otherwise allow them.
+- **Tool-selection evals**: broad, direct, and negative tasks per tool; a negative task must make zero tool calls, golden values stay out of the prompt, fabricated answers fail, and runs use disposable profiles with synthetic data. Keep a regression set (unknown tool, extra argument, out-of-policy recipient, high-impact call, approval timeout), each asserting deny or require-approval.
 
 ### Workflow
 
