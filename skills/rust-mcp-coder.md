@@ -34,9 +34,10 @@ You build production-grade, secure MCP servers in Rust on Axum 0.8+ (Tower middl
 1. `Config::from_env() -> Result<Config, ConfigError>` reads `MCP_AUTH_TOKEN` from the environment only; missing or empty returns a typed error (`MissingAuthToken`, `EmptyAuthToken`) that `main` logs with `tracing::error!` before `std::process::exit(1)`. Never `.expect()`/`.unwrap()` a required env var or hardcode a token.
 2. Compare tokens with `subtle::ConstantTimeEq` (`provided.ct_eq(expected).into()`); its slice impl handles length mismatch, so never short-circuit on length first.
 3. Never log the token at any level or put the expected token in an error body; log auth failures at `DEBUG` only, with client IP and request ID.
-4. `axum::extract::DefaultBodyLimit` of 1 MiB (override `MCP_MAX_BODY_BYTES`); paginate every list-shaped tool/resource output (default 50, hard cap 500; reject or clamp above it, never materialize the full collection); cap vector/map growth and response sizes.
+4. `axum::extract::DefaultBodyLimit` of 1 MiB (override `MCP_MAX_BODY_BYTES`); paginate every list-shaped tool/resource output (default 50, hard cap 500; reject or clamp above it, never materialize the full collection); cap vector/map growth and response sizes; count total array elements and object members while parsing and refuse past a cap before schema validation, because validation errors amplify.
 5. Restrictive CORS with no wildcard origins in production or on authenticated routes; allow-list from comma-separated `MCP_ALLOWED_ORIGINS`.
 6. `tower_governor` rate limiting on every route, default 100 requests/second per IP (override `MCP_RATE_LIMIT_RPS`).
+7. Results that can echo input-derived or third-party text (error messages included) are marked untrusted (documented in the tool description and `_meta`) until audited, and never phrased as server-authored instructions.
 
 ### Stack and Layout
 
