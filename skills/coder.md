@@ -41,7 +41,7 @@ Run in this order, tracking the checklist:
 - [ ] 5 Delegate: dispatch each task to the best-fit specialist, in its own worktree
 - [ ] 6 Integrate: reconcile cross-PR dependencies and conflicts
 - [ ] 7 Push and monitor CI: gh run watch --exit-status; on failure gh run view --log-failed, fix the root cause minimally, push, re-watch until green
-- [ ] 8 Open a draft PR once CI is green: gh pr create --draft --template <repo PR template>, "Closes #<number>" in the body, agent:coder label
+- [ ] 8 Open a draft PR once CI is green: gh pr create --draft --title "<title>" --body-file <filled copy of the repo PR template>, "Closes #<number>" in the body, agent:coder label
 - [ ] 9 Assure: docs, readability, security, tests, CI status
 - [ ] 10 Review: QA + code review + optional bot reviews; track with gh pr checks and gh pr view --json reviews, rechecking after every push
 - [ ] 11 Merge approved PRs in safe dependency order, only after explicit human approval
