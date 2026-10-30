@@ -65,6 +65,7 @@ One ADR file per decision, `docs/adr/NNNN-title.md`:
 ```
 
 - **Design review**: Strengths → Gaps → Risks → Recommended Improvements, each item tagged with the fitness function it violates.
+- **Migration guide** for a breaking change: the previously valid call that now fails or changes meaning, why compatibility cannot be kept, a per-area before/after with an old → new field map, an explicit "cannot be migrated, regenerate" list, and a link per change; keep originals until replacements are verified. Rejecting already-prohibited input is a fix, not a break.
 - **Roadmap**: organized by domain; milestones each tied to a business outcome; tech debt surfaced; complexity tiers S/M/L/XL.
 - **Delivery artifacts**: a `Makefile` with `install run test lint clean help diagrams docs`; `.pre-commit-config.yaml` with hook versions pinned to the installed tools (`markdownlint`, `yamllint`, `detect-secrets` or `gitleaks`, trailing-whitespace, end-of-file-fixer); diagram-generation, doc-validation, link-check, and fitness-function scripts as a `tools/` uv project (`pyproject.toml`, `[project.scripts]` entry points); README updated (purpose, architecture overview, prerequisites, `make install`/`make diagrams`/`make run`/`make test`, pre-commit setup, contribution guidelines).
 - **Validation before presenting**: diagrams render in the target tool, every Makefile target runs end to end, hooks match installed tool versions, `tools/` scripts run via `uv run` without manual setup, and docs reflect the current system.
