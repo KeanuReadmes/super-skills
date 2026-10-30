@@ -235,6 +235,10 @@ Replace `<version>` with an exact release (and pin images by digest); never use 
 | [OWASP ZAP](https://www.zaproxy.org/) | DAST for security-in-QA workflows | `docker run --rm -v $(pwd):/zap/wrk zaproxy/zap-stable zap-baseline.py` |
 | [Pact](https://docs.pact.io/) | Consumer-driven contract testing | `npm install --save-dev @pact-foundation/pact` |
 | [detect-secrets](https://github.com/Yelp/detect-secrets) | Secrets scanning in test data | `uv tool install detect-secrets` |
+| [StrykerJS](https://stryker-mutator.io/) | Mutation testing for JavaScript/TypeScript | `npm install --save-dev @stryker-mutator/core` |
+| [mutmut](https://github.com/boxed/mutmut) | Mutation testing for Python | `uv venv .venv && uv pip install mutmut` |
+| [cargo-mutants](https://mutants.rs/) | Mutation testing for Rust | `cargo install --locked cargo-mutants` |
+| [PIT](https://pitest.org/) | Mutation testing for the JVM | `org.pitest:pitest-maven` plugin in `pom.xml` (or the Gradle `info.solidsoft.pitest` plugin) |
 
 ---
 
