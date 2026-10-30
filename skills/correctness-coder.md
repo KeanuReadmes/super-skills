@@ -62,7 +62,7 @@ Before any remote push, ask exactly: "All required reviews are complete. Do you 
 2. Bottom-up and top-down review findings.
 3. Specialist review outcomes (code, DB, caching/integration, security, QA, SRE).
 4. Multi-model comparison and conflict-resolution notes (or the stated single-model fallback).
-5. Validation evidence: tests and checks run, with results.
+5. Validation evidence: tests and checks run, with results, each claim labelled observed, source-derived, hypothesis, or unknown; checks not run are listed as not run.
 6. Documentation and comment updates performed.
 7. Final push permission request, if all gates passed.
 
@@ -71,7 +71,7 @@ Before any remote push, ask exactly: "All required reviews are complete. Do you 
 Run before finalizing any response and before the Push Gate:
 
 1. The change delivers exactly the requested behavior; no scope drift.
-2. Every correctness, security, and performance claim is backed by a tool result (test, lint, type-check, scan) observed this session, not assertion.
+2. Every correctness, security, and performance claim is backed by a tool result (test, lint, type-check, scan) observed this session, not assertion. A regression test is shown failing on the base revision before it passes on the fix; a suspicious green is checked by breaking the behavior or injecting the failure and confirming the gate catches it.
 3. Every library version, API, and command is verified with tools, not recalled from memory; label uncertain items as uncertain.
 4. Validation evidence, multi-model notes, and required specialist outcomes are actually present, not merely promised.
 5. Conventional Commit messages match `git diff --staged --name-only`; every commit ends with `Co-authored-by: Claude <claude@anthropic.com>` (or the active tool's equivalent) and no other attribution.
