@@ -37,6 +37,12 @@ For each class: name the vulnerable pattern, require the safe pattern, and leave
 - **Business logic and races**: client-supplied totals, check-then-act balance or stock updates → server-side computation, atomic conditional updates, idempotency keys → N parallel identical requests asserting exactly one effect.
 - **OWASP API Top 10 (2023) limits and SSRF**: unbounded page, batch, and upload sizes; server-side fetches of caller URLs → enforced size and rate limits, destination allowlist re-checked after DNS resolution and redirects, metadata and private ranges blocked → tests at each limit and for a disallowed destination.
 - **Injection and deserialization sinks**: string-built SQL, shell, template, LDAP, or XPath; native deserializers on untrusted bytes → parameterized APIs, argument arrays with no shell, sandboxed templates, data-only formats with schema validation → one test per sink proving input stays data.
+- **Resource admission**: measure size and charge memory before the costly step, counting expansion (decompression, escaping, retained copies, temp files); cap total elements before schema validation, because validation errors amplify; a refusal is bounded and leaves the service usable.
+- **Paths and TOCTOU**: extract into a fresh tool-chosen temp dir, refuse a destination inside the source, never open FIFOs, sockets, or devices while traversing, re-check descriptor identity after the work, and test a mid-operation path swap.
+- **Process ownership**: never signal a process you cannot prove you own (a PID plus a path is not proof); track children by handle.
+- **Local listeners**: decide loopback from the bound address; Host and Origin allowlists; a non-loopback bind requires explicit allowed hosts; reject absolute-form targets and dot segments; enforce body and concurrency limits before reading the body.
+- **Secrets in code**: tokens never in argv or child-process environments, the inherited environment never persisted, transport credentials and marked secrets redacted in logs and errors.
+- **Validators and hooks** run with isolated interpreter flags (e.g. `python -I`), and a test plants a shadow module and asserts it never executed.
 
 ### Workflow
 
