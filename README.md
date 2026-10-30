@@ -14,7 +14,7 @@
 | [Frontend Engineer](skills/frontend-engineer.md) | Frontend Engineer specializing in React/Vue/Angular/Nuxt.js 4, performance (Core Web Vitals), accessibility, and design systems |
 | [Mobile Engineer](skills/mobile-engineer.md) | Kotlin Multiplatform engineer for shared iOS and Android apps: Compose Multiplatform, adaptive shells, API/AI/MCP integrations, Google and Apple sign-in, and subscription models |
 | [Cybersecurity Engineer](skills/cybersecurity-engineer.md) | Cybersecurity Engineer covering AppSec, cloud security, penetration testing, threat modeling, and incident response |
-| [Vulnerability Defense Engineer](skills/vulnerability-defense-engineer.md) | Defensive, report-only engineer who runs stack-aware local security scans (Trivy plus ecosystem scanners) with or without pre-commit or CI, triages newly disclosed and zero-day CVEs by exposure, reachability, KEV, EPSS, and CVSS v4, and ships compensating controls, exploitation-attempt detections, and expiring exceptions |
+| [Vulnerability Defense Engineer](skills/vulnerability-defense-engineer.md) | Defensive, report-only engineer who runs stack-aware local security scans (Trivy plus ecosystem scanners) with or without pre-commit or CI, triages newly disclosed and zero-day CVEs by exposure, reachability, KEV, EPSS, and CVSS v4, and designs compensating controls, exploitation-attempt detections, and expiring exceptions |
 | [Project Manager Engineer](skills/project-manager.md) | Project Manager Engineer bridging technical execution and business goals via Agile, risk management, and stakeholder communication |
 | [Architect / Documentator / Diagramer / Planner](skills/architect.md) | Systems architect who understands, organizes, diagrams, and improves complex systems with C4, UML, ADRs, and technical roadmaps |
 | [CLI / Tools Engineer](skills/cli-tools-engineer.md) | CLI & Tools Engineer specializing in Python-first tooling with uv/poetry, clean code, proper packaging, CI/CD workflows, and pre-commit hooks |
@@ -156,24 +156,24 @@ Every skill produces **fully functioning solutions**, not just code snippets:
 
 ### 🛡️ Vulnerability Defense Engineer
 
-Replace `<version>` with an exact release (and pin images by digest); never use `:latest`. Licences come from each project's published metadata; flagged rows need a licence review before adoption.
+Replace `<version>` with an exact release and pin images by digest (`<image>:<version>@<digest>`); never use `:latest`. Once databases are prefetched, add the skill's sandbox flags (`--network none --cap-drop ALL --security-opt no-new-privileges --read-only`). Licences come from each project's published metadata; flagged rows need a licence review before adoption.
 
 | Tool | Purpose | Sandbox Install | Licence |
 |------|---------|----------------|---------|
-| [Trivy](https://github.com/aquasecurity/trivy) | Filesystem, IaC, secret, and image-tarball scanning | `docker run --rm -v "$PWD":/src:ro aquasec/trivy:<version> fs /src` | Apache-2.0 |
-| [OSV-Scanner](https://github.com/google/osv-scanner) | Lockfile vulnerability scanning against OSV, with offline databases | `docker run --rm -v "$PWD":/src:ro ghcr.io/google/osv-scanner:<version> scan source -r /src` | Apache-2.0 |
-| [Syft](https://github.com/anchore/syft) + [Grype](https://github.com/anchore/grype) | SBOM generation and a second-opinion vulnerability match | `docker run --rm -v "$PWD":/src:ro anchore/syft:<version> scan dir:/src -o cyclonedx-json` | Apache-2.0 |
+| [Trivy](https://github.com/aquasecurity/trivy) | Filesystem, IaC, secret, and image-tarball scanning | `docker run --rm -v "$PWD":/src:ro aquasec/trivy:<version> fs --disable-telemetry /src` | Apache-2.0 |
+| [OSV-Scanner](https://github.com/google/osv-scanner) | Lockfile vulnerability scanning against OSV, with offline databases | `docker run --rm -v "$PWD":/src:ro ghcr.io/google/osv-scanner:<version> scan source --offline --download-offline-databases -r /src` | Apache-2.0 |
+| [Syft](https://github.com/anchore/syft) + [Grype](https://github.com/anchore/grype) | SBOM generation and a second-opinion vulnerability match | `docker run --rm -v "$PWD":/src:ro anchore/syft:<version> scan dir:/src -o cyclonedx-json`, then `anchore/grype:<version> sbom:<file>` | Apache-2.0 |
 | [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck) | Go vulnerabilities filtered by call-graph reachability | `go run golang.org/x/vuln/cmd/govulncheck@<version> ./...` | BSD-3-Clause |
-| [pip-audit](https://github.com/pypa/pip-audit) | Python dependency audit | `uvx pip-audit@<version> -r requirements.txt` | Apache-2.0 |
+| [pip-audit](https://github.com/pypa/pip-audit) | Python dependency audit | `uvx pip-audit@<version> --disable-pip -r <hashed-requirements>` | Apache-2.0 |
 | [cargo-audit](https://github.com/rustsec/rustsec) + [cargo-deny](https://github.com/EmbarkStudios/cargo-deny) | Rust advisories, bans, and source policy | `cargo install --locked cargo-audit@<version> cargo-deny@<version>` | Apache-2.0 OR MIT |
 | [Semgrep CE](https://github.com/semgrep/semgrep) | Multi-language SAST, diff-aware with `--baseline-commit` | `uvx semgrep@<version> scan --metrics=off --config <rules>` | LGPL-2.1-or-later engine; ⚠️ registry rules are under the non-OSI Semgrep Rules License |
-| [Bandit](https://github.com/PyCQA/bandit) | Python SAST | `uvx bandit@<version> -r <src>` | Apache-2.0 |
+| [Bandit](https://github.com/PyCQA/bandit) / [gosec](https://github.com/securego/gosec) | Python and Go SAST | `uvx bandit@<version> -r <src>`; `docker run --rm -v "$PWD":/src:ro -w /src securego/gosec:<version> ./...` | Apache-2.0 |
 | [gitleaks](https://github.com/gitleaks/gitleaks) | Secret scanning of history and working tree, redacted | `docker run --rm -v "$PWD":/repo:ro zricethezav/gitleaks:<version> git /repo --redact` | MIT |
 | [TruffleHog](https://github.com/trufflesecurity/trufflehog) | Secret scanning; run with `--no-verification` so nothing is sent to providers | `docker run --rm -v "$PWD":/repo:ro trufflesecurity/trufflehog:<version> git file:///repo --no-verification` | ⚠️ AGPL-3.0-only |
 | [hadolint](https://github.com/hadolint/hadolint) | Dockerfile linting | `docker run --rm -i hadolint/hadolint:<version> < Dockerfile` | ⚠️ GPL-3.0-only |
 | [Checkov](https://github.com/bridgecrewio/checkov) | Terraform, Kubernetes, and Helm misconfiguration scanning | `uvx checkov@<version> -d <dir> --skip-download` | Apache-2.0 |
-| [actionlint](https://github.com/rhysd/actionlint) + [zizmor](https://github.com/zizmorcore/zizmor) | GitHub Actions correctness and security audit | `uvx zizmor@<version> --offline .github/workflows` | MIT |
-| [bundler-audit](https://github.com/rubysec/bundler-audit) / [Brakeman](https://github.com/presidentbeef/brakeman) | Ruby advisories and Rails SAST | `bundle add bundler-audit brakeman --group development` | ⚠️ GPL-3.0 / non-OSI Brakeman Public Use License |
+| [actionlint](https://github.com/rhysd/actionlint) + [zizmor](https://github.com/zizmorcore/zizmor) | GitHub Actions correctness and security audit | `docker run --rm -v "$PWD":/repo:ro -w /repo rhysd/actionlint:<version>`; `uvx zizmor@<version> --offline .github/workflows` | MIT |
+| [bundler-audit](https://github.com/rubysec/bundler-audit) / [Brakeman](https://github.com/presidentbeef/brakeman) | Ruby advisories and Rails SAST | `gem install --install-dir <scratch> bundler-audit -v <version>`; `docker run --rm -v "$PWD":/code:ro presidentbeef/brakeman:<version>` | ⚠️ GPL-3.0 / non-OSI Brakeman Public Use License |
 
 ---
 
