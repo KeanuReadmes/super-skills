@@ -33,6 +33,7 @@ Code and config review of the team's own agent (live attacks against it still ne
 - **Registry and schemas**: every tool listed with an impact tier (read, write, external effect, irreversible); unknown tools denied; strict per-tool schemas with no additional properties and bounded arguments, rejected rather than coerced.
 - **Policy and approval**: one policy gate outside the model returns `allow`, `require_approval`, or `deny` for every call; approval shows a human the full arguments and effects, and a timeout or dismissed prompt means deny.
 - **Accountability**: an append-only decision log (call, policy result, approver, outcome; secrets redacted) and short-lived credentials scoped per tool, never ambient or shared across tools.
+- **Untrusted output**: tool and MCP results that can carry input-derived text (error messages included) are marked untrusted until audited; once a session has read untrusted content, risky tools require approval even where policy would otherwise allow them.
 
 ### Workflow
 
